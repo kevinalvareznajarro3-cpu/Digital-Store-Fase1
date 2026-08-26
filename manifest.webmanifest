@@ -1,14 +1,18 @@
 {
-  "name": "Digital Store — Gestores",
+  "id": "./",
+  "name": "Digital Store",
   "short_name": "Digital Store",
-  "description": "Gestión de vales y ventas para el equipo de gestores",
-  "start_url": "./index.html",
+  "description": "Gestión de vales y ventas — Pine Forest Digital Store Innovaciones",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait-primary",
-  "background_color": "#f4f1ea",
+  "background_color": "#F4F1EA",
   "theme_color": "#1A4A2E",
   "lang": "es",
+  "dir": "ltr",
+  "categories": ["business", "productivity"],
   "icons": [
     {
       "src": "icons/icon-192.png",
@@ -21,6 +25,12 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icons/icon-512.png",
