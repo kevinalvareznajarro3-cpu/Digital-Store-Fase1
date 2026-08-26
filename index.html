@@ -7,6 +7,8 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png">
 <meta name="theme-color" content="#1A4A2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
 :root{
   --green:#1A4A2E; --green-dim:#276B43; --blue:#2E6EB5; --red:#C93C3C; --gold:#E8B825;
@@ -35,7 +37,6 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-b
 .btn-ic{width:15px;height:15px;flex:none;display:inline-flex;}
 .btn-ic svg{width:100%;height:100%;}
 
-/* ---- Login ---- */
 #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
   background:linear-gradient(160deg,#0F2E1E,#1A4A2E 55%,#2E6EB5);}
 .login-box{background:var(--surface);border-radius:18px;padding:28px 22px;width:100%;max-width:360px;box-shadow:0 12px 40px rgba(0,0,0,.35);}
@@ -48,7 +49,6 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-b
 .pass-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted);}
 .pass-eye svg{width:100%;height:100%;}
 
-/* ---- Header / brand ---- */
 header.topbar{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line);
   padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
 .brand{display:flex;align-items:center;gap:9px;min-width:0;}
@@ -58,39 +58,41 @@ header.topbar{position:sticky;top:0;z-index:20;background:var(--surface);border-
 .brand .name small{display:block;color:var(--muted);font-size:9px;letter-spacing:1.2px;text-transform:uppercase;font-weight:600;margin-top:1px;}
 .hdr-actions{display:flex;align-items:center;gap:8px;flex:none;}
 .logout-btn{font-size:12px;font-weight:700;color:var(--red);}
+.nov-btn{position:relative;width:36px;height:36px;border-radius:10px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--green-dim);}
+.nov-btn svg{width:18px;height:18px;}
+.nov-btn .badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;font-weight:800;border-radius:50px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+@keyframes slideIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.nov-item{animation:slideIn .3s ease;}
 
 main{max-width:640px;margin:0 auto;padding:14px 14px 90px;}
-.view{}
 
-/* ---- Bottom nav ---- */
 nav.tabs{position:fixed;left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:20;
   max-width:616px;margin:0 auto;background:var(--surface);border-radius:18px;box-shadow:0 6px 24px rgba(0,0,0,.18);
   display:flex;padding:6px;}
 nav.tabs button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:13px;
-  color:var(--muted);font-size:10.5px;font-weight:700;}
+  color:var(--muted);font-size:10px;font-weight:700;}
 nav.tabs button.active{color:var(--green);background:rgba(26,74,46,.10);}
 nav.tabs button .ic{display:flex;align-items:center;justify-content:center;}
 nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 
-/* ---- Toast ---- */
 #toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);z-index:80;background:#1c231c;color:#fff;
   padding:10px 18px;border-radius:50px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;max-width:88vw;text-align:center;}
 #toast.show{opacity:1;}
 
-/* ---- Vale form ---- */
 .line-item{background:var(--surface-2);border-radius:10px;padding:10px;margin-bottom:8px;position:relative;}
 .line-item .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
 .remove-line{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:var(--danger);color:#fff;
-  display:flex;align-items:center;justify-content:center;font-size:13px;}
+  display:flex;align-items:center;justify-content:center;font-size:13px;z-index:2;}
 .add-line-btn{width:100%;padding:10px;border-radius:10px;border:1.5px dashed var(--line);color:var(--green-dim);font-weight:700;font-size:13px;}
 .calc-box{background:var(--surface-2);border-radius:10px;padding:12px;font-size:13px;}
 .calc-row{display:flex;justify-content:space-between;padding:4px 0;}
 .calc-row.total{font-weight:800;font-size:15px;border-top:1px dashed var(--line);margin-top:6px;padding-top:8px;color:var(--green);}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
 .checkbox-row{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text);}
 .checkbox-row input{width:auto;}
 
-/* ---- Historial ---- */
 .hist-item{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:9px;}
 .hist-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
 .hist-top b{font-size:13.5px;}
@@ -103,7 +105,6 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 .hist-meta{font-size:12px;color:var(--muted);}
 .hist-total{font-size:14px;font-weight:800;color:var(--green);margin-top:4px;}
 
-/* ---- Catálogo (admin) ---- */
 .prod-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;display:flex;gap:11px;}
 .prod-thumb{width:64px;height:64px;border-radius:10px;object-fit:cover;flex:none;background:var(--surface-2);}
 .prod-thumb.empty{display:flex;align-items:center;justify-content:center;color:var(--muted);}
@@ -119,16 +120,16 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 .stock-badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:50px;display:inline-block;margin-top:4px;}
 .stock-badge.si{background:var(--avail-ok-bg);color:var(--avail-ok-text);}
 .stock-badge.no{background:var(--avail-out-bg);color:var(--avail-out-text);}
+.local-badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:50px;display:inline-block;margin-top:4px;margin-left:4px;background:#E3F2FD;color:#1565C0;}
+.comision-badge{font-size:10px;font-weight:700;color:var(--green-dim);margin-top:2px;}
 
-/* ---- Admin tabs ---- */
-.admin-tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px;}
+.admin-tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px;-webkit-overflow-scrolling:touch;}
 .admin-tab-btn{flex:none;padding:9px 13px;border-radius:11px;background:var(--surface);border:1px solid var(--line);
   font-size:12px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap;}
 .admin-tab-btn.active{background:var(--green);color:#fff;border-color:var(--green);}
 .admin-tab-btn .aic{width:14px;height:14px;display:flex;}
 .admin-tab-btn .aic svg{width:100%;height:100%;}
 
-/* ---- Modal ---- */
 .modal-back{position:fixed;inset:0;background:rgba(10,15,10,.6);z-index:50;display:flex;align-items:flex-end;justify-content:center;}
 .modal{background:var(--surface);border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));
   width:100%;max-width:520px;max-height:88vh;overflow-y:auto;}
@@ -136,29 +137,76 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 .modal-head h3{font-size:16px;margin:0;display:flex;align-items:center;gap:8px;}
 .modal-head button{width:28px;height:28px;border-radius:50%;background:var(--surface-2);font-size:15px;}
 
-/* ---- Photo upload ---- */
 .photo-upload{border:2px dashed var(--line);border-radius:12px;padding:16px;text-align:center;color:var(--muted);font-size:12.5px;position:relative;}
 .photo-upload img{max-width:100%;max-height:140px;border-radius:10px;margin-bottom:8px;}
 .photo-upload input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
 .upload-spinner{font-size:12px;color:var(--green-dim);font-weight:700;}
 
 .hint{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 0;}
-.badge-count{background:var(--red);color:#fff;font-size:9px;font-weight:800;border-radius:50px;min-width:15px;height:15px;
-  display:inline-flex;align-items:center;justify-content:center;padding:0 3px;margin-left:3px;}
 .top3-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;}
 .top3-item:last-child{border-bottom:none;}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
 .stat-box{background:var(--surface);border-radius:12px;padding:12px;text-align:center;}
 .stat-box .n{font-size:19px;font-weight:800;color:var(--green);}
 .stat-box .l{font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:2px;}
+
+/* PWA install banner */
+#pwaBanner{position:fixed;top:0;left:0;right:0;z-index:100;background:linear-gradient(135deg,#1A4A2E,#276B43);color:#fff;
+  padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(0,0,0,.25);}
+#pwaBanner .pwa-icon{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;flex:none;}
+#pwaBanner .pwa-icon svg{width:22px;height:22px;}
+#pwaBanner .pwa-text{flex:1;font-size:13px;font-weight:600;line-height:1.3;}
+#pwaBanner .pwa-text small{display:block;font-weight:400;opacity:.85;font-size:11px;margin-top:2px;}
+#pwaBanner .pwa-actions{display:flex;gap:8px;flex:none;}
+#pwaBanner .pwa-actions button{padding:8px 14px;border-radius:10px;font-weight:700;font-size:12px;}
+#pwaBanner .pwa-install{background:#fff;color:var(--green);}
+#pwaBanner .pwa-later{background:rgba(255,255,255,.2);color:#fff;}
+
+/* Tarifas mensajería */
+.tarifa-zona{margin-bottom:12px;}
+.tarifa-zona h4{font-size:12px;font-weight:800;color:var(--green);margin:0 0 6px;text-transform:uppercase;letter-spacing:.5px;padding:6px 10px;background:rgba(26,74,46,.08);border-radius:8px;}
+.tarifa-item{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--line);}
+.tarifa-item:hover,.tarifa-item:active{background:rgba(26,74,46,.08);}
+.tarifa-item .precio{font-weight:800;color:var(--green);white-space:nowrap;margin-left:8px;}
+.tarifa-tabs{display:flex;gap:6px;margin-bottom:12px;}
+.tarifa-tab{flex:1;padding:10px;border-radius:10px;font-weight:700;font-size:12px;text-align:center;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);}
+.tarifa-tab.active{background:var(--green);color:#fff;border-color:var(--green);}
+.local-indicator{font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;background:#E8F5E9;color:var(--green);margin-bottom:10px;text-align:center;}
+
+/* Categorías */
+.cat-filter{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px;-webkit-overflow-scrolling:touch;}
+.cat-chip{flex:none;padding:7px 12px;border-radius:20px;font-size:11px;font-weight:700;background:var(--surface);border:1px solid var(--line);color:var(--muted);white-space:nowrap;}
+.cat-chip.active{background:var(--green);color:#fff;border-color:var(--green);}
+.subcat-label{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin:10px 0 6px;padding-left:2px;}
+
+/* Perfil avatar */
+.perfil-avatar-wrap{position:relative;width:80px;height:80px;margin:0 auto 12px;}
+.perfil-avatar-wrap img,.perfil-avatar-wrap .avatar-letter{width:80px;height:80px;border-radius:50%;object-fit:cover;}
+.perfil-avatar-wrap .avatar-letter{background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;}
+.perfil-avatar-wrap .cam-btn{position:absolute;bottom:0;right:0;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;border:2px solid #fff;}
+.perfil-avatar-wrap .cam-btn svg{width:14px;height:14px;}
+
+.section-label{font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.6px;margin:16px 0 8px;padding-bottom:4px;border-bottom:2px solid rgba(26,74,46,.15);}
+.gps-btn{padding:10px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line);font-weight:700;font-size:12.5px;color:var(--blue);display:flex;align-items:center;justify-content:center;gap:6px;width:100%;}
+.gps-btn.active{background:#E3F2FD;border-color:var(--blue);}
 </style>
 </head>
 <body>
 
-<!-- ============ LOGIN ============ -->
+<!-- PWA Install Banner -->
+<div id="pwaBanner" class="hidden">
+  <div class="pwa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></div>
+  <div class="pwa-text">Instala Digital Store<small>Acceso rápido desde tu pantalla de inicio</small></div>
+  <div class="pwa-actions">
+    <button class="pwa-install" onclick="installPWA()">Instalar</button>
+    <button class="pwa-later" onclick="dismissPWA()">Ahora no</button>
+  </div>
+</div>
+
+<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-box">
-    <div class="login-logo"><img src="logo.jpg" alt="Digital Store"></div>
+    <div class="login-logo"><img src="logo.jpg" alt="Digital Store" onerror="this.src='icons/icon-192.png'"></div>
     <h1 class="login-title">Digital Store</h1>
     <p class="login-sub">Pine Forest Innovaciones</p>
     <div class="field">
@@ -179,36 +227,56 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
   </div>
 </div>
 
-<!-- ============ APP ============ -->
+<!-- APP -->
 <div id="app" class="hidden">
   <header class="topbar">
     <div class="brand">
-      <div class="mark"><img src="logo.jpg" alt=""></div>
+      <div class="mark"><img src="logo.jpg" alt="" onerror="this.src='icons/icon-192.png'"></div>
       <div class="name">Digital Store<small>Gestión de ventas</small></div>
     </div>
     <div class="hdr-actions">
+      <button class="nov-btn" onclick="openNovedades()" title="Novedades">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="badge hidden" id="novBadge">0</span>
+      </button>
       <span id="userName" style="font-size:12px;font-weight:700;color:var(--muted);"></span>
       <button class="logout-btn" onclick="doLogout()">Salir</button>
     </div>
   </header>
 
   <main>
-    <!-- ===== VISTA: NUEVO VALE (gestor) ===== -->
+    <!-- VALE -->
     <section id="view-vale" class="view hidden">
       <div class="card">
         <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>Datos del cliente</h2>
-        <div class="field"><label>Nombre *</label><input type="text" id="cNombre" placeholder="Nombre del cliente"></div>
+        <div class="field"><label>Nombre completo *</label><input type="text" id="cNombre" placeholder="Nombre completo del cliente"></div>
+        <div class="field">
+          <label>Carnet (foto obligatoria) *</label>
+          <div class="photo-upload" id="carnetUploadBox">
+            <span id="carnetUploadHint">Toca para añadir foto del carnet</span>
+            <input type="file" accept="image/*" capture="environment" id="carnetInput" onchange="handleCarnetUpload(event)">
+          </div>
+        </div>
         <div class="row2">
           <div class="field"><label>Teléfono *</label><input type="tel" id="cTelefono" placeholder="5xxxxxxx"></div>
+          <div class="field"><label>Teléfono adicional</label><input type="tel" id="cTelefono2" placeholder="Opcional"></div>
+        </div>
+        <div class="field"><label>Dirección exacta con # *</label><input type="text" id="cDireccion" placeholder="Calle, #, entre calles…"></div>
+        <div class="row2">
+          <div class="field"><label>Municipio / Reparto</label><input type="text" id="cMunicipio" placeholder="Opcional"></div>
           <div class="field"><label>Referencia</label><input type="text" id="cReferencia" placeholder="Opcional"></div>
         </div>
-        <div class="field"><label>Dirección *</label><input type="text" id="cDireccion" placeholder="Dirección de entrega"></div>
+        <div class="field">
+          <label>Ubicación GPS</label>
+          <button type="button" class="gps-btn" id="gpsBtn" onclick="captureGPS()">📍 Compartir ubicación del cliente</button>
+          <input type="hidden" id="cGps">
+        </div>
         <div id="blacklistAlert" class="hidden" style="background:var(--avail-out-bg);color:var(--avail-out-text);border-radius:10px;padding:10px;font-size:12.5px;font-weight:700;margin-top:6px;"></div>
       </div>
 
       <div class="card">
-        <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2.4 11.6a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 8H6"/></svg></span>Artículo(s) *</h2>
-        <button type="button" class="btn-secondary" onclick="openCatalogPicker()" style="margin-bottom:10px;">Seleccionar del catálogo</button>
+        <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2.4 11.6a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 8H6"/></svg></span>Producto(s) *</h2>
+        <button type="button" class="btn-secondary" onclick="openCatalogPicker()" style="margin-bottom:10px;">📦 Seleccionar del catálogo</button>
         <div id="lineItems"></div>
         <button type="button" class="add-line-btn" onclick="addLineItem()">+ Añadir artículo manual</button>
       </div>
@@ -216,34 +284,60 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
       <div class="card">
         <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.5" width="20" height="11" rx="2"/><circle cx="12" cy="12" r="2.6"/></svg></span>Pago y mensajería</h2>
         <div class="row2">
-          <div class="field"><label>Moneda del pago</label>
+          <div class="field"><label>Moneda del producto *</label>
             <select id="moneda"><option>CUP</option><option>USD</option><option>Euros</option><option>Zelle</option><option>PayPal</option></select>
           </div>
-          <div class="field"><label>Tipo de pago mensajería</label>
-            <select id="tipoPagoMsj"><option>Efectivo</option><option>Transferencia</option><option>Otro</option></select>
+          <div class="field"><label>Tipo de pago *</label>
+            <select id="tipoPago">
+              <option>Efectivo</option>
+              <option>Transferencia</option>
+              <option>Pago con tarjeta (7% de comisión)</option>
+              <option>Otro</option>
+            </select>
           </div>
         </div>
-        <div class="field"><label>Costo de mensajería ($)</label><input type="number" id="mensajeria" value="0" step="0.01" oninput="recalcVale()"></div>
-        <div class="checkbox-row" style="margin-bottom:10px;">
-          <input type="checkbox" id="hayVuelto" onchange="toggleVuelto()"><label style="margin:0;">¿Hay que llevar vuelto?</label>
+        <div class="field">
+          <label>Mensajería *</label>
+          <button type="button" class="btn-secondary" onclick="openTarifasModal()" id="tarifasBtn">🌲 Elegir tarifa de mensajería</button>
+          <input type="number" id="mensajeria" value="0" step="1" oninput="recalcVale()" style="margin-top:8px;" placeholder="O escribe el monto">
+          <div id="tarifaSelected" style="font-size:12px;color:var(--muted);margin-top:4px;"></div>
         </div>
-        <div class="field hidden" id="vueltoField"><label>Cantidad de vuelto</label><input type="number" id="vueltoCantidad" value="0" step="0.01"></div>
+        <div class="row2">
+          <div class="field"><label>Tipo pago mensajería *</label>
+            <select id="tipoPagoMsj"><option>CUP</option><option>USD</option><option>Otro</option></select>
+          </div>
+          <div class="field"><label>Total mensajería</label>
+            <input type="number" id="totalMsjDisplay" value="0" step="0.01" readonly style="background:var(--surface-2);">
+          </div>
+        </div>
+        <div class="checkbox-row" style="margin-bottom:10px;">
+          <input type="checkbox" id="hayVuelto" onchange="toggleVuelto()"><label style="margin:0;">¿Hay que dar vuelto?</label>
+        </div>
+        <div class="hidden" id="vueltoField">
+          <div class="row2">
+            <div class="field"><label>Cantidad de vuelto *</label><input type="text" id="vueltoCantidad" placeholder="Ej: 500 o quinientos"></div>
+            <div class="field"><label>Moneda del vuelto *</label>
+              <select id="vueltoMoneda"><option>CUP</option><option>USD</option></select>
+            </div>
+          </div>
+        </div>
         <div class="calc-box" id="calcBox"></div>
       </div>
 
       <div class="card">
-        <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg></span>Entrega</h2>
+        <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg></span>Preferencia del cliente</h2>
         <div class="row2">
-          <div class="field"><label>Día</label><input type="date" id="entregaDia"></div>
-          <div class="field"><label>Hora</label><input type="time" id="entregaHora"></div>
+          <div class="field"><label>Día que quiere *</label><input type="date" id="entregaDia"></div>
+          <div class="field"><label>Hora que quiere *</label><input type="time" id="entregaHora"></div>
         </div>
         <div class="field"><label>Detalles</label><textarea id="detalles" rows="2" placeholder="Notas adicionales"></textarea></div>
+        <div class="field"><label>Garantía</label><input type="text" id="garantia" placeholder="Ej: 30 días, 1 año…"></div>
       </div>
 
-      <button class="btn-primary" id="submitValeBtn" onclick="submitVale()">Guardar vale</button>
+      <button class="btn-primary" id="submitValeBtn" onclick="submitVale()">🌲 Guardar vale de mensajería</button>
     </section>
 
-    <!-- ===== VISTA: HISTORIAL ===== -->
+    <!-- HISTORIAL -->
     <section id="view-historial" class="view hidden">
       <div class="card">
         <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3.5 2"/></svg></span>Historial de pedidos</h2>
@@ -251,12 +345,32 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
       </div>
     </section>
 
-    <!-- ===== VISTA: PERFIL ===== -->
+    <!-- RESUMEN GESTOR -->
+    <section id="view-resumen" class="view hidden">
+      <div class="stat-grid">
+        <div class="stat-box"><div class="n" id="gStatComision">$0</div><div class="l">Comisión total</div></div>
+        <div class="stat-box"><div class="n" id="gStatPendiente">$0</div><div class="l">Pendiente</div></div>
+        <div class="stat-box"><div class="n" id="gStatRecaudado">$0</div><div class="l">Recaudado</div></div>
+        <div class="stat-box"><div class="n" id="gStatPedidos">0</div><div class="l">Pedidos</div></div>
+      </div>
+      <div class="card">
+        <h2>Desglose de comisiones</h2>
+        <div id="gComisionList"><div class="hint">Sin datos todavía</div></div>
+      </div>
+    </section>
+
+    <!-- PERFIL -->
     <section id="view-perfil" class="view hidden">
       <div class="card" style="text-align:center;">
-        <div style="width:64px;height:64px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;margin:0 auto 12px;" id="perfilAvatar"></div>
+        <div class="perfil-avatar-wrap">
+          <div id="perfilAvatarBox"><div class="avatar-letter" id="perfilAvatar">?</div></div>
+          <button class="cam-btn" onclick="$('perfilPhotoInput').click()" title="Cambiar foto">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          </button>
+          <input type="file" accept="image/*" id="perfilPhotoInput" class="hidden" onchange="handlePerfilPhoto(event)">
+        </div>
         <div style="font-weight:800;font-size:16px;" id="perfilNombre"></div>
-        <div style="color:var(--muted);font-size:12.5px;margin-top:2px;" id="perfilRol"></div>
+        <div style="color:var(--muted);font-size:12.5px;margin-top:2px;" id="perfilRol">Gestor de ventas</div>
       </div>
       <div class="card">
         <h2>Mi WhatsApp de contacto</h2>
@@ -264,13 +378,23 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
       </div>
     </section>
 
-    <!-- ===== VISTA: ADMIN ===== -->
+    <!-- CATÁLOGO GESTOR (solo lectura) -->
+    <section id="view-catalogo" class="view hidden">
+      <div class="card" style="padding-bottom:8px;">
+        <input type="text" id="gestorCatSearch" placeholder="Buscar producto…" oninput="renderGestorCatalogo()" style="margin-bottom:10px;">
+        <div class="cat-filter" id="gestorCatFilters"></div>
+      </div>
+      <div id="gestorCatList"><div class="hint">Cargando catálogo…</div></div>
+    </section>
+
+    <!-- ADMIN -->
     <section id="view-admin" class="view hidden">
       <div class="admin-tabs">
         <button class="admin-tab-btn active" data-atab="resumen" onclick="adminSwitch('resumen')"><span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M12 20V4M20 20v-7"/></svg></span>Resumen</button>
         <button class="admin-tab-btn" data-atab="catalogo" onclick="adminSwitch('catalogo')"><span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8.5 12 4 3 8.5 12 13l9-4.5Z"/><path d="M3 8.5V16l9 4.5 9-4.5V8.5"/><path d="M12 13v7.5"/></svg></span>Catálogo</button>
         <button class="admin-tab-btn" data-atab="pedidos" onclick="adminSwitch('pedidos')"><span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>Pedidos</button>
         <button class="admin-tab-btn" data-atab="gestores" onclick="adminSwitch('gestores')"><span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></span>Gestores</button>
+        <button class="admin-tab-btn" data-atab="novedades" onclick="adminSwitch('novedades')"><span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>Novedades</button>
         <button class="admin-tab-btn" data-atab="config" onclick="adminSwitch('config')"><span class="aic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.55 1Z"/></svg></span>Config</button>
       </div>
 
@@ -289,6 +413,7 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 
       <div id="adminPanelCatalogo" class="admin-panel hidden">
         <button class="btn-primary" onclick="openProductModal()" style="margin-bottom:12px;">+ Nuevo producto</button>
+        <div class="cat-filter" id="adminCatFilters"></div>
         <div id="adminProdList"><div class="hint">Cargando…</div></div>
       </div>
 
@@ -301,6 +426,16 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
         <div id="adminGestoresList"><div class="hint">Cargando…</div></div>
       </div>
 
+      <div id="adminPanelNovedades" class="admin-panel hidden">
+        <div class="card">
+          <h2>Publicar novedad</h2>
+          <div class="field"><label>Título *</label><input type="text" id="novTitulo" placeholder="Título de la novedad"></div>
+          <div class="field"><label>Mensaje *</label><textarea id="novMensaje" rows="3" placeholder="Escribe la novedad…"></textarea></div>
+          <button class="btn-primary" onclick="publishNovedad()">Publicar</button>
+        </div>
+        <div id="adminNovList"><div class="hint">Sin novedades</div></div>
+      </div>
+
       <div id="adminPanelConfig" class="admin-panel hidden">
         <div class="card">
           <h2>Configuración general</h2>
@@ -311,45 +446,74 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
     </section>
   </main>
 
-  <!-- ===== NAV INFERIOR (gestor) ===== -->
+  <!-- NAV GESTOR -->
   <nav class="tabs" id="navGestor">
     <button class="tab-btn active" data-tab="vale" onclick="switchTab('vale')"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 20V6a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M14.5 4.5V9a1 1 0 0 0 1 1h4.5"/><path d="M8 13h6M8 16.5h4"/></svg></span>Vale</button>
+    <button class="tab-btn" data-tab="catalogo" onclick="switchTab('catalogo')"><span class="ic"><svg viewBox="0 0 24 24"><path d="M21 8.5 12 4 3 8.5 12 13l9-4.5Z"/><path d="M3 8.5V16l9 4.5 9-4.5V8.5"/><path d="M12 13v7.5"/></svg></span>Catálogo</button>
     <button class="tab-btn" data-tab="historial" onclick="switchTab('historial')"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3.5 2"/></svg></span>Historial</button>
-    <button class="tab-btn" data-tab="perfil" onclick="switchTab('perfil')"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></span>Mi perfil</button>
+    <button class="tab-btn" data-tab="resumen" onclick="switchTab('resumen')"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg></span>Resumen</button>
+    <button class="tab-btn" data-tab="perfil" onclick="switchTab('perfil')"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></span>Perfil</button>
   </nav>
 
-  <!-- ===== NAV INFERIOR (admin) ===== -->
+  <!-- NAV ADMIN -->
   <nav class="tabs hidden" id="navAdmin">
     <button class="tab-btn active" onclick="switchTab('admin')"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg></span>Panel Admin</button>
   </nav>
 </div>
 
-<!-- ===== MODAL: Selector de catálogo ===== -->
+<!-- MODAL: Catálogo picker -->
 <div id="catalogModal" class="modal-back hidden" onclick="if(event.target===this) closeCatalogPicker()">
   <div class="modal">
     <div class="modal-head"><h3>Seleccionar del catálogo</h3><button onclick="closeCatalogPicker()">✕</button></div>
-    <input type="text" id="catalogSearch" placeholder="Buscar producto…" oninput="renderCatalogPicker()" style="margin-bottom:12px;">
+    <input type="text" id="catalogSearch" placeholder="Buscar producto…" oninput="renderCatalogPicker()" style="margin-bottom:10px;">
+    <div class="cat-filter" id="pickerCatFilters"></div>
     <div id="catalogPickerList"></div>
   </div>
 </div>
 
-<!-- ===== MODAL: Producto (admin) ===== -->
+<!-- MODAL: Tarifas mensajería -->
+<div id="tarifasModal" class="modal-back hidden" onclick="if(event.target===this) closeTarifasModal()">
+  <div class="modal">
+    <div class="modal-head"><h3>🌲 Tarifas de mensajería</h3><button onclick="closeTarifasModal()">✕</button></div>
+    <div class="local-indicator" id="tarifaLocalLabel">1er Local</div>
+    <div class="tarifa-tabs" id="tarifaLocalTabs">
+      <button class="tarifa-tab active" data-local="1" onclick="switchTarifaLocal(1)">1er Local 🏪</button>
+      <button class="tarifa-tab" data-local="2" onclick="switchTarifaLocal(2)">2ndo Local 🏪</button>
+    </div>
+    <div id="tarifas2Tipo" class="hidden" style="margin-bottom:10px;">
+      <div class="tarifa-tabs">
+        <button class="tarifa-tab active" data-tipo="motos" onclick="switchTarifaTipo('motos')">Motos</button>
+        <button class="tarifa-tab" data-tipo="triciclos" onclick="switchTarifaTipo('triciclos')">Triciclos</button>
+      </div>
+    </div>
+    <input type="text" id="tarifaSearch" placeholder="Buscar zona…" oninput="renderTarifas()" style="margin-bottom:10px;">
+    <div id="tarifasList"></div>
+  </div>
+</div>
+
+<!-- MODAL: Producto -->
 <div id="productModal" class="modal-back hidden">
   <div class="modal">
     <div class="modal-head"><h3 id="productModalTitle">Nuevo producto</h3><button onclick="closeProductModal()">✕</button></div>
     <div class="field"><label>Nombre *</label><input type="text" id="pNombre"></div>
-    <div class="field"><label>Descripción</label><textarea id="pDescripcion" rows="2"></textarea></div>
+    <div class="field"><label>Descripción / Especificación</label><textarea id="pDescripcion" rows="2"></textarea></div>
+    <div class="field"><label>Categoría principal *</label>
+      <select id="pCategoria" onchange="updateSubcats()"></select>
+    </div>
+    <div class="field"><label>Subcategoría</label>
+      <select id="pSubcategoria"></select>
+    </div>
+    <div class="field"><label>Local *</label>
+      <select id="pLocal"><option value="1">1er Local</option><option value="2">2ndo Local</option></select>
+    </div>
     <div class="row2">
-      <div class="field"><label>Categoría</label><input type="text" id="pCategoria" placeholder="Ej: Tecnología"></div>
       <div class="field"><label>Precio base (USD) *</label><input type="number" id="pPrecioBase" step="0.01"></div>
+      <div class="field"><label>Comisión fija ($)</label><input type="number" id="pComisionValor" step="0.01" value="0" placeholder="Monto fijo"></div>
     </div>
-    <div class="row2">
-      <div class="field"><label>Tipo de comisión</label>
-        <select id="pComisionTipo" onchange="toggleComisionValor()"><option value="porcentaje">Porcentaje (%)</option><option value="fija">Fija ($)</option></select>
-      </div>
-      <div class="field"><label>Valor comisión</label><input type="number" id="pComisionValor" step="0.01" value="10"></div>
+    <div class="checkbox-row" style="margin-bottom:10px;">
+      <input type="checkbox" id="pDisponible" checked onchange="toggleStockField()"><label style="margin:0;">Disponible</label>
     </div>
-    <div class="field"><label>Stock disponible</label><input type="number" id="pStock" value="0"></div>
+    <div class="field" id="pStockField"><label>Cantidad en stock (opcional)</label><input type="number" id="pStock" value="" placeholder="Dejar vacío si no aplica"></div>
     <div class="field">
       <label>Foto del producto</label>
       <div class="photo-upload" id="photoUploadBox">
@@ -362,7 +526,7 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
   </div>
 </div>
 
-<!-- ===== MODAL: Gestor (admin) ===== -->
+<!-- MODAL: Gestor -->
 <div id="gestorModal" class="modal-back hidden">
   <div class="modal">
     <div class="modal-head"><h3 id="gestorModalTitle">Nuevo gestor</h3><button onclick="closeGestorModal()">✕</button></div>
@@ -374,16 +538,23 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
   </div>
 </div>
 
+<!-- MODAL: Novedades -->
+<div id="novedadesModal" class="modal-back hidden" onclick="if(event.target===this) closeNovedades()">
+  <div class="modal">
+    <div class="modal-head"><h3>🔔 Novedades</h3><button onclick="closeNovedades()">✕</button></div>
+    <div id="novedadesList"><div class="hint">Sin novedades</div></div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDoc,
+  getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDoc, setDoc,
   onSnapshot, query, where, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
-/* ============ CONFIGURACIÓN ============ */
 const firebaseConfig = {
   apiKey: "AIzaSyD8BhxfSPDmeCR2g1JyyqtV0Qt2Q4d_DfE",
   authDomain: "digital-store-64852.firebaseapp.com",
@@ -400,7 +571,154 @@ const ADMIN_PASS = "digital2026";
 const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
 
-/* ============ ÍCONOS REUTILIZABLES ============ */
+/* ============ CATEGORÍAS ============ */
+const CATEGORIAS = {
+  "ELECTRODOMÉSTICOS Y HOGAR": ["Generadores Eléctricos","Electrodomésticos (Batidoras y Licuadoras)","Electrodomésticos Varios","Hogar","Iluminación y Luces","Protectores de Voltaje"],
+  "MÓVILES Y ACCESORIOS": ["Celulares y Tablets","Accesorios para Celulares y Tablets","Cargadores y Cables","Cargadores Portátiles y Baterías","Audífonos Bluetooth","Audífonos de Cable","Bocinas y Accesorios","Smartwatch y Accesorios","HUB y Regletas"],
+  "MODA Y ESTILO": ["Mochilas, Maletas y Bolsos","Relojería","Belleza","Perfumería","Higiene Personal","Accesorios en General"],
+  "COMPUTACIÓN Y TECNOLOGÍA": ["Laptop Grado A","Laptops Nuevas","PC y Periféricos","Accesorios para PC y Laptops","Discos","Memorias USB","Adaptadores de Video","Adaptadores de audio","Adaptadores de PC","Red y Conectividad","Electrónica (General y Otros Artículos de Interés)","Impresoras y Accesorios"],
+  "ENTRETENIMIENTO Y GAMING": ["Gaming","Accesorios y Periféricos para Gaming","Juguetes y Coleccionables","Juguetes Sexuales","Instrumentos Musicales","Creación de Contenido","Entrenamiento y Artículos Deportivos"],
+  "2NDO LOCAL": ["Neveras de Exhibición","Estantes Comerciales","Frigoríficos","Equipos de Refrigeración Profesionales","Insumos Desechables","Electrodomésticos","Luminarias","Electrónica","Deportivos","Útiles del Hogar","Muebles","Muebles Comprimidos","Ferretería","Juguetes"],
+  "VEHÍCULOS Y HERRAMIENTAS": ["Vehículos","Accesorios para Vehículos","Herramientas","Seguridad"]
+};
+
+/* ============ TARIFAS 1er LOCAL ============ */
+const TARIFAS_1 = {
+  "ZONA CENTRAL": [
+    {z:"Habana Vieja",p:600},{z:"Centro Habana",p:700},{z:"Plaza de la Revolución (Vedado)",p:900},{z:"Cerro",p:1000}
+  ],
+  "PLAYA": [
+    {z:"Playa (hasta calle 60)",p:1300},{z:"Playa (62 hasta 84)",p:1500},{z:"Playa (86 hasta 120)",p:1800},
+    {z:"Playa (Náutico)",p:2000},{z:"Playa (Flores)",p:2200},{z:"Playa (Atabey)",p:2400},
+    {z:"Playa (Jaimanitas)",p:2800},{z:"Playa (Santa Fe)",p:3000}
+  ],
+  "MARIANAO": [
+    {z:"Marianao (ITM)",p:1500},{z:"Marianao (74 hasta 114)",p:1700},{z:"Marianao (114 al Puente de la Lisa)",p:1800}
+  ],
+  "LA LISA": [
+    {z:"Barrio Nuevo",p:1900},{z:"Bello 26",p:2200},{z:"Novoa",p:2000},{z:"Balcón de la Lisa",p:2100},
+    {z:"San Agustín",p:2500},{z:"Arroyo Arena",p:2800},{z:"Barbosa",p:1800},{z:"La Coronela",p:2400},
+    {z:"Cruz Piedra",p:3000},{z:"El Cano",p:3000},{z:"Juan de Dios Fraga",p:2100},{z:"La Concepción",p:3200},
+    {z:"La Oca-Cangrejeras",p:3500},{z:"Valle Grande",p:3500},{z:"Punta Brava",p:3500},
+    {z:"El Chico/El Cano",p:3000},{z:"Guatao",p:4000},{z:"UCI",p:5000}
+  ],
+  "BOYEROS": [
+    {z:"Reparto Martí / 100 y Vento",p:1300},{z:"Alta Habana",p:1500},{z:"Aldabó",p:1800},
+    {z:"Capdevila",p:2000},{z:"Cujae",p:2500},{z:"Fontanar",p:2500},{z:"Abel Santamaría",p:2500},
+    {z:"Wajay",p:3000},{z:"Aeropuerto-Mazorra-Río Verde",p:3000},{z:"Mulgoba-Santiago de las Vegas",p:3500},
+    {z:"El Rincón",p:4000}
+  ],
+  "10 DE OCTUBRE": [
+    {z:"Luyanó",p:800},{z:"Lawton",p:900},{z:"Víbora Park",p:1000},{z:"Santo Suárez",p:1000},
+    {z:"Sevillano/La Floresta",p:1200}
+  ],
+  "ARROYO NARANJO": [
+    {z:"La Palma",p:1500},{z:"Naranjito/Miraflores",p:1200},{z:"Poey",p:1500},{z:"Párraga",p:1600},
+    {z:"Mantilla",p:1600},{z:"Los Pinos",p:1500},{z:"Arday-Vieja Linda",p:1600},{z:"Capri",p:1800},
+    {z:"Caturla/Parajón/El Trigal",p:1800},{z:"Calvario",p:1900},{z:"Güinera",p:2000},
+    {z:"Eléctrico",p:2000},{z:"Calabazar",p:2500},{z:"Parque Lenin",p:3000},{z:"Managua",p:3000}
+  ],
+  "SAN MIGUEL DEL PADRÓN": [
+    {z:"Virgen del Camino/Barrio Obrero/Rocafort/La Rosalía",p:1000},{z:"La Corea",p:1200},
+    {z:"Caballo Blanco",p:1300},{z:"Cuevita",p:1500},{z:"Diezmero",p:1600},
+    {z:"San Francisco de Paula",p:2000}
+  ],
+  "COTORRO": [
+    {z:"La Lolita/Vedado Cotorro/Res. América/Res. Paraíso",p:1900},{z:"Brisas",p:2000},
+    {z:"Reparto Modelo",p:2300},{z:"Alberro/Loma de Tierra",p:4000},{z:"Cuatro Caminos",p:2800}
+  ],
+  "GUANABACOA": [
+    {z:"Cruz Verde",p:1000},{z:"Reparto Mañana",p:1100},{z:"Cementerio Viejo",p:1100},
+    {z:"Habana Nueva",p:1200},{z:"Debeche",p:1700},{z:"Chivas",p:1500},{z:"El Roble",p:1600},
+    {z:"La Hata",p:1900},{z:"Santa Fe",p:2000},{z:"Libertad",p:2500},{z:"Julio Trigo",p:2500},
+    {z:"Machurrucutu",p:3000}
+  ],
+  "HABANA DEL ESTE": [
+    {z:"Regla",p:1000},{z:"Guiteras",p:1900},{z:"El Bahía",p:1800},{z:"Casa Blanca",p:2100},
+    {z:"Cojimar",p:2000},{z:"Las Cañas",p:2000},{z:"Las Piscinas/Berenguer",p:2000},
+    {z:"Las Ruinas",p:2000},{z:"Camilo Cienfuegos",p:2000},{z:"Las Guásimas",p:2500},
+    {z:"La Gallega",p:2500},{z:"Barrera",p:3000},{z:"Bacuarnao",p:3500}
+  ],
+  "ALAMAR": [
+    {z:"Zonas 1/2/3/4",p:2000},{z:"Zonas 5/6/9/10",p:2000},{z:"Zonas 7/8/14/24/25",p:2200},
+    {z:"Zonas 12/13/19/20/21/22/23",p:2300},{z:"Zonas 15/16/17/18",p:2400},{z:"Micro X",p:2500}
+  ],
+  "ZONAS EXTENDIDAS": [
+    {z:"Brisas del Mar",p:4500},{z:"Guanabo",p:5000}
+  ]
+};
+
+/* ============ TARIFAS 2ndo LOCAL (motos / triciclos) ============ */
+const TARIFAS_2 = {
+  "CENTRO HABANA": [{z:"Cayo Hueso, Colón, Los Sitios, Pueblo Nuevo",m:1500,t:2500}],
+  "HABANA VIEJA": [{z:"Casco Histórico, Belén, San Isidro, Jesús María",m:2000,t:3000}],
+  "PLAZA DE LA REVOLUCIÓN": [{z:"Vedado, Nuevo Vedado, Puentes Grandes, Príncipe",m:1000,t:2000}],
+  "CERRO": [
+    {z:"Latinoamericano, El Canal",m:1000,t:2000},
+    {z:"Casino Deportivo, Palatino",m:1200,t:2500}
+  ],
+  "DIEZ DE OCTUBRE": [
+    {z:"Monaco, Santos Suárez",m:2000,t:3000},
+    {z:"Luyanó, Lawton",m:3000,t:4000},
+    {z:"La Víbora, El Sevillano",m:3500,t:5000}
+  ],
+  "PLAYA": [
+    {z:"Kohly",m:1500,t:3000},
+    {z:"Miramar, Buenavista",m:2500,t:3500},
+    {z:"Siboney, Jaimanitas",m:3500,t:5000},
+    {z:"Santa Fe",m:5000,t:7000}
+  ],
+  "MARIANAO": [
+    {z:"Los Pocitos, Zamora, Coco Solo",m:3000,t:5000},
+    {z:"Plaza de Marianao - Alturas de Belén",m:3500,t:6000}
+  ],
+  "LA LISA": [
+    {z:"Puente de la Lisa, Arroyo Arenas",m:5000,t:6000},
+    {z:"San Agustín, El Cano",m:5500,t:7000},
+    {z:"Alturas de la Lisa",m:6000,t:7000},
+    {z:"Punta Brava, Cangrejeras",m:8000,t:11000}
+  ],
+  "REGLA": [
+    {z:"Casco Histórico de Regla",m:4000,t:6000},
+    {z:"Casablanca",m:4500,t:7000}
+  ],
+  "GUANABACOA": [
+    {z:"Casco Histórico",m:3500,t:6000},
+    {z:"Mikito",m:4000,t:7000},
+    {z:"Barreras, Peñalver",m:4500,t:8000},
+    {z:"Minas",m:6000,t:10000}
+  ],
+  "SAN MIGUEL DEL PADRÓN": [
+    {z:"Virgen del Camino",m:3000,t:4000},
+    {z:"Diezmero",m:3500,t:5000},
+    {z:"San Francisco de Paula",m:4500,t:6000}
+  ],
+  "ARROYO NARANJO": [
+    {z:"Los Pinos, Poey",m:4500,t:6000},
+    {z:"La Güinera, Vieja Linda",m:5000,t:7000},
+    {z:"Managua",m:6000,t:10000}
+  ],
+  "COTORRO": [
+    {z:"Mantilla, Párraga",m:4000,t:6000},
+    {z:"Santa María del Rosario - Alberro",m:4500,t:7000},
+    {z:"Centro del Cotorro",m:5000,t:8000},
+    {z:"Cuatro Caminos",m:6000,t:10000}
+  ],
+  "BOYEROS": [
+    {z:"Alta Habana",m:3000,t:4000},
+    {z:"Calabazar, Fontanar",m:4000,t:6000},
+    {z:"Zona Aeropuerto",m:4500,t:7000},
+    {z:"Santiago de las Vegas, Wajay",m:5000,t:8000}
+  ],
+  "HABANA DEL ESTE": [
+    {z:"Bahía",m:4000,t:6000},
+    {z:"Alamar, Camilo Cienfuegos, Guiteras, Cojímar",m:5000,t:8000}
+  ],
+  "HABANA DEL ESTE (PLAYAS)": [
+    {z:"Guanabo, Santa María",m:7000,t:12000}
+  ]
+};
+
 const ICONS = {
   pedidos:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>',
   trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg>',
@@ -409,23 +727,63 @@ const ICONS = {
   dot:'<svg viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>'
 };
 
-/* ============ ESTADO ============ */
 const state = {
   user:null, currentTab:'vale', adminTab:'resumen',
-  gestores:[], productos:[], pedidos:[],
+  gestores:[], productos:[], pedidos:[], novedades:[],
   lineItems:[], editingProductId:null, editingGestorId:null,
-  photoUrl:'', settings:{ waNumber:null }
+  photoUrl:'', carnetUrl:'', settings:{ waNumber:null },
+  tarifaLocal:1, tarifaTipo:'motos', catFilter:'', pickerCatFilter:'',
+  deferredPrompt:null, perfilPhotoUrl:''
 };
 
 function $(id){ return document.getElementById(id); }
 function escapeHtml(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function money(n){ return Number(n||0).toFixed(2); }
+function moneyInt(n){ return Number(n||0).toLocaleString('es-CU'); }
 function todayISO(){ return new Date().toISOString().slice(0,10); }
 function uid(){ return Math.random().toString(36).slice(2,10); }
 
 function showToast(msg){
   const t=$('toast'); t.textContent=msg; t.classList.add('show');
   clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+/* ============ PWA INSTALL ============ */
+let pwaDismissed = localStorage.getItem('pwa_dismissed')==='1';
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  state.deferredPrompt = e;
+  if(!window.matchMedia('(display-mode: standalone)').matches && !pwaDismissed){
+    $('pwaBanner').classList.remove('hidden');
+  }
+});
+window.addEventListener('appinstalled', ()=>{
+  $('pwaBanner').classList.add('hidden');
+  localStorage.removeItem('pwa_dismissed');
+  state.deferredPrompt = null;
+});
+function installPWA(){
+  if(state.deferredPrompt){
+    state.deferredPrompt.prompt();
+    state.deferredPrompt.userChoice.then(()=>{ state.deferredPrompt=null; $('pwaBanner').classList.add('hidden'); });
+  } else {
+    showToast('Usa el menú del navegador → Añadir a pantalla de inicio');
+  }
+}
+function dismissPWA(){
+  pwaDismissed = true;
+  localStorage.setItem('pwa_dismissed','1');
+  $('pwaBanner').classList.add('hidden');
+}
+if(window.matchMedia('(display-mode: standalone)').matches){
+  $('pwaBanner').classList.add('hidden');
+} else if(!pwaDismissed){
+  setTimeout(()=>{ if(!state.deferredPrompt) $('pwaBanner').classList.remove('hidden'); }, 2000);
+}
+
+/* Service Worker */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
 }
 
 /* ============ LOGIN ============ */
@@ -439,12 +797,10 @@ async function doLogin(){
   const u=$('loginUser').value.trim(), p=$('loginPass').value;
   const errBox=$('loginError'); errBox.classList.add('hidden');
   if(!u || !p){ errBox.textContent='Escribe usuario y contraseña.'; errBox.classList.remove('hidden'); return; }
-
   if(u.toLowerCase()===ADMIN_USER && p===ADMIN_PASS){
     state.user = { role:'admin', nombre:'Administrador', username:ADMIN_USER };
     enterApp(); return;
   }
-  // buscar gestor en Firestore
   try{
     const snap = await new Promise((resolve)=>{
       const unsub = onSnapshot(collection(db,'gestores'), s=>{ unsub(); resolve(s); });
@@ -453,7 +809,7 @@ async function doLogin(){
       String(g.username||'').toLowerCase()===u.toLowerCase() && String(g.password||'')===p
     );
     if(!found){ errBox.textContent='Usuario o contraseña incorrectos.'; errBox.classList.remove('hidden'); return; }
-    state.user = { role:'gestor', nombre:found.nombre, username:found.username, id:found.id, telefono:found.telefono };
+    state.user = { role:'gestor', nombre:found.nombre, username:found.username, id:found.id, telefono:found.telefono, fotoUrl:found.fotoUrl||'' };
     enterApp();
   }catch(e){
     errBox.textContent='Error de conexión. Revisa tu internet.'; errBox.classList.remove('hidden');
@@ -484,6 +840,8 @@ function enterApp(){
     resetValeForm();
   }
   startSettingsListener();
+  startNovedadesListener();
+  fillCategoriaSelects();
 }
 
 /* ============ NAVEGACIÓN ============ */
@@ -493,13 +851,15 @@ function switchTab(tab){
   document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
   if(tab==='admin'){
     $('view-admin').classList.remove('hidden');
-    document.querySelector('#navAdmin button').classList.add('active');
+    document.querySelector('#navAdmin button')?.classList.add('active');
   } else {
-    $('view-'+tab).classList.remove('hidden');
+    $('view-'+tab)?.classList.remove('hidden');
     const btn = document.querySelector(`#navGestor button[data-tab="${tab}"]`);
     if(btn) btn.classList.add('active');
     if(tab==='historial') renderHistorial();
     if(tab==='perfil') renderPerfil();
+    if(tab==='resumen') renderGestorResumen();
+    if(tab==='catalogo') renderGestorCatalogo();
   }
 }
 
@@ -507,30 +867,34 @@ function adminSwitch(tab){
   state.adminTab = tab;
   document.querySelectorAll('.admin-panel').forEach(p=>p.classList.add('hidden'));
   document.querySelectorAll('.admin-tab-btn').forEach(b=>b.classList.remove('active'));
-  $('adminPanel'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.remove('hidden');
-  document.querySelector(`.admin-tab-btn[data-atab="${tab}"]`).classList.add('active');
+  const panel = $('adminPanel'+tab.charAt(0).toUpperCase()+tab.slice(1));
+  if(panel) panel.classList.remove('hidden');
+  document.querySelector(`.admin-tab-btn[data-atab="${tab}"]`)?.classList.add('active');
   if(tab==='resumen') renderResumen();
   if(tab==='catalogo') renderAdminCatalogo();
   if(tab==='pedidos') renderAdminPedidos();
   if(tab==='gestores') renderAdminGestores();
   if(tab==='config') renderAdminConfig();
+  if(tab==='novedades') renderAdminNovedades();
 }
 
-/* ============ LISTENERS EN TIEMPO REAL ============ */
+/* ============ LISTENERS ============ */
 function startSettingsListener(){
   onSnapshot(doc(db,'settings','general'), snap=>{
     state.settings = snap.exists() ? snap.data() : { waNumber:null };
     if($('cfgWhatsapp')) $('cfgWhatsapp').value = state.settings.waNumber || '';
     if(state.user && state.user.role!=='admin') renderPerfil();
-  });
+  }, ()=>{});
 }
 function startGestorListeners(){
   onSnapshot(query(collection(db,'productos'), where('activo','==',true)), snap=>{
     state.productos = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    if(state.currentTab==='catalogo') renderGestorCatalogo();
   });
   onSnapshot(collection(db,'pedidos'), snap=>{
     state.pedidos = snap.docs.map(d=>({id:d.id, ...d.data()}));
     if(state.currentTab==='historial') renderHistorial();
+    if(state.currentTab==='resumen') renderGestorResumen();
   });
 }
 function startAdminListeners(){
@@ -549,27 +913,76 @@ function startAdminListeners(){
     if(state.adminTab==='resumen') renderResumen();
   });
 }
+function startNovedadesListener(){
+  onSnapshot(collection(db,'novedades'), snap=>{
+    state.novedades = snap.docs.map(d=>({id:d.id, ...d.data()}))
+      .sort((a,b)=>(b.fecha?.seconds||0)-(a.fecha?.seconds||0));
+    updateNovBadge();
+    if(state.adminTab==='novedades') renderAdminNovedades();
+  }, ()=>{});
+}
 
-/* ============ VALE DE PEDIDO (gestor) ============ */
+/* ============ CATEGORÍAS UI ============ */
+function fillCategoriaSelects(){
+  const sel = $('pCategoria');
+  if(!sel) return;
+  sel.innerHTML = Object.keys(CATEGORIAS).map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  updateSubcats();
+}
+function updateSubcats(){
+  const cat = $('pCategoria')?.value || '';
+  const subs = CATEGORIAS[cat] || [];
+  const sel = $('pSubcategoria');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">— Sin subcategoría —</option>' + subs.map(s=>`<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+}
+
+function renderCatFilters(containerId, current, onClickFn){
+  const box = $(containerId);
+  if(!box) return;
+  const cats = ['Todos', ...Object.keys(CATEGORIAS)];
+  box.innerHTML = cats.map(c=>{
+    const active = (c==='Todos' && !current) || c===current;
+    return `<button class="cat-chip ${active?'active':''}" onclick="${onClickFn}('${c==='Todos'?'':c}')">${c==='Todos'?'Todos':c.split(' ')[0]}</button>`;
+  }).join('');
+}
+
+/* ============ VALE ============ */
 function resetValeForm(){
   state.lineItems = [];
-  ['cNombre','cTelefono','cDireccion','cReferencia','detalles'].forEach(id=>{ if($(id)) $(id).value=''; });
+  state.carnetUrl = '';
+  ['cNombre','cTelefono','cTelefono2','cDireccion','cMunicipio','cReferencia','detalles','garantia','vueltoCantidad','cGps'].forEach(id=>{ if($(id)) $(id).value=''; });
   $('mensajeria').value = 0;
   $('hayVuelto').checked = false;
   $('vueltoField').classList.add('hidden');
   $('entregaDia').value = todayISO();
+  $('entregaHora').value = '';
+  $('carnetUploadHint').innerHTML = 'Toca para añadir foto del carnet';
+  $('tarifaSelected').textContent = '';
+  $('gpsBtn').classList.remove('active');
+  $('gpsBtn').textContent = '📍 Compartir ubicación del cliente';
   renderLineItems();
   recalcVale();
 }
+
 function addLineItem(prod){
+  let precioGestor = prod?.precioBase || 0;
+  if(prod?.comisionValor) precioGestor = Number(prod.precioBase||0) + Number(prod.comisionValor||0);
   state.lineItems.push({
     id: uid(),
     nombre: prod?.nombre || '',
+    especificacion: prod?.descripcion || '',
     cantidad: 1,
     precioBase: prod?.precioBase || 0,
-    precioGestor: prod?.precioBase || 0,
-    productoId: prod?.id || null
+    precioGestor: precioGestor,
+    productoId: prod?.id || null,
+    local: prod?.local || '1',
+    comision: prod?.comisionValor || 0
   });
+  // Auto-select tarifa local based on product
+  if(prod?.local){
+    state.tarifaLocal = Number(prod.local) || 1;
+  }
   renderLineItems();
   recalcVale();
 }
@@ -580,8 +993,10 @@ function removeLineItem(id){
 function updateLineItem(id, field, value){
   const line = state.lineItems.find(l=>l.id===id);
   if(!line) return;
-  line[field] = (field==='nombre') ? value : Number(value)||0;
+  if(field==='nombre'||field==='especificacion') line[field] = value;
+  else line[field] = Number(value)||0;
   recalcVale();
+  if(field==='cantidad'||field==='precioGestor'||field==='precioBase') renderLineItems();
 }
 function renderLineItems(){
   const box=$('lineItems');
@@ -589,17 +1004,24 @@ function renderLineItems(){
   box.innerHTML = state.lineItems.map(l=>`
     <div class="line-item">
       <button class="remove-line" onclick="removeLineItem('${l.id}')">✕</button>
-      <input type="text" value="${escapeHtml(l.nombre)}" placeholder="Nombre del artículo" oninput="updateLineItem('${l.id}','nombre',this.value)">
-      <div class="row2">
-        <div><label style="margin-bottom:3px;">Cantidad</label><input type="number" value="${l.cantidad}" min="1" oninput="updateLineItem('${l.id}','cantidad',this.value)"></div>
-        <div><label style="margin-bottom:3px;">Precio base</label><input type="number" value="${l.precioBase}" step="0.01" oninput="updateLineItem('${l.id}','precioBase',this.value)"></div>
+      <input type="text" value="${escapeHtml(l.nombre)}" placeholder="Producto *" oninput="updateLineItem('${l.id}','nombre',this.value)">
+      <div class="field" style="margin-top:6px;margin-bottom:0;"><label style="margin-bottom:3px;">Especificación</label>
+        <input type="text" value="${escapeHtml(l.especificacion||'')}" placeholder="Opcional" oninput="updateLineItem('${l.id}','especificacion',this.value)">
       </div>
       <div class="row2">
-        <div><label style="margin-bottom:3px;">Precio gestor</label><input type="number" value="${l.precioGestor}" step="0.01" oninput="updateLineItem('${l.id}','precioGestor',this.value)"></div>
-        <div style="display:flex;align-items:flex-end;font-size:12px;color:var(--muted);padding-bottom:9px;">Subtotal: $${money(l.cantidad*l.precioGestor)}</div>
+        <div><label style="margin-bottom:3px;">Cantidad *</label><input type="number" value="${l.cantidad}" min="1" oninput="updateLineItem('${l.id}','cantidad',this.value)"></div>
+        <div><label style="margin-bottom:3px;">Precio base *</label><input type="number" value="${l.precioBase}" step="0.01" oninput="updateLineItem('${l.id}','precioBase',this.value)"></div>
+      </div>
+      <div class="row2">
+        <div><label style="margin-bottom:3px;">Precio gestor *</label><input type="number" value="${l.precioGestor}" step="0.01" oninput="updateLineItem('${l.id}','precioGestor',this.value)"></div>
+        <div style="display:flex;align-items:flex-end;font-size:12px;color:var(--muted);padding-bottom:9px;">
+          Subtotal: $${money(l.cantidad*l.precioGestor)}
+          ${l.local?`<br><span class="local-badge">${l.local==='2'?'2ndo':'1er'} Local</span>`:''}
+        </div>
       </div>
     </div>`).join('');
 }
+
 function toggleVuelto(){
   $('vueltoField').classList.toggle('hidden', !$('hayVuelto').checked);
 }
@@ -608,19 +1030,64 @@ function recalcVale(){
   const totalBase = state.lineItems.reduce((s,l)=>s+(l.cantidad*l.precioBase),0);
   const comision = totalProducto - totalBase;
   const mensajeria = Number($('mensajeria')?.value||0);
+  if($('totalMsjDisplay')) $('totalMsjDisplay').value = mensajeria;
   const totalCobrar = totalProducto + mensajeria;
+  const tipoPago = $('tipoPago')?.value || '';
+  let tarjetaExtra = 0;
+  if(tipoPago.includes('tarjeta')){
+    tarjetaExtra = totalProducto * 0.07;
+  }
   $('calcBox').innerHTML = `
     <div class="calc-row"><span>Total producto(s)</span><span>$${money(totalProducto)}</span></div>
     <div class="calc-row"><span>Mensajería</span><span>$${money(mensajeria)}</span></div>
     <div class="calc-row"><span>Tu comisión</span><span>$${money(comision)}</span></div>
-    <div class="calc-row total"><span>Total a cobrar</span><span>$${money(totalCobrar)}</span></div>`;
-  return { totalProducto, comision, mensajeria, totalCobrar };
+    ${tarjetaExtra?`<div class="calc-row"><span>Comisión tarjeta 7%</span><span>$${money(tarjetaExtra)}</span></div>`:''}
+    <div class="calc-row total"><span>Total a cobrar</span><span>$${money(totalCobrar + tarjetaExtra)}</span></div>`;
+  return { totalProducto, comision, mensajeria, totalCobrar: totalCobrar + tarjetaExtra, tarjetaExtra };
+}
+
+async function handleCarnetUpload(ev){
+  const file = ev.target.files[0];
+  if(!file) return;
+  $('carnetUploadHint').innerHTML = '<span class="upload-spinner">Subiendo foto del carnet…</span>';
+  try{
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method:'POST', body: fd });
+    const data = await res.json();
+    if(!data.secure_url) throw new Error('sin url');
+    state.carnetUrl = data.secure_url;
+    $('carnetUploadHint').innerHTML = `<img src="${data.secure_url}"><br>Toca para cambiar`;
+  }catch(e){
+    $('carnetUploadHint').textContent = 'Error al subir. Toca para intentar de nuevo.';
+    showToast('No se pudo subir la foto del carnet.');
+  }
+}
+
+function captureGPS(){
+  if(!navigator.geolocation){ showToast('GPS no disponible en este dispositivo'); return; }
+  $('gpsBtn').textContent = '📍 Obteniendo ubicación…';
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      const coords = `${pos.coords.latitude.toFixed(6)},${pos.coords.longitude.toFixed(6)}`;
+      $('cGps').value = coords;
+      $('gpsBtn').classList.add('active');
+      $('gpsBtn').textContent = `📍 ${coords}`;
+      showToast('Ubicación capturada');
+    },
+    ()=>{ showToast('No se pudo obtener la ubicación'); $('gpsBtn').textContent = '📍 Compartir ubicación del cliente'; },
+    { enableHighAccuracy:true, timeout:10000 }
+  );
 }
 
 async function submitVale(){
   const nombre=$('cNombre').value.trim(), telefono=$('cTelefono').value.trim(), direccion=$('cDireccion').value.trim();
-  if(!nombre || !telefono || !direccion){ showToast('Completa nombre, teléfono y dirección del cliente.'); return; }
-  if(!state.lineItems.length){ showToast('Añade al menos un artículo.'); return; }
+  if(!nombre || !telefono || !direccion){ showToast('Completa nombre, teléfono y dirección.'); return; }
+  if(!state.carnetUrl){ showToast('La foto del carnet es obligatoria.'); return; }
+  if(!state.lineItems.length){ showToast('Añade al menos un producto.'); return; }
+  if(!$('entregaDia').value || !$('entregaHora').value){ showToast('Indica día y hora de entrega.'); return; }
+  if($('hayVuelto').checked && !$('vueltoCantidad').value.trim()){ showToast('Indica la cantidad de vuelto.'); return; }
   const calc = recalcVale();
   const btn=$('submitValeBtn'); btn.disabled=true; btn.textContent='Guardando…';
   try{
@@ -628,39 +1095,150 @@ async function submitVale(){
       gestorId: state.user.id || state.user.username,
       gestorNombre: state.user.nombre,
       fecha: serverTimestamp(),
-      cliente: { nombre, telefono, direccion, referencia: $('cReferencia').value.trim() },
-      productos: state.lineItems.map(l=>({ nombre:l.nombre, cantidad:l.cantidad, precioBase:l.precioBase, precioGestor:l.precioGestor })),
-      precios: { totalProducto: calc.totalProducto, mensajeria: calc.mensajeria, totalCobrar: calc.totalCobrar, comision: calc.comision },
-      pagos: { monedaProducto: $('moneda').value, tipoPagoMensajeria: $('tipoPagoMsj').value, vuelto: $('hayVuelto').checked, vueltoCantidad: Number($('vueltoCantidad').value||0) },
+      cliente: {
+        nombre, telefono, telefono2: $('cTelefono2').value.trim(),
+        direccion, municipio: $('cMunicipio').value.trim(),
+        referencia: $('cReferencia').value.trim(),
+        carnetUrl: state.carnetUrl,
+        gps: $('cGps').value.trim()
+      },
+      productos: state.lineItems.map(l=>({
+        nombre:l.nombre, especificacion:l.especificacion||'',
+        cantidad:l.cantidad, precioBase:l.precioBase, precioGestor:l.precioGestor,
+        local:l.local||'1', comision:l.comision||0, productoId:l.productoId
+      })),
+      precios: {
+        totalProducto: calc.totalProducto, mensajeria: calc.mensajeria,
+        totalCobrar: calc.totalCobrar, comision: calc.comision,
+        tarjetaExtra: calc.tarjetaExtra||0
+      },
+      pagos: {
+        monedaProducto: $('moneda').value,
+        tipoPago: $('tipoPago').value,
+        tipoPagoMensajeria: $('tipoPagoMsj').value,
+        vuelto: $('hayVuelto').checked,
+        vueltoCantidad: $('vueltoCantidad').value.trim(),
+        vueltoMoneda: $('vueltoMoneda')?.value || 'CUP'
+      },
       entrega: { dia: $('entregaDia').value, hora: $('entregaHora').value },
       detalles: $('detalles').value.trim(),
+      garantia: $('garantia').value.trim(),
+      tarifaZona: $('tarifaSelected').textContent || '',
       estado: 'pendiente'
     });
-    showToast('Vale guardado correctamente.');
+    showToast('Vale de mensajería guardado 🌲');
     resetValeForm();
   }catch(e){
+    console.error(e);
     showToast('Error al guardar. Intenta de nuevo.');
   }
-  btn.disabled=false; btn.textContent='Guardar vale';
+  btn.disabled=false; btn.textContent='🌲 Guardar vale de mensajería';
 }
 
-/* ============ SELECTOR DE CATÁLOGO ============ */
-function openCatalogPicker(){ $('catalogModal').classList.remove('hidden'); renderCatalogPicker(); }
+/* ============ TARIFAS ============ */
+function openTarifasModal(){
+  // Auto-detect local from first product
+  if(state.lineItems.length && state.lineItems[0].local){
+    state.tarifaLocal = Number(state.lineItems[0].local) || 1;
+  }
+  switchTarifaLocal(state.tarifaLocal);
+  $('tarifasModal').classList.remove('hidden');
+  renderTarifas();
+}
+function closeTarifasModal(){ $('tarifasModal').classList.add('hidden'); }
+function switchTarifaLocal(n){
+  state.tarifaLocal = n;
+  document.querySelectorAll('#tarifaLocalTabs .tarifa-tab').forEach(b=>{
+    b.classList.toggle('active', Number(b.dataset.local)===n);
+  });
+  $('tarifaLocalLabel').textContent = n===1 ? '🌲 Tarifas — 1er Local 🏪' : '🌲 Tarifas — 2ndo Local 🏪';
+  $('tarifas2Tipo').classList.toggle('hidden', n!==2);
+  renderTarifas();
+}
+function switchTarifaTipo(t){
+  state.tarifaTipo = t;
+  document.querySelectorAll('#tarifas2Tipo .tarifa-tab').forEach(b=>{
+    b.classList.toggle('active', b.dataset.tipo===t);
+  });
+  renderTarifas();
+}
+function renderTarifas(){
+  const q = ($('tarifaSearch')?.value||'').toLowerCase();
+  const box = $('tarifasList');
+  if(state.tarifaLocal===1){
+    let html = '';
+    for(const [zona, items] of Object.entries(TARIFAS_1)){
+      const filtered = items.filter(i=>!q || i.z.toLowerCase().includes(q) || zona.toLowerCase().includes(q));
+      if(!filtered.length) continue;
+      html += `<div class="tarifa-zona"><h4>${escapeHtml(zona)}</h4>`;
+      filtered.forEach(i=>{
+        html += `<div class="tarifa-item" onclick="selectTarifa('${escapeHtml(i.z)}',${i.p})">
+          <span>${escapeHtml(i.z)}</span><span class="precio">${moneyInt(i.p)} CUP</span></div>`;
+      });
+      html += '</div>';
+    }
+    box.innerHTML = html || '<div class="hint">No se encontraron zonas</div>';
+  } else {
+    let html = '';
+    const tipo = state.tarifaTipo;
+    for(const [zona, items] of Object.entries(TARIFAS_2)){
+      const filtered = items.filter(i=>!q || i.z.toLowerCase().includes(q) || zona.toLowerCase().includes(q));
+      if(!filtered.length) continue;
+      html += `<div class="tarifa-zona"><h4>${escapeHtml(zona)}</h4>`;
+      filtered.forEach(i=>{
+        const precio = tipo==='motos' ? i.m : i.t;
+        html += `<div class="tarifa-item" onclick="selectTarifa('${escapeHtml(i.z)} (${tipo})',${precio})">
+          <span>${escapeHtml(i.z)}</span><span class="precio">${moneyInt(precio)} CUP</span></div>`;
+      });
+      html += '</div>';
+    }
+    box.innerHTML = html || '<div class="hint">No se encontraron zonas</div>';
+  }
+}
+function selectTarifa(zona, precio){
+  $('mensajeria').value = precio;
+  $('tarifaSelected').textContent = `${zona} — ${moneyInt(precio)} CUP (Local ${state.tarifaLocal})`;
+  recalcVale();
+  closeTarifasModal();
+  showToast(`Tarifa aplicada: ${moneyInt(precio)} CUP`);
+}
+
+/* ============ CATÁLOGO PICKER ============ */
+function openCatalogPicker(){
+  state.pickerCatFilter = '';
+  $('catalogModal').classList.remove('hidden');
+  renderCatFilters('pickerCatFilters', '', 'setPickerCat');
+  renderCatalogPicker();
+}
 function closeCatalogPicker(){ $('catalogModal').classList.add('hidden'); }
+function setPickerCat(c){ state.pickerCatFilter=c; renderCatFilters('pickerCatFilters',c,'setPickerCat'); renderCatalogPicker(); }
 function renderCatalogPicker(){
   const q=($('catalogSearch').value||'').toLowerCase();
-  const items = state.productos.filter(p=>(p.nombre||'').toLowerCase().includes(q));
+  let items = state.productos.filter(p=>{
+    const matchQ = !q || (p.nombre||'').toLowerCase().includes(q) || (p.categoria||'').toLowerCase().includes(q) || (p.subcategoria||'').toLowerCase().includes(q);
+    const matchC = !state.pickerCatFilter || p.categoria===state.pickerCatFilter;
+    return matchQ && matchC && p.activo!==false;
+  });
   const box=$('catalogPickerList');
   if(!items.length){ box.innerHTML='<div class="hint">No hay productos.</div>'; return; }
-  box.innerHTML = items.map(p=>`
-    <div class="prod-card" onclick="pickCatalogProduct('${p.id}')" style="cursor:pointer;">
-      ${p.imagenUrl ? `<img class="prod-thumb" src="${p.imagenUrl}">` : `<div class="prod-thumb empty">${ICONS.box}</div>`}
-      <div class="prod-info">
-        <b>${escapeHtml(p.nombre)}</b>
-        <div class="cat">${escapeHtml(p.categoria||'General')}</div>
-        <div class="prod-price">$${money(p.precioBase)}</div>
-      </div>
-    </div>`).join('');
+  // Group by category
+  const byCat = {};
+  items.forEach(p=>{ const c=p.categoria||'General'; (byCat[c]=byCat[c]||[]).push(p); });
+  let html = '';
+  for(const [cat, prods] of Object.entries(byCat)){
+    html += `<div class="subcat-label">${escapeHtml(cat)}</div>`;
+    html += prods.map(p=>`
+      <div class="prod-card" onclick="pickCatalogProduct('${p.id}')" style="cursor:pointer;">
+        ${p.imagenUrl ? `<img class="prod-thumb" src="${p.imagenUrl}">` : `<div class="prod-thumb empty">${ICONS.box}</div>`}
+        <div class="prod-info">
+          <b>${escapeHtml(p.nombre)}</b>
+          <div class="cat">${escapeHtml(p.subcategoria||p.categoria||'')} · ${p.local==='2'?'2ndo':'1er'} Local</div>
+          <div class="prod-price">$${money(p.precioBase)}${p.comisionValor?` + $${money(p.comisionValor)} com.`:''}</div>
+          <span class="stock-badge ${p.disponible!==false?'si':'no'}">${p.disponible!==false?(p.stock?('Stock: '+p.stock):'Disponible'):'Agotado'}</span>
+        </div>
+      </div>`).join('');
+  }
+  box.innerHTML = html;
 }
 function pickCatalogProduct(id){
   const p = state.productos.find(x=>x.id===id);
@@ -669,7 +1247,45 @@ function pickCatalogProduct(id){
   closeCatalogPicker();
 }
 
-/* ============ HISTORIAL (gestor) ============ */
+/* ============ CATÁLOGO GESTOR ============ */
+function setGestorCat(c){ state.catFilter=c; renderCatFilters('gestorCatFilters',c,'setGestorCat'); renderGestorCatalogo(); }
+function renderGestorCatalogo(){
+  renderCatFilters('gestorCatFilters', state.catFilter, 'setGestorCat');
+  const q=($('gestorCatSearch')?.value||'').toLowerCase();
+  let items = state.productos.filter(p=>{
+    const matchQ = !q || (p.nombre||'').toLowerCase().includes(q);
+    const matchC = !state.catFilter || p.categoria===state.catFilter;
+    return matchQ && matchC;
+  });
+  const box=$('gestorCatList');
+  if(!items.length){ box.innerHTML='<div class="hint">No hay productos en esta categoría.</div>'; return; }
+  const byCat = {};
+  items.forEach(p=>{ const c=p.categoria||'General'; (byCat[c]=byCat[c]||[]).push(p); });
+  let html = '';
+  for(const [cat, prods] of Object.entries(byCat)){
+    html += `<div class="card"><h2 style="margin-bottom:8px;">${escapeHtml(cat)}</h2>`;
+    const bySub = {};
+    prods.forEach(p=>{ const s=p.subcategoria||'General'; (bySub[s]=bySub[s]||[]).push(p); });
+    for(const [sub, list] of Object.entries(bySub)){
+      if(sub!=='General') html += `<div class="subcat-label">🔹 ${escapeHtml(sub)}</div>`;
+      html += list.map(p=>`
+        <div class="prod-card">
+          ${p.imagenUrl ? `<img class="prod-thumb" src="${p.imagenUrl}">` : `<div class="prod-thumb empty">${ICONS.box}</div>`}
+          <div class="prod-info">
+            <b>${escapeHtml(p.nombre)}</b>
+            <div class="cat">${p.local==='2'?'2ndo Local':'1er Local'}</div>
+            <div class="prod-price">$${money(p.precioBase)}</div>
+            ${p.comisionValor?`<div class="comision-badge">Comisión: $${money(p.comisionValor)}</div>`:''}
+            <span class="stock-badge ${p.disponible!==false?'si':'no'}">${p.disponible!==false?(p.stock!=null&&p.stock!==''?('Stock: '+p.stock):'Disponible'):'Agotado'}</span>
+          </div>
+        </div>`).join('');
+    }
+    html += '</div>';
+  }
+  box.innerHTML = html;
+}
+
+/* ============ HISTORIAL ============ */
 function renderHistorial(){
   const box=$('histList');
   const mine = state.pedidos.filter(o=>o.gestorId===(state.user.id||state.user.username))
@@ -677,26 +1293,74 @@ function renderHistorial(){
   if(!mine.length){ box.innerHTML='<div class="hint">Aún no tienes pedidos.</div>'; return; }
   box.innerHTML = mine.map(o=>{
     const st = o.estado||'pendiente';
-    const dotCls = st==='completado'?'sd-green':st==='pagado'?'sd-blue':'sd-yellow';
     const fecha = o.fecha?.seconds ? new Date(o.fecha.seconds*1000).toLocaleDateString() : '—';
     return `<div class="hist-item">
       <div class="hist-top"><b>${escapeHtml(o.cliente?.nombre||'—')}</b>
         <span class="status ${st}"><span class="status-dot">${ICONS.dot}</span>${st}</span></div>
-      <div class="hist-meta">${fecha} · ${(o.productos||[]).length} artículo(s)</div>
+      <div class="hist-meta">${fecha} · ${(o.productos||[]).length} artículo(s) · Comisión $${money(o.precios?.comision)}</div>
       <div class="hist-total">$${money(o.precios?.totalCobrar)}</div>
     </div>`;
   }).join('');
 }
 
-/* ============ PERFIL (gestor) ============ */
+/* ============ RESUMEN GESTOR ============ */
+function renderGestorResumen(){
+  const mine = state.pedidos.filter(o=>o.gestorId===(state.user.id||state.user.username));
+  const totalComision = mine.reduce((s,o)=>s+(o.precios?.comision||0),0);
+  const pendiente = mine.filter(o=>(o.estado||'pendiente')==='pendiente').reduce((s,o)=>s+(o.precios?.comision||0),0);
+  const recaudado = mine.filter(o=>o.estado==='pagado'||o.estado==='completado').reduce((s,o)=>s+(o.precios?.comision||0),0);
+  $('gStatComision').textContent = '$'+money(totalComision);
+  $('gStatPendiente').textContent = '$'+money(pendiente);
+  $('gStatRecaudado').textContent = '$'+money(recaudado);
+  $('gStatPedidos').textContent = mine.length;
+  const box = $('gComisionList');
+  if(!mine.length){ box.innerHTML='<div class="hint">Sin pedidos todavía.</div>'; return; }
+  box.innerHTML = mine.sort((a,b)=>(b.fecha?.seconds||0)-(a.fecha?.seconds||0)).slice(0,20).map(o=>{
+    const fecha = o.fecha?.seconds ? new Date(o.fecha.seconds*1000).toLocaleDateString() : '—';
+    return `<div class="top3-item">
+      <span>${escapeHtml(o.cliente?.nombre||'—')} <small style="color:var(--muted);">${fecha} · ${o.estado||'pendiente'}</small></span>
+      <b>$${money(o.precios?.comision)}</b>
+    </div>`;
+  }).join('');
+}
+
+/* ============ PERFIL ============ */
 function renderPerfil(){
-  $('perfilAvatar').textContent = (state.user.nombre||'?').charAt(0).toUpperCase();
+  const foto = state.user.fotoUrl || state.perfilPhotoUrl;
+  if(foto){
+    $('perfilAvatarBox').innerHTML = `<img src="${foto}" alt="">`;
+  } else {
+    $('perfilAvatarBox').innerHTML = `<div class="avatar-letter" id="perfilAvatar">${(state.user.nombre||'?').charAt(0).toUpperCase()}</div>`;
+  }
   $('perfilNombre').textContent = state.user.nombre;
   $('perfilRol').textContent = 'Gestor de ventas';
   $('perfilWa').textContent = state.settings.waNumber || 'No configurado por el Admin';
 }
 
-/* ============ ADMIN: RESUMEN ============ */
+async function handlePerfilPhoto(ev){
+  const file = ev.target.files[0];
+  if(!file) return;
+  showToast('Subiendo foto…');
+  try{
+    const fd = new FormData();
+    fd.append('file', file);
+    fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, { method:'POST', body: fd });
+    const data = await res.json();
+    if(!data.secure_url) throw new Error('sin url');
+    state.perfilPhotoUrl = data.secure_url;
+    state.user.fotoUrl = data.secure_url;
+    if(state.user.id){
+      await updateDoc(doc(db,'gestores',state.user.id), { fotoUrl: data.secure_url });
+    }
+    renderPerfil();
+    showToast('Foto de perfil actualizada');
+  }catch(e){
+    showToast('Error al subir la foto');
+  }
+}
+
+/* ============ ADMIN RESUMEN ============ */
 function renderResumen(){
   const now = new Date();
   const mesActual = now.getMonth(), añoActual = now.getFullYear();
@@ -712,7 +1376,6 @@ function renderResumen(){
   $('statComisiones').textContent = '$'+money(totalComisiones);
   $('statPendientes').textContent = pendientes;
   $('statTotalPedidos').textContent = state.pedidos.length;
-
   const porGestor = {};
   delMes.forEach(o=>{ porGestor[o.gestorNombre] = (porGestor[o.gestorNombre]||0) + (o.precios?.totalCobrar||0); });
   const top3 = Object.entries(porGestor).sort((a,b)=>b[1]-a[1]).slice(0,3);
@@ -721,18 +1384,23 @@ function renderResumen(){
   `).join('') : '<div class="hint">Sin ventas este mes todavía.</div>';
 }
 
-/* ============ ADMIN: CATÁLOGO ============ */
+/* ============ ADMIN CATÁLOGO ============ */
+function setAdminCat(c){ state.catFilter=c; renderCatFilters('adminCatFilters',c,'setAdminCat'); renderAdminCatalogo(); }
 function renderAdminCatalogo(){
+  renderCatFilters('adminCatFilters', state.catFilter, 'setAdminCat');
   const box=$('adminProdList');
-  if(!state.productos.length){ box.innerHTML='<div class="hint">No hay productos. Toca "+ Nuevo producto".</div>'; return; }
-  box.innerHTML = state.productos.map(p=>`
+  let items = state.productos;
+  if(state.catFilter) items = items.filter(p=>p.categoria===state.catFilter);
+  if(!items.length){ box.innerHTML='<div class="hint">No hay productos. Toca "+ Nuevo producto".</div>'; return; }
+  box.innerHTML = items.map(p=>`
     <div class="prod-card">
       ${p.imagenUrl ? `<img class="prod-thumb" src="${p.imagenUrl}">` : `<div class="prod-thumb empty">${ICONS.box}</div>`}
       <div class="prod-info">
         <b>${escapeHtml(p.nombre)}</b>
-        <div class="cat">${escapeHtml(p.categoria||'General')}</div>
-        <div class="prod-price">$${money(p.precioBase)}</div>
-        <span class="stock-badge ${Number(p.stock)>0?'si':'no'}">${Number(p.stock)>0? 'Stock: '+p.stock : 'Sin stock'}</span>
+        <div class="cat">${escapeHtml(p.categoria||'')} ${p.subcategoria?'· '+escapeHtml(p.subcategoria):''}</div>
+        <div class="prod-price">$${money(p.precioBase)} ${p.comisionValor?`· Com: $${money(p.comisionValor)}`:''}</div>
+        <span class="stock-badge ${p.disponible!==false?'si':'no'}">${p.disponible!==false?(p.stock!=null&&p.stock!==''?('Stock: '+p.stock):'Disponible'):'Agotado'}</span>
+        <span class="local-badge">${p.local==='2'?'2ndo Local':'1er Local'}</span>
         <div class="prod-actions">
           <button title="Editar" onclick="openProductModal('${p.id}')">${ICONS.pencil}</button>
           <button title="Eliminar" class="del" onclick="removeProduct('${p.id}')">${ICONS.trash}</button>
@@ -748,19 +1416,24 @@ function openProductModal(id){
   $('productModalTitle').textContent = id ? 'Editar producto' : 'Nuevo producto';
   $('pNombre').value = p?.nombre || '';
   $('pDescripcion').value = p?.descripcion || '';
-  $('pCategoria').value = p?.categoria || '';
+  if(p?.categoria) $('pCategoria').value = p.categoria;
+  updateSubcats();
+  if(p?.subcategoria) $('pSubcategoria').value = p.subcategoria;
+  $('pLocal').value = p?.local || '1';
   $('pPrecioBase').value = p?.precioBase || '';
-  $('pComisionTipo').value = p?.comisionTipo || 'porcentaje';
-  $('pComisionValor').value = p?.comisionValor ?? 10;
-  $('pStock').value = p?.stock || 0;
+  $('pComisionValor').value = p?.comisionValor ?? 0;
+  $('pDisponible').checked = p?.disponible !== false;
+  $('pStock').value = p?.stock ?? '';
+  toggleStockField();
   $('pActivo').checked = p?.activo !== false;
   state.photoUrl = p?.imagenUrl || '';
   $('photoUploadHint').innerHTML = state.photoUrl ? `<img src="${state.photoUrl}"><br>Toca para cambiar` : 'Toca para subir una foto';
   $('productModal').classList.remove('hidden');
 }
 function closeProductModal(){ $('productModal').classList.add('hidden'); }
-function toggleComisionValor(){}
-
+function toggleStockField(){
+  // stock always visible but optional
+}
 async function handlePhotoUpload(ev){
   const file = ev.target.files[0];
   if(!file) return;
@@ -779,14 +1452,19 @@ async function handlePhotoUpload(ev){
     showToast('No se pudo subir la foto.');
   }
 }
-
 async function saveProduct(){
   const nombre=$('pNombre').value.trim(), precioBase=Number($('pPrecioBase').value||0);
   if(!nombre || !precioBase){ showToast('Nombre y precio base son obligatorios.'); return; }
+  const stockVal = $('pStock').value;
   const data = {
-    nombre, descripcion: $('pDescripcion').value.trim(), categoria: $('pCategoria').value.trim()||'General',
-    precioBase, comisionTipo: $('pComisionTipo').value, comisionValor: Number($('pComisionValor').value||0),
-    stock: Number($('pStock').value||0), imagenUrl: state.photoUrl || '', activo: $('pActivo').checked
+    nombre, descripcion: $('pDescripcion').value.trim(),
+    categoria: $('pCategoria').value || 'General',
+    subcategoria: $('pSubcategoria').value || '',
+    local: $('pLocal').value || '1',
+    precioBase, comisionTipo: 'fija', comisionValor: Number($('pComisionValor').value||0),
+    disponible: $('pDisponible').checked,
+    stock: stockVal!=='' ? Number(stockVal) : null,
+    imagenUrl: state.photoUrl || '', activo: $('pActivo').checked
   };
   try{
     if(state.editingProductId) await updateDoc(doc(db,'productos',state.editingProductId), data);
@@ -801,7 +1479,7 @@ async function removeProduct(id){
   showToast('Producto eliminado.');
 }
 
-/* ============ ADMIN: PEDIDOS ============ */
+/* ============ ADMIN PEDIDOS ============ */
 function renderAdminPedidos(){
   const box=$('adminPedidosList');
   const list = [...state.pedidos].sort((a,b)=>(b.fecha?.seconds||0)-(a.fecha?.seconds||0));
@@ -826,17 +1504,20 @@ async function updateOrderStatus(id, estado){
   showToast('Estado actualizado.');
 }
 
-/* ============ ADMIN: GESTORES ============ */
+/* ============ ADMIN GESTORES ============ */
 function renderAdminGestores(){
   const box=$('adminGestoresList');
   if(!state.gestores.length){ box.innerHTML='<div class="hint">No hay gestores. Toca "+ Nuevo gestor".</div>'; return; }
   box.innerHTML = state.gestores.map(g=>`
-    <div class="hist-item">
-      <div class="hist-top"><b>${escapeHtml(g.nombre)}</b></div>
-      <div class="hist-meta">@${escapeHtml(g.username)} ${g.telefono? ' · '+escapeHtml(g.telefono):''}</div>
-      <div class="prod-actions" style="margin-top:8px;">
-        <button title="Editar" onclick="openGestorModal('${g.id}')">${ICONS.pencil}</button>
-        <button title="Eliminar" class="del" onclick="removeGestor('${g.id}')">${ICONS.trash}</button>
+    <div class="hist-item" style="display:flex;gap:12px;align-items:center;">
+      ${g.fotoUrl?`<img src="${g.fotoUrl}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;">`:`<div style="width:44px;height:44px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;">${(g.nombre||'?').charAt(0)}</div>`}
+      <div style="flex:1;">
+        <div class="hist-top"><b>${escapeHtml(g.nombre)}</b></div>
+        <div class="hist-meta">@${escapeHtml(g.username)} ${g.telefono? ' · '+escapeHtml(g.telefono):''}</div>
+        <div class="prod-actions" style="margin-top:8px;">
+          <button title="Editar" onclick="openGestorModal('${g.id}')">${ICONS.pencil}</button>
+          <button title="Eliminar" class="del" onclick="removeGestor('${g.id}')">${ICONS.trash}</button>
+        </div>
       </div>
     </div>`).join('');
 }
@@ -868,27 +1549,80 @@ async function removeGestor(id){
   showToast('Gestor eliminado.');
 }
 
-/* ============ ADMIN: CONFIGURACIÓN ============ */
+/* ============ NOVEDADES ============ */
+function updateNovBadge(){
+  const badge = $('novBadge');
+  const count = state.novedades.length;
+  if(count>0){ badge.textContent = count>9?'9+':count; badge.classList.remove('hidden'); }
+  else badge.classList.add('hidden');
+}
+function openNovedades(){
+  $('novedadesModal').classList.remove('hidden');
+  const box = $('novedadesList');
+  if(!state.novedades.length){ box.innerHTML='<div class="hint">No hay novedades todavía.</div>'; return; }
+  box.innerHTML = state.novedades.map(n=>{
+    const fecha = n.fecha?.seconds ? new Date(n.fecha.seconds*1000).toLocaleDateString('es-CU',{day:'numeric',month:'short',year:'numeric'}) : '';
+    return `<div class="card nov-item" style="margin-bottom:10px;">
+      <div style="font-weight:800;font-size:14px;margin-bottom:4px;">${escapeHtml(n.titulo)}</div>
+      <div style="font-size:13px;line-height:1.4;">${escapeHtml(n.mensaje)}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;">${fecha}</div>
+    </div>`;
+  }).join('');
+}
+function closeNovedades(){ $('novedadesModal').classList.add('hidden'); }
+function renderAdminNovedades(){
+  const box = $('adminNovList');
+  if(!state.novedades.length){ box.innerHTML='<div class="hint">Sin novedades publicadas.</div>'; return; }
+  box.innerHTML = state.novedades.map(n=>{
+    const fecha = n.fecha?.seconds ? new Date(n.fecha.seconds*1000).toLocaleDateString() : '';
+    return `<div class="hist-item">
+      <div class="hist-top"><b>${escapeHtml(n.titulo)}</b>
+        <button class="btn-danger" style="padding:4px 8px;font-size:11px;" onclick="deleteNovedad('${n.id}')">Eliminar</button>
+      </div>
+      <div class="hist-meta">${escapeHtml(n.mensaje)}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;">${fecha}</div>
+    </div>`;
+  }).join('');
+}
+async function publishNovedad(){
+  const titulo = $('novTitulo').value.trim(), mensaje = $('novMensaje').value.trim();
+  if(!titulo || !mensaje){ showToast('Título y mensaje son obligatorios.'); return; }
+  try{
+    await addDoc(collection(db,'novedades'), { titulo, mensaje, fecha: serverTimestamp() });
+    $('novTitulo').value=''; $('novMensaje').value='';
+    showToast('Novedad publicada 🔔');
+  }catch(e){ showToast('Error al publicar.'); }
+}
+async function deleteNovedad(id){
+  if(!confirm('¿Eliminar esta novedad?')) return;
+  await deleteDoc(doc(db,'novedades',id));
+  showToast('Novedad eliminada.');
+}
+
+/* ============ CONFIG ============ */
 function renderAdminConfig(){
   $('cfgWhatsapp').value = state.settings.waNumber || '';
 }
 async function saveConfig(){
   const wa = $('cfgWhatsapp').value.trim();
   try{
-    await updateDoc(doc(db,'settings','general'), { waNumber: wa }).catch(async ()=>{
-      await addDoc(collection(db,'settings'), { waNumber: wa });
-    });
+    await setDoc(doc(db,'settings','general'), { waNumber: wa }, { merge:true });
     showToast('Configuración guardada.');
   }catch(e){ showToast('Error al guardar configuración.'); }
 }
 
-/* ============ EXPONER FUNCIONES AL HTML (script type=module) ============ */
+/* ============ EXPORT ============ */
 Object.assign(window, {
   togglePassEye, doLogin, doLogout, switchTab, adminSwitch,
   addLineItem, removeLineItem, updateLineItem, toggleVuelto, recalcVale, submitVale,
-  openCatalogPicker, closeCatalogPicker, renderCatalogPicker, pickCatalogProduct,
-  openProductModal, closeProductModal, toggleComisionValor, handlePhotoUpload, saveProduct, removeProduct,
-  updateOrderStatus, openGestorModal, closeGestorModal, saveGestor, removeGestor, saveConfig
+  openCatalogPicker, closeCatalogPicker, renderCatalogPicker, pickCatalogProduct, setPickerCat,
+  openProductModal, closeProductModal, handlePhotoUpload, saveProduct, removeProduct, updateSubcats, toggleStockField,
+  updateOrderStatus, openGestorModal, closeGestorModal, saveGestor, removeGestor, saveConfig,
+  openTarifasModal, closeTarifasModal, switchTarifaLocal, switchTarifaTipo, renderTarifas, selectTarifa,
+  handleCarnetUpload, captureGPS, handlePerfilPhoto,
+  openNovedades, closeNovedades, publishNovedad, deleteNovedad,
+  setGestorCat, setAdminCat, installPWA, dismissPWA,
+  $: (id)=>document.getElementById(id)
 });
 
 document.getElementById('entregaDia') && (document.getElementById('entregaDia').value = todayISO());
