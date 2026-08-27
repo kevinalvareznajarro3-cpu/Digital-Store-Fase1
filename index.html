@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Digital Store — Gestión de Ventas</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon-192.png" type="image/png" sizes="192x192">
 <link rel="icon" href="icons/icon-512.png" type="image/png" sizes="512x512">
@@ -225,7 +228,9 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 .cat-tile .cat-emoji{font-size:28px;display:block;margin-bottom:6px;}
 .subcat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
 .subcat-tile{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center;font-weight:700;font-size:11.5px;cursor:pointer;}
-.back-cats{font-size:13px;font-weight:700;color:var(--green);margin-bottom:10px;display:inline-flex;align-items:center;gap:4px;cursor:pointer;}
+.back-cats{font-size:14.5px;font-weight:800;color:#fff;background:var(--green);margin-bottom:12px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;padding:12px 18px;border-radius:13px;box-shadow:0 3px 10px rgba(26,74,46,.28);-webkit-tap-highlight-color:transparent;user-select:none;}
+.back-cats:active{transform:scale(.96);background:var(--green-dim);}
+.back-cats svg{width:18px;height:18px;flex:none;stroke:#fff;}
 
 /* New products carousel */
 .new-carousel-wrap{overflow:hidden;margin-bottom:12px;border-radius:12px;background:var(--surface);padding:10px 0;border:1px solid var(--line);}
@@ -864,7 +869,8 @@ const ICONS = {
   trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg>',
   pencil:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-3-3L5 17v3Z"/><path d="M14 6l4 4"/></svg>',
   box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8.5 12 4 3 8.5 12 13l9-4.5Z"/><path d="M3 8.5V16l9 4.5 9-4.5V8.5"/><path d="M12 13v7.5"/></svg>',
-  dot:'<svg viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>'
+  dot:'<svg viewBox="0 0 10 10" fill="currentColor"><circle cx="5" cy="5" r="5"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg>'
 };
 
 const state = {
@@ -891,6 +897,58 @@ function showToast(msg){
   const t=$('toast'); t.textContent=msg; t.classList.add('show');
   clearTimeout(showToast._t); showToast._t=setTimeout(()=>t.classList.remove('show'),2400);
 }
+
+/* ============ NAVEGACIÓN FÍSICA (BOTÓN ATRÁS) ============ */
+let _skipNavPush = false;
+function navSnapshot(){
+  return {
+    role: state.user ? state.user.role : null,
+    tab: state.currentTab,
+    adminTab: state.adminTab,
+    catalogLevel: state.catalogLevel,
+    catalogCat: state.catalogCat,
+    catalogSub: state.catalogSub
+  };
+}
+function pushNavState(){
+  if(_skipNavPush) return;
+  try{ history.pushState(navSnapshot(), '', location.pathname + location.search); }catch(e){}
+}
+function replaceNavState(){
+  try{ history.replaceState(navSnapshot(), '', location.pathname + location.search); }catch(e){}
+}
+function closeTopModalIfAny(){
+  const map = [
+    ['confirmDialog', ()=>closeConfirm(false)],
+    ['productDetailModal', closeProductDetail],
+    ['productModal', closeProductModal],
+    ['gestorModal', closeGestorModal],
+    ['tarifasModal', closeTarifasModal],
+    ['catalogModal', closeCatalogPicker],
+    ['novedadesModal', closeNovedades]
+  ];
+  for(const [id, fn] of map){
+    const el = $(id);
+    if(el && !el.classList.contains('hidden')){ fn(); return true; }
+  }
+  return false;
+}
+window.addEventListener('popstate', (e)=>{
+  if(closeTopModalIfAny()){ replaceNavState(); return; }
+  const st = e.state;
+  if(!st || !state.user) return; // sin sesión o sin estado guardado: comportamiento normal del navegador
+  _skipNavPush = true;
+  try{
+    if(st.role==='admin' && state.user.role==='admin'){
+      adminSwitch(st.adminTab || 'resumen');
+    } else if(st.role!=='admin' && state.user.role!=='admin'){
+      state.catalogLevel = st.catalogLevel || 'cats';
+      state.catalogCat = st.catalogCat || '';
+      state.catalogSub = st.catalogSub || '';
+      switchTab(st.tab || 'vale');
+    }
+  } finally { _skipNavPush = false; }
+});
 
 /* ============ PWA INSTALL ============ */
 /* pwa in state */
@@ -930,9 +988,33 @@ if(window.matchMedia('(display-mode: standalone)').matches){
   setTimeout(()=>{ if(!document.querySelector('#pwaBanner:not(.hidden)')) $('pwaBanner').classList.remove('hidden'); }, 1500);
 }
 
-/* Service Worker */
+/* Service Worker: registro + auto-actualización (evita quedarse con versión vieja en caché) */
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  const _hadController = !!navigator.serviceWorker.controller;
+  let _swRefreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+    // Solo recargar si YA había una versión controlando la página (actualización real).
+    // En la primera visita (sin controller previo) clients.claim() también dispara este evento,
+    // y recargar en ese momento interrumpiría la carga inicial de la app.
+    if(!_hadController || _swRefreshing) return;
+    _swRefreshing = true;
+    window.location.reload();
+  });
+  navigator.serviceWorker.register('./sw.js').then(reg=>{
+    reg.addEventListener('updatefound', ()=>{
+      const nw = reg.installing;
+      if(!nw) return;
+      nw.addEventListener('statechange', ()=>{
+        if(nw.state==='installed' && navigator.serviceWorker.controller){
+          nw.postMessage({type:'SKIP_WAITING'});
+        }
+      });
+    });
+    setInterval(()=>{ reg.update().catch(()=>{}); }, 60000);
+    document.addEventListener('visibilitychange', ()=>{
+      if(document.visibilityState==='visible') reg.update().catch(()=>{});
+    });
+  }).catch(()=>{});
 }
 
 /* ============ LOGIN ============ */
@@ -984,6 +1066,7 @@ function doLogout(){
   $('loginScreen').classList.remove('hidden');
   $('loginUser').value=''; $('loginPass').value='';
   if($('rememberMe')) $('rememberMe').checked=false;
+  try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
 }
 
 function enterApp(){
@@ -991,6 +1074,7 @@ function enterApp(){
   $('app').classList.remove('hidden');
   $('userName').textContent = state.user.nombre;
   const savedTab = sessionStorage.getItem('ds_tab');
+  _skipNavPush = true;
   if(state.user.role==='admin'){
     $('navGestor').classList.add('hidden');
     $('navAdmin').classList.remove('hidden');
@@ -1004,6 +1088,8 @@ function enterApp(){
     startGestorListeners();
     loadValeDraft();
   }
+  _skipNavPush = false;
+  replaceNavState();
   startSettingsListener();
   startNovedadesListener();
   fillCategoriaSelects();
@@ -1027,6 +1113,7 @@ function switchTab(tab){
     if(tab==='resumen') renderGestorResumen();
     if(tab==='catalogo') renderGestorCatalogo();
   }
+  pushNavState();
 }
 
 function adminSwitch(tab){
@@ -1042,6 +1129,7 @@ function adminSwitch(tab){
   if(tab==='gestores') renderAdminGestores();
   if(tab==='config') renderAdminConfig();
   if(tab==='novedades') renderAdminNovedades();
+  pushNavState();
 }
 
 /* ============ LISTENERS ============ */
@@ -1472,6 +1560,7 @@ function openTarifasModal(){
   switchTarifaLocal(state.tarifaLocal);
   $('tarifasModal').classList.remove('hidden');
   renderTarifas();
+  pushNavState();
 }
 function closeTarifasModal(){ $('tarifasModal').classList.add('hidden'); }
 function switchTarifaLocal(n){
@@ -1537,6 +1626,7 @@ function openCatalogPicker(){
   $('catalogModal').classList.remove('hidden');
   renderCatFilters('pickerCatFilters', '', 'setPickerCat');
   renderCatalogPicker();
+  pushNavState();
 }
 function closeCatalogPicker(){ $('catalogModal').classList.add('hidden'); }
 function setPickerCat(c){ state.pickerCatFilter=c; renderCatFilters('pickerCatFilters',c,'setPickerCat'); renderCatalogPicker(); }
@@ -1587,10 +1677,11 @@ function onGestorSearch(){
   if(q){ state.catalogLevel = 'search'; }
   else { state.catalogLevel = 'cats'; state.catalogCat=''; state.catalogSub=''; }
   renderGestorCatalogo();
+  pushNavState();
 }
-function goCatalogCats(){ state.catalogLevel='cats'; state.catalogCat=''; state.catalogSub=''; renderGestorCatalogo(); }
-function goCatalogCat(c){ state.catalogLevel='subs'; state.catalogCat=c; state.catalogSub=''; renderGestorCatalogo(); }
-function goCatalogSub(s){ state.catalogLevel='prods'; state.catalogSub=s; renderGestorCatalogo(); }
+function goCatalogCats(){ state.catalogLevel='cats'; state.catalogCat=''; state.catalogSub=''; renderGestorCatalogo(); pushNavState(); }
+function goCatalogCat(c){ state.catalogLevel='subs'; state.catalogCat=c; state.catalogSub=''; renderGestorCatalogo(); pushNavState(); }
+function goCatalogSub(s){ state.catalogLevel='prods'; state.catalogSub=s; renderGestorCatalogo(); pushNavState(); }
 
 function renderNewCarousel(){
   const box = $('newCarouselBox');
@@ -1619,7 +1710,7 @@ function renderGestorCatalogo(){
   const q = ($('gestorCatSearch')?.value||'').toLowerCase().trim();
 
   if(state.catalogLevel==='search' && q){
-    if(nav) nav.innerHTML = `<div class="back-cats" onclick="goCatalogCats()">← Volver a categorías</div>`;
+    if(nav) nav.innerHTML = `<div class="back-cats" onclick="goCatalogCats()">${ICONS.back}Volver a categorías</div>`;
     const items = state.productos.filter(p=>(p.nombre||'').toLowerCase().includes(q)||(p.categoria||'').toLowerCase().includes(q)||(p.subcategoria||'').toLowerCase().includes(q));
     box.innerHTML = renderProdList(items);
     return;
@@ -1637,7 +1728,7 @@ function renderGestorCatalogo(){
   }
 
   if(state.catalogLevel==='subs'){
-    if(nav) nav.innerHTML = `<div class="back-cats" onclick="goCatalogCats()">← Categorías</div><div style="font-weight:800;margin-bottom:8px;">${escapeHtml(state.catalogCat)}</div>`;
+    if(nav) nav.innerHTML = `<div class="back-cats" onclick="goCatalogCats()">${ICONS.back}Volver a categorías</div><div style="font-weight:800;margin-bottom:8px;">${escapeHtml(state.catalogCat)}</div>`;
     const subs = CATEGORIAS[state.catalogCat] || [];
     box.innerHTML = `<div class="subcat-grid">${subs.map(s=>`
       <div class="subcat-tile" onclick="goCatalogSub('${escapeHtml(s)}')">${escapeHtml(s)}</div>`).join('')}
@@ -1647,7 +1738,7 @@ function renderGestorCatalogo(){
   }
 
   // prods
-  if(nav) nav.innerHTML = `<div class="back-cats" onclick="goCatalogCat('${escapeHtml(state.catalogCat)}')">← Subcategorías</div>
+  if(nav) nav.innerHTML = `<div class="back-cats" onclick="goCatalogCat('${escapeHtml(state.catalogCat)}')">${ICONS.back}Volver a subcategorías</div>
     <div style="font-weight:800;margin-bottom:8px;font-size:13px;">${escapeHtml(state.catalogSub||'Todos')} · ${escapeHtml(state.catalogCat)}</div>`;
   let items = state.productos.filter(p=>p.categoria===state.catalogCat);
   if(state.catalogSub) items = items.filter(p=>p.subcategoria===state.catalogSub);
@@ -1731,6 +1822,7 @@ function openProductDetail(id){
     navigator.clipboard?.writeText(desc).then(()=>showToast('Descripción copiada')).catch(()=>showToast('No se pudo copiar'));
   };
   $('productDetailModal').classList.remove('hidden');
+  pushNavState();
 }
 function closeProductDetail(){ $('productDetailModal').classList.add('hidden'); state.detailProduct=null; }
 function pickFromDetail(id){
@@ -1885,6 +1977,7 @@ function openProductModal(id){
   renderMultiPhotos();
   state._prevProduct = p ? {...p} : null;
   $('productModal').classList.remove('hidden');
+  pushNavState();
 }
 function closeProductModal(){ $('productModal').classList.add('hidden'); }
 function toggleStockField(){
@@ -2082,6 +2175,7 @@ function openGestorModal(id){
   $('gPassword').value = g?.password || '';
   $('gTelefono').value = g?.telefono || '';
   $('gestorModal').classList.remove('hidden');
+  pushNavState();
 }
 function closeGestorModal(){ $('gestorModal').classList.add('hidden'); }
 async function saveGestor(){
@@ -2115,6 +2209,7 @@ function updateNovBadge(){
 }
 function openNovedades(){
   $('novedadesModal').classList.remove('hidden');
+  pushNavState();
   const box = $('novedadesList');
   const visible = state.novedades.filter(n=>!state.deletedNovIds.includes(n.id));
   if(!visible.length){ box.innerHTML='<div class="hint">No hay novedades todavía.</div>'; return; }
@@ -2154,6 +2249,7 @@ function showConfirm(msg){
     state.confirmResolve = resolve;
     $('confirmMsg').textContent = msg;
     $('confirmDialog').classList.remove('hidden');
+    pushNavState();
   });
 }
 function closeConfirm(val){
