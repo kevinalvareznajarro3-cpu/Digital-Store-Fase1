@@ -1,7 +1,7 @@
 /* Digital Store — Service Worker
    Sube CACHE_VERSION cada vez que publiques cambios importantes (opcional,
    ya que la estrategia network-first hace que casi nunca haga falta). */
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const CACHE_NAME = `digital-store-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -13,7 +13,9 @@ const APP_SHELL = [
 ];
 
 self.addEventListener('install', (event) => {
-  self.skipWaiting();
+  // NO se llama a self.skipWaiting() aqui: el Service Worker nuevo debe quedarse
+  // en estado "waiting" hasta que la app (index.html) le mande el mensaje SKIP_WAITING,
+  // lo cual ocurre solo cuando el gestor toca el boton "Actualizar" del banner.
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL).catch(() => {}))
   );
@@ -47,7 +49,6 @@ self.addEventListener('fetch', (event) => {
   );
 
   if (isAppShell) {
-    // Network-first: siempre intenta traer la versión más reciente del servidor
     event.respondWith(
       fetch(req).then(res => {
         const copy = res.clone();
@@ -60,7 +61,6 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Resto de recursos (íconos, fotos, cdns): cache-first con actualización en segundo plano
   event.respondWith(
     caches.match(req).then(cached => {
       const network = fetch(req).then(res => {
