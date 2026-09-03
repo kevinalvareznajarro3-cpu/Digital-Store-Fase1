@@ -246,9 +246,6 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 /* New products carousel */
 .new-carousel-wrap{overflow:hidden;margin-bottom:12px;border-radius:12px;background:var(--surface);padding:10px 0;border:1px solid var(--line);}
 .new-carousel-title{font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:.5px;padding:0 12px 8px;}
-.new-carousel{display:flex;gap:10px;animation:carouselScroll 45s linear infinite;width:max-content;will-change:transform;}
-.new-carousel:hover,.new-carousel:active,.new-carousel.paused{animation-play-state:paused;}
-@keyframes carouselScroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 .new-item{width:110px;flex:none;text-align:center;cursor:pointer;touch-action:manipulation;}
 .new-item img{width:90px;height:90px;object-fit:cover;border-radius:10px;margin:0 auto 4px;display:block;background:var(--surface-2);}
 .new-item .ni-name{font-size:11px;font-weight:700;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px;}
@@ -277,8 +274,7 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 .detail-nav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;}
 .detail-nav.prev{left:6px;}
 .detail-nav.next{right:6px;}
-.detail-desc-toggle{font-size:12px;color:var(--blue);font-weight:700;cursor:pointer;margin-top:4px;}
-.detail-desc.collapsed{max-height:60px;overflow:hidden;}
+.detail-desc{white-space:pre-wrap;line-height:1.5;font-size:13.5px;}
 .copy-btn, .dl-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:8px;background:var(--surface-2);font-size:12px;font-weight:700;margin-top:6px;margin-right:6px;}
 
 /* Multi photo admin */
@@ -298,6 +294,63 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 
 /* Clear draft btn */
 .clear-draft-btn{width:100%;padding:10px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line);color:var(--danger);font-weight:700;font-size:13px;margin-bottom:12px;}
+
+/* ===== Modo oscuro (punto #4) ===== */
+body.dark{
+  --bg:#0F1512; --surface:#1B2420; --surface-2:#222D27; --text:#EDEFEA; --muted:#93A69A;
+  --line:#33413A; --avail-ok-bg:#1E3A24; --avail-low-bg:#3A331A; --avail-out-bg:#3A2A18;
+}
+body.dark input,body.dark select,body.dark textarea{background:var(--surface-2);}
+.theme-toggle{width:44px;height:25px;border-radius:20px;background:var(--surface-2);border:1px solid var(--line);position:relative;flex:none;transition:background .2s;}
+.theme-toggle .tt-knob{position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:11px;transition:left .2s;}
+body.dark .theme-toggle{background:var(--green-dim);}
+body.dark .theme-toggle .tt-knob{left:21px;}
+
+/* ===== Selector Vale de Mensajería / Recogida (punto #2) ===== */
+.vale-mode-field{margin-bottom:14px;}
+.vale-mode-field select{font-weight:700;color:var(--green);}
+.pickup-info{font-size:12.5px;line-height:1.6;color:var(--text);}
+.pickup-info b{color:var(--green);}
+
+/* ===== Carrusel "Nuevos de la semana" (punto #5) ===== */
+.new-carousel-head{display:flex;align-items:center;justify-content:space-between;padding:0 12px 8px;}
+.new-carousel-head .new-carousel-title{padding:0;}
+.carousel-toggle{flex:none;font-size:10.5px;font-weight:800;color:var(--green-dim);background:var(--surface-2);padding:5px 10px;border-radius:20px;border:1px solid var(--line);}
+.new-carousel-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.new-carousel-scroll::-webkit-scrollbar{display:none;}
+.new-carousel{display:flex;gap:10px;width:max-content;}
+
+/* ===== Neón aviso de novedades ocultas (punto #7) ===== */
+.carousel-toggle.neon{
+  animation: neonToggle 1.4s ease-in-out infinite;
+  border-color: var(--gold);
+  color: #7a5c00;
+}
+body.dark .carousel-toggle.neon{ color:#3a2c00; }
+@keyframes neonToggle{
+  0%,100%{ box-shadow:0 0 3px var(--gold), 0 0 7px var(--gold); background:var(--surface-2); }
+  50%{ box-shadow:0 0 10px var(--gold), 0 0 20px var(--gold); background:#FFF6DA; }
+}
+
+/* ===== Historial rediseñado: comisión pendiente (punto #13/#14) ===== */
+.hist-claim-tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--surface-2);border-radius:12px;padding:4px;}
+.hist-claim-tab{flex:1;padding:9px 6px;border-radius:9px;font-size:12.5px;font-weight:700;color:var(--muted);}
+.hist-claim-tab.active{background:var(--green);color:#fff;}
+.hist-claim-text{font-size:12.5px;line-height:1.6;color:var(--text);background:var(--surface-2);border-radius:10px;padding:12px;margin-bottom:12px;}
+.hist-claim-text b{color:var(--green-dim);}
+body.dark .hist-claim-text b{color:var(--gold);}
+
+/* ===== Etiquetas de calidad del producto (punto #10) ===== */
+.prod-thumb-box{position:relative;width:64px;height:64px;border-radius:10px;flex:none;overflow:hidden;}
+.prod-grid .prod-thumb-box{width:100%;height:100px;margin-bottom:6px;}
+.prod-thumb-box .prod-thumb{width:100%;height:100%;margin:0;}
+.quality-badge{position:absolute;top:4px;left:4px;font-size:8.5px;font-weight:800;padding:3px 6px;border-radius:6px;color:#fff;z-index:2;letter-spacing:.2px;box-shadow:0 1px 4px rgba(0,0,0,.35);white-space:nowrap;}
+.quality-badge.nuevo{background:var(--blue);animation:qualityPulse 1.8s ease-in-out infinite;}
+.quality-badge.gradoA{background:var(--ok);animation:qualityPulse 1.8s ease-in-out infinite;}
+.quality-badge.gradoAPlus{background:linear-gradient(135deg,var(--gold),#F4D160);color:#4a3800;animation:qualityPulse 1.8s ease-in-out infinite;}
+@keyframes qualityPulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.07);opacity:.88;}}
+.detail-photos{overflow:visible;}
+.detail-photos .quality-badge{top:0;left:0;font-size:10px;padding:4px 9px;}
 
 </style>
 </head>
@@ -359,6 +412,9 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
       <div class="name">Digital Store<small>Gestión de ventas</small></div>
     </div>
     <div class="hdr-actions">
+      <button class="theme-toggle" id="themeToggleBtn" onclick="toggleDarkMode()" title="Modo oscuro/claro">
+        <span class="tt-knob" id="ttKnob">🌙</span>
+      </button>
       <button class="nov-btn" onclick="openNovedades()" title="Novedades">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
         <span class="badge hidden" id="novBadge">0</span>
@@ -368,9 +424,18 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
     </div>
   </header>
 
-  <main>
+  <main id="mainContent">
     <!-- VALE -->
     <section id="view-vale" class="view hidden">
+      <div class="card vale-mode-field">
+        <label>Tipo de vale</label>
+        <select id="valeModeSelect" onchange="switchValeMode(this.value)">
+          <option value="mensajeria">🌲 Vale de Mensajería</option>
+          <option value="recogida">🏪 Vale de Recogida (en tienda)</option>
+        </select>
+      </div>
+
+      <div id="valeMensajeriaForm">
       <div class="card">
         <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>Datos del cliente</h2>
         <div class="field"><label>Nombre completo *</label><input type="text" id="cNombre" placeholder="Nombre completo del cliente"></div>
@@ -413,19 +478,26 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 
       <div class="card">
         <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.5" width="20" height="11" rx="2"/><circle cx="12" cy="12" r="2.6"/></svg></span>Pago y mensajería</h2>
-        <div class="row2">
-          <div class="field"><label>Moneda del producto *</label>
-            <select id="moneda" onchange="recalcVale()">
-              <option>CUP</option><option>USD</option><option>Euros</option><option>Zelle</option><option>PayPal</option>
+        <div class="field">
+          <label>Tipo de pago *</label>
+          <select id="tipoPagoUnico" onchange="recalcVale(); onTipoPagoUnicoChange();">
+            <optgroup label="🏪 1er Local">
+              <option>CUP</option>
+              <option>USD</option>
+              <option>Euros</option>
+              <option>Zelle</option>
+              <option>PayPal</option>
               <option>Pago con tarjeta (7% de comisión)</option>
-            </select>
-          </div>
-          <div class="field"><label>Tipo de pago *</label>
-            <select id="tipoPago">
-              <option>Efectivo</option>
-              <option>Transferencia</option>
-              <option>Otro</option>
-            </select>
+            </optgroup>
+            <optgroup label="🏬 2do Local (efectivo)">
+              <option>USD Efectivo (2do Local)</option>
+              <option>CUP Efectivo (2do Local)</option>
+              <option>Euros Efectivo (2do Local)</option>
+            </optgroup>
+            <option value="Otro">Otro método de pago</option>
+          </select>
+          <div id="tipoPagoOtroBox" class="hidden" style="margin-top:8px;">
+            <button type="button" class="btn-secondary" onclick="waOtroMetodo()">💬 Preguntar por WhatsApp</button>
           </div>
         </div>
         <div class="field">
@@ -466,13 +538,88 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
         <div class="field"><label>Garantía</label><input type="text" id="garantia" placeholder="Ej: 30 días, 1 año…"></div>
       </div>
 
-      <button class="btn-primary" id="submitValeBtn" onclick="submitVale()">🌲 Guardar vale de mensajería</button>
+      <button class="btn-primary" id="submitValeBtn" onclick="submitVale()">🌲 Enviar Vale de mensajería</button>
+      </div>
+
+      <!-- VALE DE RECOGIDA -->
+      <div id="valeRecogidaForm" class="hidden">
+        <div class="card">
+          <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></span>Datos del cliente</h2>
+          <div class="field"><label>Nombre completo *</label><input type="text" id="rNombre" placeholder="Nombre completo del cliente"></div>
+          <div class="field"><label>CI *</label><input type="text" id="rCI" placeholder="Carnet de identidad" inputmode="numeric"></div>
+        </div>
+
+        <div class="card">
+          <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2.4 11.6a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 2-1.6L20 8H6"/></svg></span>Artículos *</h2>
+          <button type="button" class="btn-secondary" onclick="openCatalogPicker('recogida')" style="margin-bottom:10px;">📦 Seleccionar del catálogo</button>
+          <div id="lineItemsRecogida"></div>
+          <button type="button" class="add-line-btn" onclick="addLineItemRecogida()">+ Añadir artículo manual</button>
+          <div class="calc-box" id="calcBoxRecogida" style="margin-top:12px;"></div>
+        </div>
+
+        <div class="card">
+          <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg></span>Recogida y pago</h2>
+          <div class="row2">
+            <div class="field"><label>Día que quiere *</label><input type="date" id="rDia"></div>
+            <div class="field"><label>Hora que va a pasar *</label><input type="time" id="rHora"></div>
+          </div>
+          <div class="field">
+            <label>Moneda de pago *</label>
+            <select id="rMetodoPago" onchange="onRMetodoPagoChange()">
+              <option>Efectivo USD</option>
+              <option>Efectivo CUP</option>
+              <option>Efectivo Euros</option>
+              <option value="Otro">Otro método de pago</option>
+            </select>
+            <div id="rMetodoPagoOtroBox" class="hidden" style="margin-top:8px;">
+              <button type="button" class="btn-secondary" onclick="waOtroMetodo()">💬 Preguntar por WhatsApp</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card pickup-info">
+          <h2>📍 Recogida en tienda — 2do Local</h2>
+          <b>Horario:</b> Lunes a viernes 10am–5pm, Sábados 10am–2pm.<br>
+          <b>Dirección:</b> Pedro e/ Ermita y Ave. Boyeros, Plaza de la Revolución.<br>
+          <b>Referencia:</b> Frente a la facultad de comunicaciones. Un portón gris grande, en el sótano.
+        </div>
+
+        <button class="btn-primary" id="submitRecogidaBtn" onclick="submitValeRecogida()">🏪 Enviar Vale de Recogida</button>
+      </div>
     </section>
 
     <!-- HISTORIAL -->
     <section id="view-historial" class="view hidden">
+      <div class="stat-grid">
+        <div class="stat-box"><div class="n" id="histStatFacturado">$0</div><div class="l">Total facturado</div></div>
+        <div class="stat-box"><div class="n" id="histStatPendiente">$0</div><div class="l">Comisión pendiente</div></div>
+      </div>
+
       <div class="card">
-        <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3.5 2"/></svg></span>Historial de pedidos</h2>
+        <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>Reclamar comisión pendiente</h2>
+        <div class="hist-claim-tabs">
+          <button type="button" class="hist-claim-tab active" data-hc="transferencia" onclick="switchHistClaim('transferencia')">Transferencia</button>
+          <button type="button" class="hist-claim-tab" data-hc="efectivo" onclick="switchHistClaim('efectivo')">Efectivo</button>
+        </div>
+
+        <div id="histClaimTransferencia">
+          <div class="field"><label>Número de tarjeta (Transfermóvil)</label><input type="text" id="histTarjeta" inputmode="numeric" placeholder="Ej: 9227 XXXX XXXX XXXX"></div>
+          <div class="field"><label>Teléfono de confirmación</label><input type="tel" id="histTelefono" placeholder="Tu número para confirmar"></div>
+          <button class="btn-primary" id="histClaimTransferBtn" onclick="submitComisionTransferencia()">💸 Solicitar cobro por Transferencia</button>
+        </div>
+
+        <div id="histClaimEfectivo" class="hidden">
+          <div class="hist-claim-text">
+            Tu comisión en efectivo se acumula durante <b>1 semana</b> desde que se avise su disponibilidad. Si no la recoges en ese plazo, pasa automáticamente al siguiente cierre <b>(quincenal)</b>.<br><br>
+            Espera la confirmación del Admin: el aviso se publica en <b>Novedades</b> y en la <b>comunidad de WhatsApp</b>.
+          </div>
+          <button class="btn-secondary" style="margin-bottom:8px;" onclick="goHistComunidadWa()">💬 Ir a la comunidad de WhatsApp</button>
+          <button class="btn-secondary" onclick="goHistNovedades()">🔔 Ver Novedades</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3.5 2"/></svg></span>Tus pedidos</h2>
         <div id="histList"><div class="hint">Cargando…</div></div>
       </div>
     </section>
@@ -577,6 +724,7 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
         <div class="card">
           <h2>Configuración general</h2>
           <div class="field"><label>WhatsApp del Admin</label><input type="tel" id="cfgWhatsapp" placeholder="53xxxxxxx"></div>
+          <div class="field"><label>Enlace de la comunidad de WhatsApp</label><input type="text" id="cfgComunidad" placeholder="https://chat.whatsapp.com/..."></div>
           <button class="btn-primary" onclick="saveConfig()">Guardar</button>
         </div>
       </div>
@@ -655,6 +803,14 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
     <div class="field"><label>Producto de la semana (nuevo)</label>
       <div class="checkbox-row"><input type="checkbox" id="pNuevoSemana"><label style="margin:0;">Mostrar en “Nuevos de la semana”</label></div>
     </div>
+    <div class="field"><label>Etiqueta de calidad</label>
+      <select id="pCalidad">
+        <option value="">Sin marcar</option>
+        <option value="nuevo">Nuevo</option>
+        <option value="gradoA">Grado A</option>
+        <option value="gradoAPlus">Grado A Plus</option>
+      </select>
+    </div>
     <div class="field">
       <label>Fotos del producto (múltiples)</label>
       <div class="photo-upload" id="photoUploadBox">
@@ -677,6 +833,30 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
     <div class="field"><label>Contraseña *</label><input type="text" id="gPassword"></div>
     <div class="field"><label>WhatsApp</label><input type="tel" id="gTelefono"></div>
     <button class="btn-primary" onclick="saveGestor()">Guardar gestor</button>
+  </div>
+</div>
+
+<!-- MODAL: Comisiones de Gestor -->
+<div id="gestorComisionModal" class="modal-back hidden" onclick="if(event.target===this) closeGestorComisionModal()">
+  <div class="modal">
+    <div class="modal-head"><h3>Comisiones — <span id="gcNombre"></span></h3><button onclick="closeGestorComisionModal()">✕</button></div>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="n" id="gcTotalComision">$0</div><div class="l">Comisión generada</div></div>
+      <div class="stat-box"><div class="n" id="gcTotalPagado">$0</div><div class="l">Ya pagado</div></div>
+    </div>
+    <div class="stat-box" style="margin-bottom:14px;"><div class="n" id="gcPendiente">$0</div><div class="l">Comisión pendiente</div></div>
+    <div class="field"><label>Registrar pago realizado (resta de lo pendiente)</label>
+      <div class="row2">
+        <input type="number" id="gcMonto" step="0.01" placeholder="Monto pagado">
+        <select id="gcMetodo"><option value="transferencia">Transferencia</option><option value="efectivo">Efectivo</option></select>
+      </div>
+    </div>
+    <div class="field"><label>Nota (opcional)</label><input type="text" id="gcNota" placeholder="Ej: pago quincenal"></div>
+    <button class="btn-primary" onclick="registrarPagoComision()">Registrar pago</button>
+    <div style="margin-top:16px;">
+      <div style="font-weight:700;font-size:13px;margin-bottom:8px;">Pagos registrados</div>
+      <div id="gcPagosList"><div class="hint">Sin pagos registrados.</div></div>
+    </div>
   </div>
 </div>
 
@@ -714,7 +894,8 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDoc, setDoc,
+  initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, setDoc, arrayUnion,
   onSnapshot, query, where, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
@@ -732,7 +913,17 @@ const ADMIN_USER = "admin";
 const ADMIN_PASS = "digital2026";
 
 const fbApp = initializeApp(firebaseConfig);
-const db = getFirestore(fbApp);
+// Caché local persistente (IndexedDB): permite que Catálogo, Pedidos, Gestores, Novedades
+// y el login del gestor sigan funcionando sin conexión, mostrando al instante los últimos
+// datos sincronizados y actualizándose solos en cuanto vuelve la señal.
+let db;
+try{
+  db = initializeFirestore(fbApp, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+  });
+}catch(e){
+  db = getFirestore(fbApp);
+}
 
 /* ============ CATEGORÍAS ============ */
 const CATEGORIAS = {
@@ -895,13 +1086,17 @@ const state = {
   user:null, currentTab:'vale', adminTab:'resumen',
   gestores:[], productos:[], pedidos:[], novedades:[],
   lineItems:[], editingProductId:null, editingGestorId:null,
-  photoUrl:'', photoUrls:[], carnetUrl:'', settings:{ waNumber:null },
+  photoUrl:'', photoUrls:[], carnetUrl:'', settings:{ waNumber:null, waComunidad:null },
+  myGestorData:null, viewingGestorId:null,
   tarifaLocal:1, tarifaTipo:'motos', catFilter:'', pickerCatFilter:'',
   deferredPrompt:null, perfilPhotoUrl:'',
   catalogLevel:'cats', catalogCat:'', catalogSub:'', catalogView:'grid',
   detailPhotoIdx:0, detailProduct:null, confirmResolve:null,
   deletedNovIds: JSON.parse(localStorage.getItem('deleted_novs')||'[]'),
-  pwaDismissed: localStorage.getItem('pwa_dismissed')==='1'
+  pwaDismissed: localStorage.getItem('pwa_dismissed')==='1',
+  valeMode:'mensajeria', lineItemsRecogida:[], pickerTarget:'mensajeria',
+  darkMode: localStorage.getItem('dark_mode')==='1',
+  carouselCollapsed: localStorage.getItem('new_carousel_collapsed')==='1'
 };
 
 function $(id){ return document.getElementById(id); }
@@ -1058,6 +1253,25 @@ function togglePassEye(){
   else { inp.type='password'; btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>'; }
 }
 
+/* Lee la lista de gestores para autenticar. Funciona sin conexión gracias a la caché
+   persistente de Firestore (si el dispositivo ya sincronizó alguna vez); si no hay ni
+   red ni caché de Firestore disponible, usa como último respaldo una copia propia
+   guardada en localStorage la última vez que este dispositivo inició sesión con éxito. */
+async function fetchGestoresParaLogin(){
+  try{
+    const snap = await Promise.race([
+      getDocs(collection(db,'gestores')),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), 7000))
+    ]);
+    const list = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    try{ localStorage.setItem('ds_gestores_cache', JSON.stringify(list)); }catch(e){}
+    return list;
+  }catch(e){
+    try{ return JSON.parse(localStorage.getItem('ds_gestores_cache')||'[]'); }
+    catch(e2){ return []; }
+  }
+}
+
 async function doLogin(){
   const u=$('loginUser').value.trim(), p=$('loginPass').value;
   const errBox=$('loginError'); errBox.classList.add('hidden');
@@ -1069,20 +1283,18 @@ async function doLogin(){
       state.user = { role:'admin', nombre:'Administrador', username:ADMIN_USER };
       if($('rememberMe')?.checked) localStorage.setItem('ds_remember', JSON.stringify({u,p,role:'admin'}));
       else localStorage.removeItem('ds_remember');
-      sessionStorage.setItem('ds_user', JSON.stringify(state.user));
+      localStorage.setItem('ds_user', JSON.stringify(state.user));
       enterApp(); return;
     }
-    const snap = await new Promise((resolve)=>{
-      const unsub = onSnapshot(collection(db,'gestores'), s=>{ unsub(); resolve(s); });
-    });
-    const found = snap.docs.map(d=>({id:d.id, ...d.data()})).find(g=>
+    const list = await fetchGestoresParaLogin();
+    const found = list.find(g=>
       String(g.username||'').toLowerCase()===u.toLowerCase() && String(g.password||'')===p
     );
     if(!found){ errBox.textContent='Usuario o contraseña incorrectos.'; errBox.classList.remove('hidden'); return; }
     state.user = { role:'gestor', nombre:found.nombre, username:found.username, id:found.id, telefono:found.telefono, fotoUrl:found.fotoUrl||'' };
     if($('rememberMe')?.checked) localStorage.setItem('ds_remember', JSON.stringify({u,p,role:'gestor'}));
     else localStorage.removeItem('ds_remember');
-    sessionStorage.setItem('ds_user', JSON.stringify(state.user));
+    localStorage.setItem('ds_user', JSON.stringify(state.user));
     enterApp();
   }catch(e){
     errBox.textContent='Error de conexión. Revisa tu internet.'; errBox.classList.remove('hidden');
@@ -1093,8 +1305,8 @@ async function doLogin(){
 
 function doLogout(){
   state.user=null;
-  sessionStorage.removeItem('ds_user');
-  sessionStorage.removeItem('ds_tab');
+  localStorage.removeItem('ds_user');
+  localStorage.removeItem('ds_tab');
   localStorage.removeItem('ds_remember');
   $('app').classList.add('hidden');
   $('loginScreen').classList.remove('hidden');
@@ -1107,7 +1319,7 @@ function enterApp(){
   $('loginScreen').classList.add('hidden');
   $('app').classList.remove('hidden');
   $('userName').textContent = state.user.nombre;
-  const savedTab = sessionStorage.getItem('ds_tab');
+  const savedTab = localStorage.getItem('ds_tab');
   _skipNavPush = true;
   if(state.user.role==='admin'){
     $('navGestor').classList.add('hidden');
@@ -1127,12 +1339,13 @@ function enterApp(){
   startSettingsListener();
   startNovedadesListener();
   fillCategoriaSelects();
+  initSwipeNav();
 }
 
 /* ============ NAVEGACIÓN ============ */
 function switchTab(tab){
   state.currentTab = tab;
-  sessionStorage.setItem('ds_tab', tab);
+  localStorage.setItem('ds_tab', tab);
   document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));
   document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
   if(tab==='admin'){
@@ -1166,11 +1379,60 @@ function adminSwitch(tab){
   pushNavState();
 }
 
+/* ============ SWIPE ENTRE PESTAÑAS (punto #6) ============ */
+const SWIPE_TAB_ORDER = ['vale','historial','resumen','catalogo','perfil'];
+function initSwipeNav(){
+  const el = $('mainContent');
+  if(!el || el._swipeBound) return;
+  el._swipeBound = true;
+  const MIN_DIST = 55;      // distancia mínima horizontal para considerar swipe
+  const DIR_RATIO = 1.4;    // deltaX debe superar claramente a deltaY
+  let startX = 0, startY = 0, tracking = false, isSwipe = false;
+
+  el.addEventListener('touchstart', (e)=>{
+    tracking = false; isSwipe = false;
+    if(state.user?.role !== 'gestor') return;
+    if(!$('view-admin')?.classList.contains('hidden')) return; // no aplica en Admin
+    if(e.touches.length !== 1) return;
+    // No interferir con el scroll horizontal propio del carrusel de novedades
+    if(e.target.closest('#newCarouselScroll') || e.target.closest('.new-carousel-scroll')) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    tracking = true;
+  }, { passive:true });
+
+  el.addEventListener('touchmove', (e)=>{
+    if(!tracking) return;
+    const dx = e.touches[0].clientX - startX;
+    const dy = e.touches[0].clientY - startY;
+    if(!isSwipe){
+      if(Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * DIR_RATIO){
+        isSwipe = true; // gesto horizontal claro
+      } else if(Math.abs(dy) > 10){
+        tracking = false; // gana el scroll vertical, no interferir
+      }
+    }
+  }, { passive:true });
+
+  el.addEventListener('touchend', (e)=>{
+    if(!tracking || !isSwipe){ tracking=false; isSwipe=false; return; }
+    const dx = (e.changedTouches[0].clientX - startX);
+    tracking = false; isSwipe = false;
+    if(Math.abs(dx) < MIN_DIST) return;
+    const idx = SWIPE_TAB_ORDER.indexOf(state.currentTab);
+    if(idx === -1) return;
+    const nextIdx = dx < 0 ? idx + 1 : idx - 1; // izquierda = siguiente, derecha = anterior
+    if(nextIdx < 0 || nextIdx >= SWIPE_TAB_ORDER.length) return;
+    switchTab(SWIPE_TAB_ORDER[nextIdx]);
+  }, { passive:true });
+}
+
 /* ============ LISTENERS ============ */
 function startSettingsListener(){
   onSnapshot(doc(db,'settings','general'), snap=>{
-    state.settings = snap.exists() ? snap.data() : { waNumber:null };
+    state.settings = snap.exists() ? snap.data() : { waNumber:null, waComunidad:null };
     if($('cfgWhatsapp')) $('cfgWhatsapp').value = state.settings.waNumber || '';
+    if($('cfgComunidad')) $('cfgComunidad').value = state.settings.waComunidad || '';
     if(state.user && state.user.role!=='admin') renderPerfil();
   }, ()=>{});
 }
@@ -1184,6 +1446,12 @@ function startGestorListeners(){
     if(state.currentTab==='historial') renderHistorial();
     if(state.currentTab==='resumen') renderGestorResumen();
   });
+  if(state.user?.id){
+    onSnapshot(doc(db,'gestores', state.user.id), snap=>{
+      state.myGestorData = snap.exists() ? snap.data() : null;
+      if(state.currentTab==='historial') renderHistorial();
+    }, ()=>{});
+  }
 }
 function startAdminListeners(){
   onSnapshot(collection(db,'productos'), snap=>{
@@ -1194,11 +1462,13 @@ function startAdminListeners(){
     state.pedidos = snap.docs.map(d=>({id:d.id, ...d.data()}));
     if(state.adminTab==='pedidos') renderAdminPedidos();
     if(state.adminTab==='resumen') renderResumen();
+    if(state.viewingGestorId && !$('gestorComisionModal').classList.contains('hidden')) renderGestorComision();
   });
   onSnapshot(collection(db,'gestores'), snap=>{
     state.gestores = snap.docs.map(d=>({id:d.id, ...d.data()}));
     if(state.adminTab==='gestores') renderAdminGestores();
     if(state.adminTab==='resumen') renderResumen();
+    if(state.viewingGestorId && !$('gestorComisionModal').classList.contains('hidden')) renderGestorComision();
   });
 }
 function startNovedadesListener(){
@@ -1248,7 +1518,8 @@ function resetValeForm(skipSave){
   if($('carnetUploadHint')) $('carnetUploadHint').innerHTML = 'Toca para añadir foto del carnet';
   if($('carnetChoices')) $('carnetChoices').style.display = 'flex';
   if($('tarifaSelected')) $('tarifaSelected').textContent = '';
-  if($('moneda')) $('moneda').value = 'CUP';
+  if($('tipoPagoUnico')) $('tipoPagoUnico').value = 'CUP';
+  if($('tipoPagoOtroBox')) $('tipoPagoOtroBox').classList.add('hidden');
   renderLineItems();
   recalcVale();
   if(!skipSave) localStorage.removeItem('vale_draft');
@@ -1267,8 +1538,7 @@ function saveValeDraft(){
     cGps: $('cGps')?.value||'',
     carnetUrl: state.carnetUrl||'',
     lineItems: JSON.parse(JSON.stringify(state.lineItems||[])),
-    moneda: $('moneda')?.value||'CUP',
-    tipoPago: $('tipoPago')?.value||'',
+    tipoPagoUnico: $('tipoPagoUnico')?.value||'CUP',
     mensajeria: $('mensajeria')?.value||0,
     tipoPagoMsj: $('tipoPagoMsj')?.value||'',
     tarifaSelected: $('tarifaSelected')?.textContent||'',
@@ -1319,14 +1589,11 @@ function loadValeDraft(){
       comision: l.comision||0,
       garantia: l.garantia||''
     })) : [];
-    if($('moneda') && d.moneda) {
-      const opts = [...$('moneda').options].map(o=>o.value);
-      if(opts.includes(d.moneda)) $('moneda').value = d.moneda;
+    if($('tipoPagoUnico') && d.tipoPagoUnico) {
+      const opts = [...$('tipoPagoUnico').options].map(o=>o.value);
+      if(opts.includes(d.tipoPagoUnico)) $('tipoPagoUnico').value = d.tipoPagoUnico;
     }
-    if($('tipoPago') && d.tipoPago) {
-      const opts = [...$('tipoPago').options].map(o=>o.value);
-      if(opts.includes(d.tipoPago)) $('tipoPago').value = d.tipoPago;
-    }
+    if($('tipoPagoOtroBox')) $('tipoPagoOtroBox').classList.toggle('hidden', $('tipoPagoUnico')?.value!=='Otro');
     if($('mensajeria')) $('mensajeria').value = d.mensajeria??0;
     if($('tipoPagoMsj')) $('tipoPagoMsj').value = d.tipoPagoMsj||'CUP';
     if($('tarifaSelected')) $('tarifaSelected').textContent = d.tarifaSelected||'';
@@ -1354,7 +1621,7 @@ function clearValeDraft(){
 
 // Auto-save draft on input
 function bindDraftAutosave(){
-  const ids = ['cNombre','cTelefono','cTelefono2','cDireccion','cMunicipio','cReferencia','cUbicacion','detalles','garantia','mensajeria','vueltoCantidad','entregaDia','entregaHora','moneda','tipoPago','tipoPagoMsj','hayVuelto'];
+  const ids = ['cNombre','cTelefono','cTelefono2','cDireccion','cMunicipio','cReferencia','cUbicacion','detalles','garantia','mensajeria','vueltoCantidad','entregaDia','entregaHora','tipoPagoUnico','tipoPagoMsj','hayVuelto'];
   ids.forEach(id=>{
     const el = $(id);
     if(!el) return;
@@ -1455,7 +1722,7 @@ function recalcVale(){
   const comision = totalProducto - totalBase;
   const mensajeria = Number($('mensajeria')?.value||0);
   if($('totalMsjDisplay')) $('totalMsjDisplay').value = mensajeria;
-  const moneda = $('moneda')?.value || '';
+  const moneda = $('tipoPagoUnico')?.value || '';
   let tarjetaExtra = 0;
   if(moneda.includes('tarjeta')){
     tarjetaExtra = totalProducto * 0.07;
@@ -1562,8 +1829,7 @@ async function submitVale(){
         tarjetaExtra: calc.tarjetaExtra||0
       },
       pagos: {
-        monedaProducto: $('moneda').value,
-        tipoPago: $('tipoPago').value,
+        metodoPago: $('tipoPagoUnico').value,
         tipoPagoMensajeria: $('tipoPagoMsj').value,
         vuelto: $('hayVuelto').checked,
         vueltoCantidad: $('vueltoCantidad').value.trim(),
@@ -1575,14 +1841,160 @@ async function submitVale(){
       tarifaZona: $('tarifaSelected').textContent || '',
       estado: 'pendiente'
     });
-    showToast('Vale de mensajería guardado 🌲');
+    showToast('Vale de mensajería enviado 🌲');
     resetValeForm();
   }catch(e){
     console.error(e);
     showToast('Error al guardar. Intenta de nuevo.');
   } finally {
-    if(btn){ btn.disabled=false; btn.textContent='🌲 Guardar vale de mensajería'; }
+    if(btn){ btn.disabled=false; btn.textContent='🌲 Enviar Vale de mensajería'; }
   }
+}
+
+/* ============ MODO DE VALE (Mensajería / Recogida) — punto #2 ============ */
+function switchValeMode(mode){
+  state.valeMode = mode;
+  if($('valeModeSelect')) $('valeModeSelect').value = mode;
+  if($('valeMensajeriaForm')) $('valeMensajeriaForm').classList.toggle('hidden', mode!=='mensajeria');
+  if($('valeRecogidaForm')) $('valeRecogidaForm').classList.toggle('hidden', mode!=='recogida');
+}
+function onTipoPagoUnicoChange(){
+  if($('tipoPagoOtroBox')) $('tipoPagoOtroBox').classList.toggle('hidden', $('tipoPagoUnico')?.value!=='Otro');
+}
+function onRMetodoPagoChange(){
+  if($('rMetodoPagoOtroBox')) $('rMetodoPagoOtroBox').classList.toggle('hidden', $('rMetodoPago')?.value!=='Otro');
+}
+function waOtroMetodo(){
+  const texto = encodeURIComponent('Tengo un cliente interesado su método de pago es ___ ¿lo aceptan?');
+  window.open(`https://wa.me/5354410879?text=${texto}`, '_blank');
+}
+
+/* ============ VALE DE RECOGIDA — punto #2 ============ */
+function addLineItemRecogida(prod){
+  state.lineItemsRecogida.push({
+    id: uid(),
+    nombre: prod?.nombre || '',
+    cantidad: 1,
+    precioBase: prod?.precioBase || 0,
+    precioGestor: '',
+    productoId: prod?.id || null,
+    local: prod?.local || '2',
+    comision: prod?.comisionValor || 0
+  });
+  renderLineItemsRecogida();
+  recalcRecogida();
+}
+function removeLineItemRecogida(id){
+  state.lineItemsRecogida = state.lineItemsRecogida.filter(l=>l.id!==id);
+  renderLineItemsRecogida(); recalcRecogida();
+}
+function updateLineItemRecogida(id, field, value){
+  const line = state.lineItemsRecogida.find(l=>l.id===id);
+  if(!line) return;
+  line[field] = value;
+  const subEl = document.getElementById('subR_'+id);
+  if(subEl){
+    const cant = parseFloat(line.cantidad);
+    const pg = parseFloat(line.precioGestor);
+    const c = Number.isFinite(cant) ? cant : 0;
+    const p = Number.isFinite(pg) ? pg : 0;
+    subEl.textContent = 'Subtotal: $'+money(c*p);
+  }
+  recalcRecogida();
+}
+function renderLineItemsRecogida(){
+  const box=$('lineItemsRecogida');
+  if(!box) return;
+  if(!state.lineItemsRecogida.length){ box.innerHTML='<div class="hint">Ningún artículo añadido todavía.</div>'; return; }
+  box.innerHTML = state.lineItemsRecogida.map(l=>{
+    const pgVal = (l.precioGestor===''||l.precioGestor===null||l.precioGestor===undefined) ? '' : String(l.precioGestor);
+    const cantVal = (l.cantidad===''||l.cantidad===null||l.cantidad===undefined) ? '' : String(l.cantidad);
+    const baseVal = (l.precioBase===''||l.precioBase===null||l.precioBase===undefined) ? '' : String(l.precioBase);
+    const comTxt = l.comision ? `<div class="comision-badge">Comisión del producto: $${money(l.comision)}</div>` : '';
+    return `
+    <div class="line-item">
+      <button class="remove-line" onclick="removeLineItemRecogida('${l.id}')">✕</button>
+      <input type="text" value="${escapeHtml(l.nombre)}" placeholder="Producto *" oninput="updateLineItemRecogida('${l.id}','nombre',this.value)">
+      ${comTxt}
+      <div class="row2">
+        <div><label style="margin-bottom:3px;">Cantidad *</label><input type="number" value="${cantVal}" min="1" inputmode="numeric" oninput="updateLineItemRecogida('${l.id}','cantidad',this.value)"></div>
+        <div><label style="margin-bottom:3px;">Precio *</label><input type="number" value="${baseVal}" step="0.01" inputmode="decimal" oninput="updateLineItemRecogida('${l.id}','precioBase',this.value)"></div>
+      </div>
+      <div class="row2">
+        <div><label style="margin-bottom:3px;">Precio gestor * (manual)</label><input type="number" value="${pgVal}" step="0.01" inputmode="decimal" placeholder="Escribe el precio" oninput="updateLineItemRecogida('${l.id}','precioGestor',this.value)"></div>
+        <div style="display:flex;flex-direction:column;justify-content:flex-end;font-size:12px;color:var(--muted);padding-bottom:9px;">
+          <span id="subR_${l.id}">Subtotal: $${money((Number(l.cantidad)||0)*(Number(l.precioGestor)||0))}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function recalcRecogida(){
+  const totalProducto = state.lineItemsRecogida.reduce((s,l)=>s+((Number(l.cantidad)||0)*(Number(l.precioGestor)||0)),0);
+  const totalBase = state.lineItemsRecogida.reduce((s,l)=>s+((Number(l.cantidad)||0)*(Number(l.precioBase)||0)),0);
+  const comision = totalProducto - totalBase;
+  if($('calcBoxRecogida')) $('calcBoxRecogida').innerHTML = `
+    <div class="calc-row"><span>Precio</span><span>$${money(totalBase)}</span></div>
+    <div class="calc-row"><span>Precio del gestor</span><span>$${money(totalProducto)}</span></div>
+    <div class="calc-row total"><span>Total</span><span>$${money(totalProducto)}</span></div>`;
+  return { totalProducto, comision };
+}
+function resetRecogidaForm(skipConfirm){
+  state.lineItemsRecogida = [];
+  if($('rNombre')) $('rNombre').value = '';
+  if($('rCI')) $('rCI').value = '';
+  if($('rDia')) $('rDia').value = todayISO();
+  if($('rHora')) $('rHora').value = '';
+  if($('rMetodoPago')) $('rMetodoPago').value = 'Efectivo USD';
+  if($('rMetodoPagoOtroBox')) $('rMetodoPagoOtroBox').classList.add('hidden');
+  renderLineItemsRecogida();
+  recalcRecogida();
+}
+async function submitValeRecogida(){
+  const nombre=$('rNombre').value.trim(), ci=$('rCI').value.trim();
+  if(!nombre || !ci){ showToast('Completa nombre y CI.'); return; }
+  if(!state.lineItemsRecogida.length){ showToast('Añade al menos un producto.'); return; }
+  for(const l of state.lineItemsRecogida){
+    if(l.precioGestor===''||l.precioGestor===null||l.precioGestor===undefined){ showToast('Completa el precio del gestor en todos los artículos.'); return; }
+  }
+  if(!$('rDia').value || !$('rHora').value){ showToast('Indica el día y la hora de recogida.'); return; }
+  const calc = recalcRecogida();
+  const btn=$('submitRecogidaBtn'); if(btn){ btn.disabled=true; btn.innerHTML='<span class="btn-spinner"></span> Enviando…'; }
+  try{
+    await addDoc(collection(db,'pedidos'), {
+      gestorId: state.user.id || state.user.username,
+      gestorNombre: state.user.nombre,
+      fecha: serverTimestamp(),
+      tipoVale: 'recogida',
+      cliente: { nombre, ci },
+      productos: state.lineItemsRecogida.map(l=>({
+        nombre:l.nombre, cantidad:Number(l.cantidad)||1, precioBase:Number(l.precioBase)||0,
+        precioGestor:Number(l.precioGestor)||0, local:l.local||'2', comision:l.comision||0, productoId:l.productoId
+      })),
+      precios: { totalProducto: calc.totalProducto, comision: calc.comision, totalCobrar: calc.totalProducto },
+      pagos: { metodoPago: $('rMetodoPago').value },
+      recogida: { dia: $('rDia').value, hora: $('rHora').value },
+      estado: 'pendiente'
+    });
+    showToast('Vale de recogida enviado 🏪');
+    resetRecogidaForm();
+  }catch(e){
+    console.error(e);
+    showToast('Error al guardar. Intenta de nuevo.');
+  } finally {
+    if(btn){ btn.disabled=false; btn.textContent='🏪 Enviar Vale de Recogida'; }
+  }
+}
+
+/* ============ MODO OSCURO — punto #4 ============ */
+function applyDarkMode(){
+  document.body.classList.toggle('dark', !!state.darkMode);
+  const knob = $('ttKnob'); if(knob) knob.textContent = state.darkMode ? '🌙' : '☀️';
+}
+function toggleDarkMode(){
+  state.darkMode = !state.darkMode;
+  localStorage.setItem('dark_mode', state.darkMode ? '1' : '0');
+  applyDarkMode();
 }
 
 /* ============ TARIFAS ============ */
@@ -1655,7 +2067,8 @@ function selectTarifa(zona, precio){
 }
 
 /* ============ CATÁLOGO PICKER ============ */
-function openCatalogPicker(){
+function openCatalogPicker(target){
+  state.pickerTarget = target || 'mensajeria';
   state.pickerCatFilter = '';
   $('catalogModal').classList.remove('hidden');
   renderCatFilters('pickerCatFilters', '', 'setPickerCat');
@@ -1695,7 +2108,8 @@ function renderCatalogPicker(){
 function pickCatalogProduct(id){
   const p = state.productos.find(x=>x.id===id);
   if(!p) return;
-  addLineItem(p);
+  if(state.pickerTarget==='recogida') addLineItemRecogida(p);
+  else addLineItem(p);
   closeCatalogPicker();
 }
 
@@ -1721,20 +2135,58 @@ function renderNewCarousel(){
   const box = $('newCarouselBox');
   if(!box) return;
   const news = state.productos.filter(p=>p.nuevoSemana && p.activo!==false);
-  if(!news.length){ box.classList.add('hidden'); return; }
+  if(!news.length){ box.classList.add('hidden'); stopCarouselAutoplay(); return; }
   box.classList.remove('hidden');
   const items = news.concat(news); // duplicate for seamless loop
-  box.innerHTML = `<div class="new-carousel-title">✨ Nuevos de la semana</div>
-    <div class="new-carousel" id="newCarouselTrack">${items.map(p=>`
-      <div class="new-item" onpointerdown="pauseCarousel()" onclick="openProductDetail('${p.id}')">
-        ${p.imagenUrl?`<img src="${p.imagenUrl}" draggable="false">`:`<div style="width:90px;height:90px;background:var(--surface-2);border-radius:10px;margin:0 auto 4px;"></div>`}
-        <div class="ni-name">${escapeHtml(p.nombre)}</div>
-        <div class="ni-price">$${money(p.precioBase)}</div>
-      </div>`).join('')}</div>`;
+  box.innerHTML = `
+    <div class="new-carousel-head">
+      <span class="new-carousel-title">✨ Nuevos de la semana</span>
+      <button type="button" class="carousel-toggle ${state.carouselCollapsed?'neon':''}" onclick="toggleNewCarousel()">${state.carouselCollapsed?'▸ Mostrar':'▾ Ocultar'}</button>
+    </div>
+    <div class="new-carousel-scroll ${state.carouselCollapsed?'hidden':''}" id="newCarouselScroll">
+      <div class="new-carousel" id="newCarouselTrack">${items.map(p=>`
+        <div class="new-item" onclick="openProductDetail('${p.id}')">
+          ${p.imagenUrl?`<img src="${p.imagenUrl}" draggable="false">`:`<div style="width:90px;height:90px;background:var(--surface-2);border-radius:10px;margin:0 auto 4px;"></div>`}
+          <div class="ni-name">${escapeHtml(p.nombre)}</div>
+          <div class="ni-price">$${money(p.precioBase)}</div>
+        </div>`).join('')}</div>
+    </div>`;
+  if(state.carouselCollapsed){ stopCarouselAutoplay(); }
+  else { startCarouselAutoplay(); }
 }
-function pauseCarousel(){
-  const track = $('newCarouselTrack');
-  if(track){ track.classList.add('paused'); clearTimeout(window._carT); window._carT=setTimeout(()=>track.classList.remove('paused'), 2500); }
+function toggleNewCarousel(){
+  state.carouselCollapsed = !state.carouselCollapsed;
+  localStorage.setItem('new_carousel_collapsed', state.carouselCollapsed ? '1' : '0');
+  renderNewCarousel();
+}
+function startCarouselAutoplay(){
+  stopCarouselAutoplay();
+  const scrollEl = $('newCarouselScroll');
+  if(!scrollEl) return;
+  let paused = false, resumeTimer = null;
+  const onInteract = ()=>{
+    paused = true;
+    clearTimeout(resumeTimer);
+    resumeTimer = setTimeout(()=>{ paused = false; }, 3000);
+  };
+  scrollEl.addEventListener('pointerdown', onInteract);
+  scrollEl.addEventListener('touchstart', onInteract, {passive:true});
+  scrollEl.addEventListener('wheel', onInteract, {passive:true});
+  window._carouselCleanup = ()=>{
+    scrollEl.removeEventListener('pointerdown', onInteract);
+    scrollEl.removeEventListener('touchstart', onInteract);
+    scrollEl.removeEventListener('wheel', onInteract);
+  };
+  window._carInterval = setInterval(()=>{
+    if(paused || !scrollEl.isConnected){ return; }
+    scrollEl.scrollLeft += 1;
+    const half = scrollEl.scrollWidth/2;
+    if(half>0 && scrollEl.scrollLeft >= half) scrollEl.scrollLeft -= half;
+  }, 30);
+}
+function stopCarouselAutoplay(){
+  clearInterval(window._carInterval); window._carInterval = null;
+  if(window._carouselCleanup){ window._carouselCleanup(); window._carouselCleanup = null; }
 }
 
 function renderGestorCatalogo(){
@@ -1786,7 +2238,10 @@ function renderProdList(items){
     const localCls = p.local==='2'?'local2':'local1';
     const localTxt = p.local==='2'?'2ndo Local':'1er Local';
     return `<div class="prod-card" style="cursor:pointer;" onclick="openProductDetail('${p.id}')">
-      ${imgs[0] ? `<img class="prod-thumb" src="${imgs[0]}">` : `<div class="prod-thumb empty">${ICONS.box}</div>`}
+      <div class="prod-thumb-box">
+        ${imgs[0] ? `<img class="prod-thumb" src="${imgs[0]}">` : `<div class="prod-thumb empty">${ICONS.box}</div>`}
+        ${qualityBadgeHtml(p.calidad)}
+      </div>
       <div class="prod-info">
         <b>${escapeHtml(p.nombre)}</b>
         <div class="cat">${escapeHtml(p.subcategoria||p.categoria||'')}</div>
@@ -1814,6 +2269,7 @@ function openProductDetail(id){
   const renderPhotos = ()=>{
     if(!imgs.length){ photos.innerHTML = `<div class="prod-thumb empty" style="width:100%;height:160px;margin:0 auto;">${ICONS.box}</div>`; return; }
     photos.innerHTML = `
+      ${qualityBadgeHtml(p.calidad)}
       <img src="${imgs[state.detailPhotoIdx]}" id="detailMainImg" onclick="downloadDetailImg()">
       ${imgs.length>1?`<button class="detail-nav prev" onclick="event.stopPropagation();shiftDetailPhoto(-1)">‹</button>
       <button class="detail-nav next" onclick="event.stopPropagation();shiftDetailPhoto(1)">›</button>`:''}
@@ -1824,11 +2280,26 @@ function openProductDetail(id){
     state.detailPhotoIdx = (state.detailPhotoIdx + d + imgs.length) % imgs.length;
     renderPhotos();
   };
-  window.downloadDetailImg = ()=>{
+  window.downloadDetailImg = async ()=>{
     const url = imgs[state.detailPhotoIdx];
     if(!url) return;
-    const a = document.createElement('a');
-    a.href = url; a.download = (p.nombre||'producto')+'.jpg'; a.target='_blank'; a.click();
+    const filename = (p.nombre||'producto').trim().replace(/[^a-z0-9-_ ]/gi,'').replace(/\s+/g,'_') + '.jpg';
+    try{
+      const resp = await fetch(url, { mode:'cors' });
+      if(!resp.ok) throw new Error('HTTP '+resp.status);
+      const blob = await resp.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>URL.revokeObjectURL(blobUrl), 4000);
+    }catch(e){
+      showToast('No se pudo descargar directo, abriendo imagen…');
+      window.open(url, '_blank');
+    }
   };
   const desc = p.descripcion||'Sin descripción';
   body.innerHTML = `
@@ -1842,16 +2313,9 @@ function openProductDetail(id){
     <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${escapeHtml(p.categoria||'')} ${p.subcategoria?'· '+escapeHtml(p.subcategoria):''}</div>
     ${p.garantia?`<div style="font-size:13px;margin-bottom:8px;"><b>Garantía:</b> ${escapeHtml(p.garantia)}</div>`:''}
     <div style="font-weight:700;font-size:13px;margin-bottom:4px;">Descripción</div>
-    <div class="detail-desc collapsed" id="detailDesc">${escapeHtml(desc)}</div>
-    <div class="detail-desc-toggle" onclick="toggleDetailDesc()">Ver más ▾</div>
+    <div class="detail-desc" id="detailDesc">${escapeHtml(desc)}</div>
     <button class="copy-btn" onclick="copyDetailDesc()">📋 Copiar descripción</button>
     <button class="btn-primary" style="margin-top:14px;" onclick="pickFromDetail('${p.id}')">➕ Añadir al vale</button>`;
-  window.toggleDetailDesc = ()=>{
-    const el = $('detailDesc');
-    const btn = el.nextElementSibling;
-    el.classList.toggle('collapsed');
-    btn.textContent = el.classList.contains('collapsed') ? 'Ver más ▾' : 'Ver menos ▴';
-  };
   window.copyDetailDesc = ()=>{
     navigator.clipboard?.writeText(desc).then(()=>showToast('Descripción copiada')).catch(()=>showToast('No se pudo copiar'));
   };
@@ -1860,8 +2324,16 @@ function openProductDetail(id){
 }
 function closeProductDetail(){ $('productDetailModal').classList.add('hidden'); state.detailProduct=null; }
 function pickFromDetail(id){
+  const p = state.productos.find(x=>x.id===id);
   closeProductDetail();
-  pickCatalogProduct(id);
+  if(!p) return;
+  // Modo Mensajería por defecto, salvo producto del 2do Local (respeta el modo actual del gestor)
+  if(p.local!=='2'){
+    switchValeMode('mensajeria');
+  }
+  switchTab('vale');
+  if(state.valeMode==='recogida') addLineItemRecogida(p);
+  else addLineItem(p);
 }
 
 
@@ -1870,6 +2342,15 @@ function renderHistorial(){
   const box=$('histList');
   const mine = state.pedidos.filter(o=>o.gestorId===(state.user.id||state.user.username))
     .sort((a,b)=>(b.fecha?.seconds||0)-(a.fecha?.seconds||0));
+
+  const totalFacturado = mine.reduce((s,o)=>s+(o.precios?.totalCobrar||0),0);
+  const totalComision = mine.reduce((s,o)=>s+(o.precios?.comision||0),0);
+  const pagos = (state.myGestorData && state.myGestorData.pagosComision) || [];
+  const totalPagado = pagos.reduce((s,p)=>s+(p.monto||0),0);
+  const pendiente = Math.max(0, totalComision - totalPagado);
+  if($('histStatFacturado')) $('histStatFacturado').textContent = '$'+money(totalFacturado);
+  if($('histStatPendiente')) $('histStatPendiente').textContent = '$'+money(pendiente);
+
   if(!mine.length){ box.innerHTML='<div class="hint">Aún no tienes pedidos.</div>'; return; }
   box.innerHTML = mine.map(o=>{
     const st = o.estado||'pendiente';
@@ -1882,6 +2363,27 @@ function renderHistorial(){
     </div>`;
   }).join('');
 }
+function switchHistClaim(mode){
+  document.querySelectorAll('.hist-claim-tab').forEach(b=>b.classList.toggle('active', b.dataset.hc===mode));
+  $('histClaimTransferencia').classList.toggle('hidden', mode!=='transferencia');
+  $('histClaimEfectivo').classList.toggle('hidden', mode!=='efectivo');
+}
+function submitComisionTransferencia(){
+  const tarjeta = $('histTarjeta').value.trim();
+  const telefono = $('histTelefono').value.trim();
+  if(!tarjeta || !telefono){ showToast('Completa la tarjeta y el teléfono.'); return; }
+  const nombre = state.user?.nombre || '';
+  const texto = encodeURIComponent(
+    `Quiero cobrar mi comisión por Transferencia\nGestor: ${nombre}\nTarjeta (Transfermóvil): ${tarjeta}\nTeléfono de confirmación: ${telefono}`
+  );
+  window.open(`https://wa.me/5354410879?text=${texto}`, '_blank');
+}
+function goHistComunidadWa(){
+  const link = state.settings.waComunidad;
+  if(!link){ showToast('El Admin aún no ha configurado el enlace de la comunidad.'); return; }
+  window.open(link, '_blank');
+}
+function goHistNovedades(){ openNovedades(); }
 
 /* ============ RESUMEN GESTOR ============ */
 function renderGestorResumen(){
@@ -2005,6 +2507,7 @@ function openProductModal(id){
   $('pActivo').checked = p?.activo !== false;
   if($('pGarantia')) $('pGarantia').value = p?.garantia || '';
   if($('pNuevoSemana')) $('pNuevoSemana').checked = !!p?.nuevoSemana;
+  if($('pCalidad')) $('pCalidad').value = p?.calidad || '';
   state.photoUrls = Array.isArray(p?.imagenes) && p.imagenes.length ? [...p.imagenes] : (p?.imagenUrl ? [p.imagenUrl] : []);
   state.photoUrl = state.photoUrls[0]||'';
   $('photoUploadHint').innerHTML = 'Toca para añadir fotos';
@@ -2068,6 +2571,7 @@ async function saveProduct(){
     imagenes,
     garantia: $('pGarantia')?.value.trim() || '',
     nuevoSemana: !!$('pNuevoSemana')?.checked,
+    calidad: $('pCalidad')?.value || '',
     activo: $('pActivo').checked
   };
   try{
@@ -2086,6 +2590,12 @@ async function saveProduct(){
   finally {
     if(btn){ btn.disabled=false; btn.textContent = prevLabel || 'Guardar producto'; }
   }
+}
+
+const QUALITY_LABELS = { nuevo:'Nuevo', gradoA:'Grado A', gradoAPlus:'Grado A+' };
+function qualityBadgeHtml(calidad){
+  if(!calidad || !QUALITY_LABELS[calidad]) return '';
+  return `<span class="quality-badge ${calidad}">${QUALITY_LABELS[calidad]}</span>`;
 }
 
 const CAT_EMOJI = {
@@ -2194,6 +2704,7 @@ function renderAdminGestores(){
         <div class="hist-top"><b>${escapeHtml(g.nombre)}</b></div>
         <div class="hist-meta">@${escapeHtml(g.username)} ${g.telefono? ' · '+escapeHtml(g.telefono):''}</div>
         <div class="prod-actions" style="margin-top:8px;">
+          <button title="Comisiones" style="width:auto;padding:0 10px;font-size:11px;font-weight:700;" onclick="openGestorComisionModal('${g.id}')">💰 Comisiones</button>
           <button title="Editar" onclick="openGestorModal('${g.id}')">${ICONS.pencil}</button>
           <button title="Eliminar" class="del" onclick="removeGestor('${g.id}')">${ICONS.trash}</button>
         </div>
@@ -2232,6 +2743,58 @@ async function removeGestor(id){
   if(!confirm('¿Eliminar este gestor?')) return;
   await deleteDoc(doc(db,'gestores',id));
   showToast('Gestor eliminado.');
+}
+
+/* ============ COMISIONES DE GESTOR (Admin) — punto #15 ============ */
+function openGestorComisionModal(id){
+  state.viewingGestorId = id;
+  const g = state.gestores.find(x=>x.id===id);
+  $('gcNombre').textContent = g?.nombre || '';
+  renderGestorComision();
+  $('gestorComisionModal').classList.remove('hidden');
+  pushNavState();
+}
+function closeGestorComisionModal(){
+  $('gestorComisionModal').classList.add('hidden');
+  state.viewingGestorId = null;
+}
+function renderGestorComision(){
+  const g = state.gestores.find(x=>x.id===state.viewingGestorId);
+  if(!g) return;
+  const suyos = state.pedidos.filter(o=>o.gestorId===g.id);
+  const totalComision = suyos.reduce((s,o)=>s+(o.precios?.comision||0),0);
+  const pagos = g.pagosComision || [];
+  const totalPagado = pagos.reduce((s,p)=>s+(p.monto||0),0);
+  const pendiente = Math.max(0, totalComision - totalPagado);
+  $('gcTotalComision').textContent = '$'+money(totalComision);
+  $('gcTotalPagado').textContent = '$'+money(totalPagado);
+  $('gcPendiente').textContent = '$'+money(pendiente);
+  const box = $('gcPagosList');
+  if(!pagos.length){ box.innerHTML='<div class="hint">Sin pagos registrados.</div>'; return; }
+  box.innerHTML = pagos.slice().reverse().map(p=>{
+    const fecha = p.fecha ? new Date(p.fecha).toLocaleDateString() : '—';
+    return `<div class="hist-item">
+      <div class="hist-top"><b>$${money(p.monto)}</b><span class="status pagado">${escapeHtml(p.metodo||'')}</span></div>
+      <div class="hist-meta">${fecha}${p.nota?' · '+escapeHtml(p.nota):''}</div>
+    </div>`;
+  }).join('');
+}
+async function registrarPagoComision(){
+  const g = state.gestores.find(x=>x.id===state.viewingGestorId);
+  if(!g) return;
+  const monto = parseFloat($('gcMonto').value);
+  const metodo = $('gcMetodo').value;
+  const nota = $('gcNota').value.trim();
+  if(!monto || monto<=0){ showToast('Escribe un monto válido.'); return; }
+  const btn = document.querySelector('#gestorComisionModal .btn-primary');
+  if(btn){ btn.disabled=true; btn.innerHTML='<span class="btn-spinner"></span> Guardando…'; }
+  try{
+    const pago = { monto, metodo, nota, fecha: new Date().toISOString() };
+    await updateDoc(doc(db,'gestores', g.id), { pagosComision: arrayUnion(pago) });
+    $('gcMonto').value=''; $('gcNota').value='';
+    showToast('Pago registrado.');
+  }catch(e){ showToast('Error al registrar el pago.'); }
+  finally{ if(btn){ btn.disabled=false; btn.textContent='Registrar pago'; } }
 }
 
 /* ============ NOVEDADES ============ */
@@ -2329,13 +2892,15 @@ async function deleteNovedad(id){
 /* ============ CONFIG ============ */
 function renderAdminConfig(){
   $('cfgWhatsapp').value = state.settings.waNumber || '';
+  if($('cfgComunidad')) $('cfgComunidad').value = state.settings.waComunidad || '';
 }
 async function saveConfig(){
   const wa = $('cfgWhatsapp').value.trim();
+  const comunidad = $('cfgComunidad')?.value.trim() || '';
   const btns = document.querySelectorAll('#adminPanelConfig .btn-primary');
   btns.forEach(b=>{ b.disabled=true; b.innerHTML='<span class="btn-spinner"></span> Guardando…'; });
   try{
-    await setDoc(doc(db,'settings','general'), { waNumber: wa }, { merge:true });
+    await setDoc(doc(db,'settings','general'), { waNumber: wa, waComunidad: comunidad }, { merge:true });
     showToast('Configuración guardada.');
   }catch(e){ showToast('Error al guardar configuración.'); }
   finally {
@@ -2350,21 +2915,33 @@ Object.assign(window, {
   openCatalogPicker, closeCatalogPicker, renderCatalogPicker, pickCatalogProduct, setPickerCat,
   openProductModal, closeProductModal, handlePhotoUpload, saveProduct, removeProduct, updateSubcats, toggleStockField,
   updateOrderStatus, openGestorModal, closeGestorModal, saveGestor, removeGestor, saveConfig,
+  switchHistClaim, submitComisionTransferencia, goHistComunidadWa, goHistNovedades,
+  openGestorComisionModal, closeGestorComisionModal, registrarPagoComision,
   openTarifasModal, closeTarifasModal, switchTarifaLocal, switchTarifaTipo, renderTarifas, selectTarifa,
   handleCarnetUpload, captureGPS, handlePerfilPhoto, pickCarnet, removeCarnet, clearValeDraft,
   openNovedades, closeNovedades, publishNovedad, deleteNovedad, dismissNovedad, onNovedadTap, closeConfirm,
   setAdminCat, installPWA, dismissPWA,
   setCatalogView, onGestorSearch, goCatalogCats, goCatalogCat, goCatalogSub,
-  openProductDetail, closeProductDetail, pickFromDetail, removeProductPhoto, pauseCarousel,
-  applyAppUpdate,
+  openProductDetail, closeProductDetail, pickFromDetail, removeProductPhoto,
+  applyAppUpdate, toggleNewCarousel, toggleDarkMode, switchValeMode,
+  onTipoPagoUnicoChange, onRMetodoPagoChange, waOtroMetodo,
+  addLineItemRecogida, removeLineItemRecogida, updateLineItemRecogida, submitValeRecogida,
   $: (id)=>document.getElementById(id)
 });
 
-/* ============ INIT: session restore ============ */
+/* ============ INIT: restaurar sesión (offline-first) ============ */
 (function initApp(){
-  // Restore session (pull-to-refresh safe)
+  applyDarkMode();
+  // Sesión guardada en localStorage: sobrevive a cerrar la app por completo (no solo
+  // recargar la pestaña), así el gestor entra directo a su última vista sin esperar
+  // respuesta de la nube y sin riesgo de error si no hay conexión.
   try{
-    const sess = sessionStorage.getItem('ds_user');
+    let sess = localStorage.getItem('ds_user');
+    if(!sess){
+      // Migración: versiones anteriores guardaban la sesión en sessionStorage.
+      const old = sessionStorage.getItem('ds_user');
+      if(old){ localStorage.setItem('ds_user', old); sess = old; sessionStorage.removeItem('ds_user'); }
+    }
     if(sess){
       state.user = JSON.parse(sess);
       enterApp();
@@ -2372,7 +2949,7 @@ Object.assign(window, {
       return;
     }
   }catch(e){}
-  // Remember me
+  // Recordarme: autocompleta e intenta iniciar sesión (usa caché offline si no hay red)
   try{
     const rem = localStorage.getItem('ds_remember');
     if(rem){
@@ -2391,6 +2968,9 @@ Object.assign(window, {
 })();
 
 document.getElementById('entregaDia') && (document.getElementById('entregaDia').value = todayISO());
+document.getElementById('rDia') && (document.getElementById('rDia').value = todayISO());
+renderLineItemsRecogida();
+recalcRecogida();
 </script>
 </body>
 </html>
