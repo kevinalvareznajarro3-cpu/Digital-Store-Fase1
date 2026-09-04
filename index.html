@@ -191,6 +191,35 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 .tarifa-tabs{display:flex;gap:6px;margin-bottom:12px;}
 .tarifa-tab{flex:1;padding:10px;border-radius:10px;font-weight:700;font-size:12px;text-align:center;background:var(--surface-2);border:1px solid var(--line);color:var(--muted);}
 .tarifa-tab.active{background:var(--green);color:#fff;border-color:var(--green);}
+
+/* ===== Modal genérico de selección (punto #2) ===== */
+.csel-display{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-size:13.5px;font-weight:600;color:var(--text);display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;}
+.csel-display .csel-arrow{flex:none;color:var(--muted);font-size:12px;}
+.csel-native{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}
+.csel-group-label{font-size:10.5px;font-weight:800;color:var(--green-dim);text-transform:uppercase;letter-spacing:.4px;padding:10px 4px 5px;}
+.csel-item{display:flex;justify-content:space-between;align-items:center;padding:11px 10px;border-radius:10px;cursor:pointer;font-size:13.5px;border-bottom:1px solid var(--line);}
+.csel-item:active{background:rgba(26,74,46,.08);}
+.csel-item .csel-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--line);flex:none;position:relative;}
+.csel-item.selected .csel-radio{border-color:var(--green);}
+.csel-item.selected .csel-radio::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--green);}
+.csel-item.selected{font-weight:700;color:var(--green);}
+
+/* ===== Detalle de pedido Admin (punto #5) ===== */
+.od-section{font-size:11px;font-weight:800;color:var(--green-dim);text-transform:uppercase;letter-spacing:.4px;margin:14px 0 6px;}
+.od-section:first-child{margin-top:0;}
+.od-row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px;}
+.od-row span:first-child{color:var(--muted);flex:none;}
+.od-row span:last-child{text-align:right;font-weight:600;}
+.od-carnet-img{width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin-top:6px;background:var(--surface-2);}
+
+/* ===== Vista previa del vale (punto #6) ===== */
+.voucher-preview-fab{position:fixed;right:16px;bottom:96px;width:58px;height:58px;border-radius:50%;z-index:60;display:flex;align-items:center;justify-content:center;padding:0;}
+.voucher-preview-fab .vpf-glow{position:absolute;inset:-5px;border-radius:50%;background:conic-gradient(from 0deg,#ff3b30,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#5856d6,#ff2d55,#ff3b30);animation:vpfSpin 3s linear infinite;filter:blur(5px);opacity:.9;}
+.voucher-preview-fab .vpf-icon{position:relative;z-index:1;width:50px;height:50px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(0,0,0,.35);}
+@keyframes vpfSpin{to{transform:rotate(360deg);}}
+.voucher-preview-panel{position:fixed;left:0;right:0;bottom:0;max-height:60vh;background:var(--surface);border-radius:18px 18px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.35);z-index:59;display:flex;flex-direction:column;padding:14px 16px calc(14px + env(safe-area-inset-bottom));}
+.vpp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex:none;}
+.voucher-preview-text{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;white-space:pre-wrap;font-family:inherit;font-size:12.5px;line-height:1.55;background:var(--surface-2);border-radius:12px;padding:12px;margin:0;color:var(--text);}
 .local-indicator{font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;background:#E8F5E9;color:var(--green);margin-bottom:10px;text-align:center;}
 
 /* Categorías */
@@ -296,10 +325,11 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 .clear-draft-btn{width:100%;padding:10px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line);color:var(--danger);font-weight:700;font-size:13px;margin-bottom:12px;}
 
 /* ===== Modo oscuro (punto #4) ===== */
-body.dark{
+html.dark, body.dark{
   --bg:#0F1512; --surface:#1B2420; --surface-2:#222D27; --text:#EDEFEA; --muted:#93A69A;
   --line:#33413A; --avail-ok-bg:#1E3A24; --avail-low-bg:#3A331A; --avail-out-bg:#3A2A18;
 }
+html.dark{background:#0F1512;}
 body.dark input,body.dark select,body.dark textarea{background:var(--surface-2);}
 .theme-toggle{width:44px;height:25px;border-radius:20px;background:var(--surface-2);border:1px solid var(--line);position:relative;flex:none;transition:background .2s;}
 .theme-toggle .tt-knob{position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:11px;transition:left .2s;}
@@ -339,6 +369,51 @@ body.dark .carousel-toggle.neon{ color:#3a2c00; }
 .hist-claim-text{font-size:12.5px;line-height:1.6;color:var(--text);background:var(--surface-2);border-radius:10px;padding:12px;margin-bottom:12px;}
 .hist-claim-text b{color:var(--green-dim);}
 body.dark .hist-claim-text b{color:var(--gold);}
+
+/* ===== Historial: rediseño visual (punto #8) ===== */
+.hist-hero{position:relative;overflow:hidden;border-radius:20px;padding:22px 88px 20px 20px;margin-bottom:14px;
+  background:linear-gradient(135deg,var(--green) 0%,var(--green-dim) 60%,#12331F 100%);
+  color:#fff;box-shadow:0 12px 28px rgba(15,46,30,.35);}
+body.dark .hist-hero{box-shadow:0 12px 26px rgba(0,0,0,.55);}
+.hist-hero::before{content:'';position:absolute;top:-46px;right:-30px;width:170px;height:170px;border-radius:50%;
+  background:radial-gradient(circle,rgba(232,184,37,.28),transparent 70%);pointer-events:none;}
+.hist-hero::after{content:'';position:absolute;left:-30%;top:0;bottom:0;width:60%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.08),transparent);
+  animation:histHeroSheen 5s ease-in-out infinite;pointer-events:none;}
+@keyframes histHeroSheen{0%{transform:translateX(-60%);}55%,100%{transform:translateX(260%);}}
+.hist-hero-label{position:relative;z-index:1;font-size:11px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;opacity:.85;display:flex;align-items:center;gap:6px;}
+.hist-hero-label .h-ic{color:var(--gold);}
+.hist-hero-amount{position:relative;z-index:1;font-size:32px;font-weight:800;margin:7px 0 2px;letter-spacing:-.5px;}
+.hist-hero-sub{position:relative;z-index:1;font-size:11.5px;opacity:.78;font-weight:600;}
+.coin-stack{position:absolute;top:18px;right:18px;width:58px;height:52px;z-index:1;}
+.coin-stack .coin{position:absolute;border-radius:50%;background:linear-gradient(135deg,#F9E08B,var(--gold) 70%);
+  box-shadow:inset 0 -3px 6px rgba(122,92,0,.35), inset 0 2px 3px rgba(255,255,255,.6), 0 3px 8px rgba(0,0,0,.3);
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:#7a5c00;font-size:15px;}
+.coin-stack .coin3{width:30px;height:30px;left:0;top:0;opacity:.8;animation:coinFloat 2.8s ease-in-out infinite;}
+.coin-stack .coin2{width:36px;height:36px;left:14px;top:8px;opacity:.92;animation:coinFloat 2.8s ease-in-out infinite .25s;}
+.coin-stack .coin1{width:42px;height:42px;left:6px;top:16px;animation:coinFloat 2.8s ease-in-out infinite .5s;}
+@keyframes coinFloat{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-6px) rotate(-6deg);}}
+
+.hist-stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.hist-stat-card{background:var(--surface);border-radius:14px;padding:13px 12px;display:flex;flex-direction:column;gap:9px;
+  border-left:4px solid var(--line);box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.hist-stat-card.wide{grid-column:1 / -1;flex-direction:row;align-items:center;gap:12px;}
+.hist-stat-card .hsc-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;color:var(--muted);background:var(--surface-2);}
+.hist-stat-card .hsc-icon svg{width:18px;height:18px;}
+.hist-stat-card .hsc-n{font-size:19px;font-weight:800;color:var(--text);}
+.hist-stat-card .hsc-l{font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px;}
+.hist-stat-card.gold{border-left-color:var(--gold);}
+.hist-stat-card.gold .hsc-icon{background:var(--avail-low-bg);color:#8a6a00;}
+body.dark .hist-stat-card.gold .hsc-icon{color:var(--gold);}
+.hist-stat-card.green{border-left-color:var(--ok);}
+.hist-stat-card.green .hsc-icon{background:var(--avail-ok-bg);color:var(--ok);}
+.hist-stat-card.blue{border-left-color:var(--blue);}
+.hist-stat-card.blue .hsc-icon{background:#DCEAFB;color:var(--blue);}
+body.dark .hist-stat-card.blue .hsc-icon{background:#1B2A3D;color:#7EB3E8;}
+.hist-item.tappable{cursor:pointer;transition:transform .15s ease;}
+.hist-item.tappable:active{transform:scale(.98);}
+.hist-item.tappable .hist-tap-hint{font-size:10.5px;color:var(--green-dim);font-weight:700;margin-top:5px;display:flex;align-items:center;gap:3px;}
+body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 
 /* ===== Etiquetas de calidad del producto (punto #10) ===== */
 .prod-thumb-box{position:relative;width:64px;height:64px;border-radius:10px;flex:none;overflow:hidden;}
@@ -429,7 +504,8 @@ body.dark .hist-claim-text b{color:var(--gold);}
     <section id="view-vale" class="view hidden">
       <div class="card vale-mode-field">
         <label>Tipo de vale</label>
-        <select id="valeModeSelect" onchange="switchValeMode(this.value)">
+        <button type="button" class="csel-display" onclick="openChoiceSelect('valeModeSelect','🌲 Tipo de vale')"><span id="valeModeSelect_label">🌲 Vale de Mensajería</span><span class="csel-arrow">▾</span></button>
+        <select id="valeModeSelect" class="csel-native" onchange="switchValeMode(this.value)">
           <option value="mensajeria">🌲 Vale de Mensajería</option>
           <option value="recogida">🏪 Vale de Recogida (en tienda)</option>
         </select>
@@ -457,13 +533,8 @@ body.dark .hist-claim-text b{color:var(--gold);}
         </div>
         <div class="field"><label>Dirección exacta con # *</label><input type="text" id="cDireccion" placeholder="Calle, #, entre calles…"></div>
         <div class="row2">
-          <div class="field"><label>Municipio / Reparto</label><input type="text" id="cMunicipio" placeholder="Opcional"></div>
+          <div class="field"><label>Municipio / Reparto *</label><input type="text" id="cMunicipio" placeholder="Ej: Marianao, reparto Pocito"></div>
           <div class="field"><label>Referencia</label><input type="text" id="cReferencia" placeholder="Opcional"></div>
-        </div>
-        <div class="field">
-          <label>Ubicación / dirección del cliente</label>
-          <textarea id="cUbicacion" rows="2" placeholder="Escribe o pega aquí la dirección del cliente (desde WhatsApp, etc.)"></textarea>
-          <input type="hidden" id="cGps">
         </div>
         <div id="blacklistAlert" class="hidden" style="background:var(--avail-out-bg);color:var(--avail-out-text);border-radius:10px;padding:10px;font-size:12.5px;font-weight:700;margin-top:6px;"></div>
       </div>
@@ -480,7 +551,8 @@ body.dark .hist-claim-text b{color:var(--gold);}
         <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6.5" width="20" height="11" rx="2"/><circle cx="12" cy="12" r="2.6"/></svg></span>Pago y mensajería</h2>
         <div class="field">
           <label>Tipo de pago *</label>
-          <select id="tipoPagoUnico" onchange="recalcVale(); onTipoPagoUnicoChange();">
+          <button type="button" class="csel-display" onclick="openChoiceSelect('tipoPagoUnico','💳 Tipo de pago')"><span id="tipoPagoUnico_label">CUP</span><span class="csel-arrow">▾</span></button>
+          <select id="tipoPagoUnico" class="csel-native" onchange="recalcVale(); onTipoPagoUnicoChange();">
             <optgroup label="🏪 1er Local">
               <option>CUP</option>
               <option>USD</option>
@@ -508,7 +580,8 @@ body.dark .hist-claim-text b{color:var(--gold);}
         </div>
         <div class="row2">
           <div class="field"><label>Tipo pago mensajería *</label>
-            <select id="tipoPagoMsj"><option>CUP</option><option>USD</option><option>Otro</option></select>
+            <button type="button" class="csel-display" onclick="openChoiceSelect('tipoPagoMsj','🌲 Tipo pago mensajería')"><span id="tipoPagoMsj_label">CUP</span><span class="csel-arrow">▾</span></button>
+            <select id="tipoPagoMsj" class="csel-native" onchange="syncChoiceLabel('tipoPagoMsj')"><option>CUP</option><option>USD</option><option>Otro</option></select>
           </div>
           <div class="field"><label>Total mensajería</label>
             <input type="number" id="totalMsjDisplay" value="0" step="0.01" readonly style="background:var(--surface-2);">
@@ -521,11 +594,16 @@ body.dark .hist-claim-text b{color:var(--gold);}
           <div class="row2">
             <div class="field"><label>Cantidad de vuelto *</label><input type="text" id="vueltoCantidad" placeholder="Ej: 500 o quinientos"></div>
             <div class="field"><label>Moneda del vuelto *</label>
-              <select id="vueltoMoneda"><option>CUP</option><option>USD</option></select>
+              <button type="button" class="csel-display" onclick="openChoiceSelect('vueltoMoneda','💵 Moneda del vuelto')"><span id="vueltoMoneda_label">CUP</span><span class="csel-arrow">▾</span></button>
+              <select id="vueltoMoneda" class="csel-native" onchange="syncChoiceLabel('vueltoMoneda')"><option>CUP</option><option>USD</option></select>
             </div>
           </div>
         </div>
         <div class="calc-box" id="calcBox"></div>
+        <div class="field" style="margin-top:12px;">
+          <label>Comisión del gestor (automática, editable) *</label>
+          <input type="number" id="comisionGestor" step="0.01" placeholder="0.00" oninput="state.comisionEditada=true; saveValeDraft();">
+        </div>
       </div>
 
       <div class="card">
@@ -555,6 +633,10 @@ body.dark .hist-claim-text b{color:var(--gold);}
           <div id="lineItemsRecogida"></div>
           <button type="button" class="add-line-btn" onclick="addLineItemRecogida()">+ Añadir artículo manual</button>
           <div class="calc-box" id="calcBoxRecogida" style="margin-top:12px;"></div>
+          <div class="field" style="margin-top:12px;">
+            <label>Comisión del gestor (automática, editable) *</label>
+            <input type="number" id="comisionGestorRecogida" step="0.01" placeholder="0.00" oninput="state.comisionEditadaRecogida=true;">
+          </div>
         </div>
 
         <div class="card">
@@ -565,7 +647,8 @@ body.dark .hist-claim-text b{color:var(--gold);}
           </div>
           <div class="field">
             <label>Moneda de pago *</label>
-            <select id="rMetodoPago" onchange="onRMetodoPagoChange()">
+            <button type="button" class="csel-display" onclick="openChoiceSelect('rMetodoPago','💵 Moneda de pago')"><span id="rMetodoPago_label">Efectivo USD</span><span class="csel-arrow">▾</span></button>
+            <select id="rMetodoPago" class="csel-native" onchange="onRMetodoPagoChange(); syncChoiceLabel('rMetodoPago');">
               <option>Efectivo USD</option>
               <option>Efectivo CUP</option>
               <option>Efectivo Euros</option>
@@ -586,13 +669,50 @@ body.dark .hist-claim-text b{color:var(--gold);}
 
         <button class="btn-primary" id="submitRecogidaBtn" onclick="submitValeRecogida()">🏪 Enviar Vale de Recogida</button>
       </div>
+
+      <!-- Vista previa en vivo del vale — punto #6 -->
+      <button type="button" class="voucher-preview-fab" onclick="toggleVoucherPreview()" title="Vista previa del vale">
+        <span class="vpf-glow"></span>
+        <span class="vpf-icon">🌲</span>
+      </button>
+      <div id="voucherPreviewPanel" class="voucher-preview-panel hidden">
+        <div class="vpp-head">
+          <b>👁️ Vista previa del vale</b>
+          <div style="display:flex;gap:6px;">
+            <button type="button" class="btn-secondary" style="width:auto;padding:7px 12px;font-size:12px;" onclick="copyVoucherPreview()">📋 Copiar</button>
+            <button type="button" onclick="toggleVoucherPreview()" style="width:30px;height:30px;border-radius:50%;background:var(--surface-2);flex:none;">✕</button>
+          </div>
+        </div>
+        <pre id="voucherPreviewText" class="voucher-preview-text"></pre>
+      </div>
     </section>
 
     <!-- HISTORIAL -->
     <section id="view-historial" class="view hidden">
-      <div class="stat-grid">
-        <div class="stat-box"><div class="n" id="histStatFacturado">$0</div><div class="l">Total facturado</div></div>
-        <div class="stat-box"><div class="n" id="histStatPendiente">$0</div><div class="l">Comisión pendiente</div></div>
+      <div class="hist-hero">
+        <div class="coin-stack" aria-hidden="true">
+          <div class="coin coin3"></div>
+          <div class="coin coin2"></div>
+          <div class="coin coin1">$</div>
+        </div>
+        <div class="hist-hero-label"><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2Z"/><circle cx="12" cy="12" r="2.6"/><path d="M6 8v0M18 16v0"/></svg></span>Comisión total generada</div>
+        <div class="hist-hero-amount" id="histStatComisionTotal">$0.00</div>
+        <div class="hist-hero-sub">Como gestor de Digital Store 🌲</div>
+      </div>
+
+      <div class="hist-stat-cards">
+        <div class="hist-stat-card gold">
+          <div class="hsc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div><div class="hsc-n" id="histStatPendiente">$0</div><div class="hsc-l">Comisión pendiente</div></div>
+        </div>
+        <div class="hist-stat-card green">
+          <div class="hsc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <div><div class="hsc-n" id="histStatRecaudado">$0</div><div class="hsc-l">Comisión recaudada</div></div>
+        </div>
+        <div class="hist-stat-card blue wide">
+          <div class="hsc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></div>
+          <div><div class="hsc-n" id="histStatPedidos">0</div><div class="hsc-l">Pedidos realizados</div></div>
+        </div>
       </div>
 
       <div class="card">
@@ -624,17 +744,12 @@ body.dark .hist-claim-text b{color:var(--gold);}
       </div>
     </section>
 
-    <!-- RESUMEN GESTOR -->
-    <section id="view-resumen" class="view hidden">
-      <div class="stat-grid">
-        <div class="stat-box"><div class="n" id="gStatComision">$0</div><div class="l">Comisión total</div></div>
-        <div class="stat-box"><div class="n" id="gStatPendiente">$0</div><div class="l">Pendiente</div></div>
-        <div class="stat-box"><div class="n" id="gStatRecaudado">$0</div><div class="l">Recaudado</div></div>
-        <div class="stat-box"><div class="n" id="gStatPedidos">0</div><div class="l">Pedidos</div></div>
-      </div>
-      <div class="card">
-        <h2>Desglose de comisiones</h2>
-        <div id="gComisionList"><div class="hint">Sin datos todavía</div></div>
+    <!-- AYUDA -->
+    <section id="view-ayuda" class="view hidden">
+      <div class="card" style="text-align:center;padding:32px 18px;">
+        <div style="font-size:38px;margin-bottom:8px;">🌲</div>
+        <h2 style="justify-content:center;">Ayuda</h2>
+        <div class="hint" style="padding:4px 0 0;">Próximamente encontrarás aquí guías y respuestas a tus preguntas más frecuentes como gestor.</div>
       </div>
     </section>
 
@@ -654,6 +769,11 @@ body.dark .hist-claim-text b{color:var(--gold);}
       <div class="card">
         <h2>Mi WhatsApp de contacto</h2>
         <div id="perfilWa" style="font-size:14px;font-weight:700;"></div>
+      </div>
+      <div class="card">
+        <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 12a9 9 0 0 1-15.5 6.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></span>Actualizar aplicación</h2>
+        <div class="hint" style="padding:0 0 12px;text-align:left;">Si notas que algo no carga bien o quieres asegurarte de tener la última versión de Digital Store, usa este botón para forzar la actualización y limpiar la caché vieja.</div>
+        <button class="btn-secondary" id="forceRefreshBtn" onclick="forceAppRefresh()">🔄 Refrescar aplicación</button>
       </div>
     </section>
 
@@ -736,7 +856,7 @@ body.dark .hist-claim-text b{color:var(--gold);}
     <button class="tab-btn active" data-tab="vale" onclick="switchTab('vale')"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 20V6a2 2 0 0 1 2-2h9l5 5v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><path d="M14.5 4.5V9a1 1 0 0 0 1 1h4.5"/><path d="M8 13h6M8 16.5h4"/></svg></span>Vale</button>
     <button class="tab-btn" data-tab="catalogo" onclick="switchTab('catalogo')"><span class="ic"><svg viewBox="0 0 24 24"><path d="M21 8.5 12 4 3 8.5 12 13l9-4.5Z"/><path d="M3 8.5V16l9 4.5 9-4.5V8.5"/><path d="M12 13v7.5"/></svg></span>Catálogo</button>
     <button class="tab-btn" data-tab="historial" onclick="switchTab('historial')"><span class="ic"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3.5 2"/></svg></span>Historial</button>
-    <button class="tab-btn" data-tab="resumen" onclick="switchTab('resumen')"><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 20V10M12 20V4M20 20v-7"/></svg></span>Resumen</button>
+    <button class="tab-btn" data-tab="ayuda" onclick="switchTab('ayuda')"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.5 2.5 0 0 1 4.9.8c0 1.7-2.4 2-2.4 3.5"/><path d="M12 17.2v.1"/></svg></span>Ayuda</button>
     <button class="tab-btn" data-tab="perfil" onclick="switchTab('perfil')"><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg></span>Perfil</button>
   </nav>
 
@@ -776,6 +896,26 @@ body.dark .hist-claim-text b{color:var(--gold);}
   </div>
 </div>
 
+<!-- MODAL GENÉRICO DE SELECCIÓN (punto #2) -->
+<div id="choiceModal" class="modal-back hidden" onclick="if(event.target===this) closeChoiceModal()">
+  <div class="modal">
+    <div class="modal-head"><h3 id="choiceModalTitle">🌲 Selecciona una opción</h3><button onclick="closeChoiceModal()">✕</button></div>
+    <div id="choiceModalList"></div>
+  </div>
+</div>
+
+<!-- MODAL: Detalle de pedido (Admin) — punto #5 -->
+<div id="orderDetailModal" class="modal-back hidden" onclick="if(event.target===this) closeOrderDetailModal()">
+  <div class="modal">
+    <div class="modal-head"><h3>📦 Detalle del pedido</h3><button onclick="closeOrderDetailModal()">✕</button></div>
+    <div id="orderDetailBody"></div>
+    <div class="row2" style="margin-top:14px;">
+      <button type="button" class="btn-secondary" onclick="copyOrderDetail()">📋 Copiar información</button>
+      <button type="button" class="btn-secondary" id="odDownloadCarnetBtn" onclick="downloadOrderCarnet()">📥 Descargar carnet</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: Producto -->
 <div id="productModal" class="modal-back hidden">
   <div class="modal">
@@ -783,13 +923,16 @@ body.dark .hist-claim-text b{color:var(--gold);}
     <div class="field"><label>Nombre *</label><input type="text" id="pNombre"></div>
     <div class="field"><label>Descripción / Especificación</label><textarea id="pDescripcion" rows="2"></textarea></div>
     <div class="field"><label>Categoría principal *</label>
-      <select id="pCategoria" onchange="updateSubcats()"></select>
+      <button type="button" class="csel-display" onclick="openChoiceSelect('pCategoria','📦 Categoría principal')"><span id="pCategoria_label">Selecciona…</span><span class="csel-arrow">▾</span></button>
+      <select id="pCategoria" class="csel-native" onchange="updateSubcats(); syncChoiceLabel('pCategoria');"></select>
     </div>
     <div class="field"><label>Subcategoría</label>
-      <select id="pSubcategoria"></select>
+      <button type="button" class="csel-display" onclick="openChoiceSelect('pSubcategoria','📦 Subcategoría')"><span id="pSubcategoria_label">Selecciona…</span><span class="csel-arrow">▾</span></button>
+      <select id="pSubcategoria" class="csel-native" onchange="syncChoiceLabel('pSubcategoria')"></select>
     </div>
     <div class="field"><label>Local *</label>
-      <select id="pLocal"><option value="1">1er Local</option><option value="2">2ndo Local</option></select>
+      <button type="button" class="csel-display" onclick="openChoiceSelect('pLocal','🏪 Local')"><span id="pLocal_label">1er Local</span><span class="csel-arrow">▾</span></button>
+      <select id="pLocal" class="csel-native" onchange="syncChoiceLabel('pLocal')"><option value="1">1er Local</option><option value="2">2ndo Local</option></select>
     </div>
     <div class="row2">
       <div class="field"><label>Precio base (USD) *</label><input type="number" id="pPrecioBase" step="0.01"></div>
@@ -804,7 +947,8 @@ body.dark .hist-claim-text b{color:var(--gold);}
       <div class="checkbox-row"><input type="checkbox" id="pNuevoSemana"><label style="margin:0;">Mostrar en “Nuevos de la semana”</label></div>
     </div>
     <div class="field"><label>Etiqueta de calidad</label>
-      <select id="pCalidad">
+      <button type="button" class="csel-display" onclick="openChoiceSelect('pCalidad','🏷️ Etiqueta de calidad')"><span id="pCalidad_label">Sin marcar</span><span class="csel-arrow">▾</span></button>
+      <select id="pCalidad" class="csel-native" onchange="syncChoiceLabel('pCalidad')">
         <option value="">Sin marcar</option>
         <option value="nuevo">Nuevo</option>
         <option value="gradoA">Grado A</option>
@@ -848,7 +992,10 @@ body.dark .hist-claim-text b{color:var(--gold);}
     <div class="field"><label>Registrar pago realizado (resta de lo pendiente)</label>
       <div class="row2">
         <input type="number" id="gcMonto" step="0.01" placeholder="Monto pagado">
-        <select id="gcMetodo"><option value="transferencia">Transferencia</option><option value="efectivo">Efectivo</option></select>
+        <div>
+          <button type="button" class="csel-display" onclick="openChoiceSelect('gcMetodo','💰 Método de pago')"><span id="gcMetodo_label">Transferencia</span><span class="csel-arrow">▾</span></button>
+          <select id="gcMetodo" class="csel-native" onchange="syncChoiceLabel('gcMetodo')"><option value="transferencia">Transferencia</option><option value="efectivo">Efectivo</option></select>
+        </div>
       </div>
     </div>
     <div class="field"><label>Nota (opcional)</label><input type="text" id="gcNota" placeholder="Ej: pago quincenal"></div>
@@ -1095,6 +1242,7 @@ const state = {
   deletedNovIds: JSON.parse(localStorage.getItem('deleted_novs')||'[]'),
   pwaDismissed: localStorage.getItem('pwa_dismissed')==='1',
   valeMode:'mensajeria', lineItemsRecogida:[], pickerTarget:'mensajeria',
+  comisionEditada:false, comisionEditadaRecogida:false,
   darkMode: localStorage.getItem('dark_mode')==='1',
   carouselCollapsed: localStorage.getItem('new_carousel_collapsed')==='1'
 };
@@ -1138,7 +1286,10 @@ function closeTopModalIfAny(){
     ['gestorModal', closeGestorModal],
     ['tarifasModal', closeTarifasModal],
     ['catalogModal', closeCatalogPicker],
-    ['novedadesModal', closeNovedades]
+    ['novedadesModal', closeNovedades],
+    ['choiceModal', closeChoiceModal],
+    ['orderDetailModal', closeOrderDetailModal],
+    ['voucherPreviewPanel', toggleVoucherPreview]
   ];
   for(const [id, fn] of map){
     const el = $(id);
@@ -1240,8 +1391,32 @@ function applyAppUpdate(){
   if(btn){ btn.classList.add('loading'); btn.textContent='Actualizando…'; }
   if(_swReg && _swReg.waiting){
     _swReg.waiting.postMessage({type:'SKIP_WAITING'});
+  } else if(_swReg){
+    // No hay "waiting" todavía: forzamos que el navegador busque una versión nueva
+    // y, si la encuentra, el listener de "updatefound" mostrará el banner de nuevo.
+    _swReg.update().catch(()=>{}).finally(()=>{ window.location.reload(); });
   } else {
-    // Respaldo: si por algo no hay "waiting" (ej. ya se activó solo), recargamos igual.
+    // Respaldo: si por algo no hay registro de Service Worker, recargamos igual.
+    window.location.reload();
+  }
+}
+/* Botón manual "Refrescar aplicación" (punto #13, Perfil del gestor): desregistra el
+   Service Worker actual, borra todas las cachés antiguas y recarga para traer siempre
+   la versión más reciente del index.html, sin depender del banner automático. */
+async function forceAppRefresh(){
+  const btn = $('forceRefreshBtn');
+  if(btn){ btn.disabled = true; btn.innerHTML = '<span class="btn-spinner"></span> Actualizando…'; }
+  try{
+    if('serviceWorker' in navigator){
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r=>r.unregister().catch(()=>{})));
+    }
+    if('caches' in window){
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k=>caches.delete(k).catch(()=>{})));
+    }
+  }catch(e){ /* seguimos igual con la recarga aunque algo falle */ }
+  finally{
     window.location.reload();
   }
 }
@@ -1329,7 +1504,7 @@ function enterApp(){
   } else {
     $('navGestor').classList.remove('hidden');
     $('navAdmin').classList.add('hidden');
-    const tab = (savedTab && savedTab!=='admin') ? savedTab : 'vale';
+    const tab = (savedTab && savedTab!=='admin' && savedTab!=='resumen') ? savedTab : 'vale';
     switchTab(tab);
     startGestorListeners();
     loadValeDraft();
@@ -1357,7 +1532,6 @@ function switchTab(tab){
     if(btn) btn.classList.add('active');
     if(tab==='historial') renderHistorial();
     if(tab==='perfil') renderPerfil();
-    if(tab==='resumen') renderGestorResumen();
     if(tab==='catalogo') renderGestorCatalogo();
   }
   pushNavState();
@@ -1380,7 +1554,7 @@ function adminSwitch(tab){
 }
 
 /* ============ SWIPE ENTRE PESTAÑAS (punto #6) ============ */
-const SWIPE_TAB_ORDER = ['vale','historial','resumen','catalogo','perfil'];
+const SWIPE_TAB_ORDER = ['vale','historial','ayuda','catalogo','perfil'];
 function initSwipeNav(){
   const el = $('mainContent');
   if(!el || el._swipeBound) return;
@@ -1444,7 +1618,6 @@ function startGestorListeners(){
   onSnapshot(collection(db,'pedidos'), snap=>{
     state.pedidos = snap.docs.map(d=>({id:d.id, ...d.data()}));
     if(state.currentTab==='historial') renderHistorial();
-    if(state.currentTab==='resumen') renderGestorResumen();
   });
   if(state.user?.id){
     onSnapshot(doc(db,'gestores', state.user.id), snap=>{
@@ -1485,6 +1658,7 @@ function fillCategoriaSelects(){
   const sel = $('pCategoria');
   if(!sel) return;
   sel.innerHTML = Object.keys(CATEGORIAS).map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+  syncChoiceLabel('pCategoria');
   updateSubcats();
 }
 function updateSubcats(){
@@ -1493,6 +1667,7 @@ function updateSubcats(){
   const sel = $('pSubcategoria');
   if(!sel) return;
   sel.innerHTML = '<option value="">— Sin subcategoría —</option>' + subs.map(s=>`<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+  syncChoiceLabel('pSubcategoria');
 }
 
 function renderCatFilters(containerId, current, onClickFn){
@@ -1509,7 +1684,7 @@ function renderCatFilters(containerId, current, onClickFn){
 function resetValeForm(skipSave){
   state.lineItems = [];
   state.carnetUrl = '';
-  ['cNombre','cTelefono','cTelefono2','cDireccion','cMunicipio','cReferencia','detalles','garantia','vueltoCantidad','cGps','cUbicacion'].forEach(id=>{ if($(id)) $(id).value=''; });
+  ['cNombre','cTelefono','cTelefono2','cDireccion','cMunicipio','cReferencia','detalles','garantia','vueltoCantidad'].forEach(id=>{ if($(id)) $(id).value=''; });
   if($('mensajeria')) $('mensajeria').value = 0;
   if($('hayVuelto')) $('hayVuelto').checked = false;
   if($('vueltoField')) $('vueltoField').classList.add('hidden');
@@ -1519,7 +1694,10 @@ function resetValeForm(skipSave){
   if($('carnetChoices')) $('carnetChoices').style.display = 'flex';
   if($('tarifaSelected')) $('tarifaSelected').textContent = '';
   if($('tipoPagoUnico')) $('tipoPagoUnico').value = 'CUP';
+  syncChoiceLabel('tipoPagoUnico');
   if($('tipoPagoOtroBox')) $('tipoPagoOtroBox').classList.add('hidden');
+  state.comisionEditada = false;
+  if($('comisionGestor')) $('comisionGestor').value = '';
   renderLineItems();
   recalcVale();
   if(!skipSave) localStorage.removeItem('vale_draft');
@@ -1534,8 +1712,6 @@ function saveValeDraft(){
     cDireccion: $('cDireccion')?.value||'',
     cMunicipio: $('cMunicipio')?.value||'',
     cReferencia: $('cReferencia')?.value||'',
-    cUbicacion: $('cUbicacion')?.value||'',
-    cGps: $('cGps')?.value||'',
     carnetUrl: state.carnetUrl||'',
     lineItems: JSON.parse(JSON.stringify(state.lineItems||[])),
     tipoPagoUnico: $('tipoPagoUnico')?.value||'CUP',
@@ -1548,7 +1724,9 @@ function saveValeDraft(){
     entregaDia: $('entregaDia')?.value||'',
     entregaHora: $('entregaHora')?.value||'',
     detalles: $('detalles')?.value||'',
-    garantia: $('garantia')?.value||''
+    garantia: $('garantia')?.value||'',
+    comisionGestor: $('comisionGestor')?.value||'',
+    comisionEditada: !!state.comisionEditada
   };
   localStorage.setItem('vale_draft', JSON.stringify(draft));
 }
@@ -1564,8 +1742,6 @@ function loadValeDraft(){
     if($('cDireccion')) $('cDireccion').value = d.cDireccion||'';
     if($('cMunicipio')) $('cMunicipio').value = d.cMunicipio||'';
     if($('cReferencia')) $('cReferencia').value = d.cReferencia||'';
-    if($('cUbicacion')) $('cUbicacion').value = d.cUbicacion||'';
-    if($('cGps')) $('cGps').value = d.cGps||'';
     // Restaurar foto del carnet visualmente
     state.carnetUrl = d.carnetUrl||'';
     const hint = $('carnetUploadHint');
@@ -1594,17 +1770,22 @@ function loadValeDraft(){
       if(opts.includes(d.tipoPagoUnico)) $('tipoPagoUnico').value = d.tipoPagoUnico;
     }
     if($('tipoPagoOtroBox')) $('tipoPagoOtroBox').classList.toggle('hidden', $('tipoPagoUnico')?.value!=='Otro');
+    syncChoiceLabel('tipoPagoUnico');
     if($('mensajeria')) $('mensajeria').value = d.mensajeria??0;
     if($('tipoPagoMsj')) $('tipoPagoMsj').value = d.tipoPagoMsj||'CUP';
+    syncChoiceLabel('tipoPagoMsj');
     if($('tarifaSelected')) $('tarifaSelected').textContent = d.tarifaSelected||'';
     if($('hayVuelto')) $('hayVuelto').checked = !!d.hayVuelto;
     if($('vueltoField')) $('vueltoField').classList.toggle('hidden', !d.hayVuelto);
     if($('vueltoCantidad')) $('vueltoCantidad').value = d.vueltoCantidad||'';
     if($('vueltoMoneda')) $('vueltoMoneda').value = d.vueltoMoneda||'CUP';
+    syncChoiceLabel('vueltoMoneda');
     if($('entregaDia')) $('entregaDia').value = d.entregaDia||todayISO();
     if($('entregaHora')) $('entregaHora').value = d.entregaHora||'';
     if($('detalles')) $('detalles').value = d.detalles||'';
     if($('garantia')) $('garantia').value = d.garantia||'';
+    state.comisionEditada = !!d.comisionEditada;
+    if($('comisionGestor')) $('comisionGestor').value = d.comisionGestor||'';
     renderLineItems();
     recalcVale();
   }catch(e){
@@ -1621,7 +1802,7 @@ function clearValeDraft(){
 
 // Auto-save draft on input
 function bindDraftAutosave(){
-  const ids = ['cNombre','cTelefono','cTelefono2','cDireccion','cMunicipio','cReferencia','cUbicacion','detalles','garantia','mensajeria','vueltoCantidad','entregaDia','entregaHora','tipoPagoUnico','tipoPagoMsj','hayVuelto'];
+  const ids = ['cNombre','cTelefono','cTelefono2','cDireccion','cMunicipio','cReferencia','detalles','garantia','mensajeria','vueltoCantidad','entregaDia','entregaHora','tipoPagoUnico','tipoPagoMsj','hayVuelto'];
   ids.forEach(id=>{
     const el = $(id);
     if(!el) return;
@@ -1719,7 +1900,14 @@ function toggleVuelto(){
 function recalcVale(){
   const totalProducto = state.lineItems.reduce((s,l)=>s+((Number(l.cantidad)||0)*(Number(l.precioGestor)||0)),0);
   const totalBase = state.lineItems.reduce((s,l)=>s+((Number(l.cantidad)||0)*(Number(l.precioBase)||0)),0);
-  const comision = totalProducto - totalBase;
+  const comisionLibre = totalProducto - totalBase;
+  // Comisión automática = comisión fija de cada producto + comisión libre (diferencia si sube el precio) — punto #3
+  const comisionFija = state.lineItems.reduce((s,l)=>s+((Number(l.cantidad)||0)*(Number(l.comision)||0)),0);
+  const comisionAuto = comisionFija + Math.max(0, comisionLibre);
+  if($('comisionGestor') && !state.comisionEditada){
+    $('comisionGestor').value = comisionAuto ? comisionAuto.toFixed(2) : '';
+  }
+  const comision = comisionAuto;
   const mensajeria = Number($('mensajeria')?.value||0);
   if($('totalMsjDisplay')) $('totalMsjDisplay').value = mensajeria;
   const moneda = $('tipoPagoUnico')?.value || '';
@@ -1735,7 +1923,8 @@ function recalcVale(){
     ${tarjetaExtra?`<div class="calc-row"><span>Comisión tarjeta 7%</span><span>$${money(tarjetaExtra)}</span></div>`:''}
     <div class="calc-row total"><span>Total producto</span><span>$${money(totalProducto + tarjetaExtra)}</span></div>
     <div class="calc-row total"><span>Total mensajería</span><span>$${money(mensajeria)}</span></div>`;
-  return { totalProducto, comision, mensajeria, totalCobrar: totalProducto + mensajeria + tarjetaExtra, tarjetaExtra };
+  const comisionFinal = $('comisionGestor') ? (Number($('comisionGestor').value)||0) : comision;
+  return { totalProducto, comision, comisionFinal, mensajeria, totalCobrar: totalProducto + mensajeria + tarjetaExtra, tarjetaExtra };
 }
 
 function pickCarnet(mode){
@@ -1752,28 +1941,41 @@ async function handleCarnetUpload(ev){
   const file = ev.target.files[0];
   if(!file) return;
   const hint = $('carnetUploadHint');
-  hint.innerHTML = `<div class="progress-wrap"><svg class="progress-ring" width="56" height="56"><circle class="bg" cx="28" cy="28" r="24"/><circle class="fg" id="carnetProg" cx="28" cy="28" r="24" stroke-dasharray="150.8" stroke-dashoffset="150.8"/></svg><span class="progress-pct" id="carnetPct">0%</span></div>`;
+  hint.innerHTML = `<div class="progress-wrap"><svg class="progress-ring" width="56" height="56"><circle class="bg" cx="28" cy="28" r="24"/><circle class="fg" id="carnetProg" cx="28" cy="28" r="24" stroke-dasharray="150.8" stroke-dashoffset="150.8"/></svg><span class="progress-pct" id="carnetPct">0%</span></div><button type="button" class="btn-secondary" style="margin-top:8px;width:auto;padding:8px 14px;font-size:12px;" onclick="cancelCarnetUpload()">✕ Cancelar subida</button>`;
   if($('carnetChoices')) $('carnetChoices').style.display='none';
   try{
     const url = await uploadToCloudinary(file, (pct)=>{
       const circ = 2*Math.PI*24;
       const el = $('carnetProg'); if(el) el.style.strokeDashoffset = circ - (pct/100)*circ;
       const p = $('carnetPct'); if(p) p.textContent = Math.round(pct)+'%';
-    });
+    }, (xhr)=>{ state._carnetXhr = xhr; });
+    state._carnetXhr = null;
     state.carnetUrl = url;
     hint.innerHTML = `<div class="photo-preview"><img src="${url}"><button type="button" class="photo-remove" onclick="removeCarnet()">✕</button></div>`;
     saveValeDraft();
   }catch(e){
-    hint.innerHTML = 'Error al subir. Elige de nuevo.';
+    state._carnetXhr = null;
+    if(e && e.message==='aborted'){
+      hint.innerHTML = 'Subida cancelada. Toca para añadir foto del carnet';
+    } else {
+      hint.innerHTML = 'Error al subir. Elige de nuevo.';
+      showToast('No se pudo subir la foto del carnet.');
+    }
     if($('carnetChoices')) $('carnetChoices').style.display='flex';
-    showToast('No se pudo subir la foto del carnet.');
   }
   ev.target.value = '';
 }
+function cancelCarnetUpload(){
+  if(state._carnetXhr){
+    try{ state._carnetXhr.abort(); }catch(e){}
+    state._carnetXhr = null;
+  }
+}
 
-function uploadToCloudinary(file, onProgress){
+function uploadToCloudinary(file, onProgress, onXhrReady){
   return new Promise((resolve, reject)=>{
     const xhr = new XMLHttpRequest();
+    if(onXhrReady) onXhrReady(xhr);
     const fd = new FormData();
     fd.append('file', file);
     fd.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
@@ -1787,15 +1989,17 @@ function uploadToCloudinary(file, onProgress){
       }catch(err){ reject(err); }
     };
     xhr.onerror = ()=>reject(new Error('network'));
+    xhr.onabort = ()=>reject(new Error('aborted'));
     xhr.send(fd);
   });
 }
 
-function captureGPS(){ /* ubicación del cliente es manual/pegar */ }
 
 async function submitVale(){
   const nombre=$('cNombre').value.trim(), telefono=$('cTelefono').value.trim(), direccion=$('cDireccion').value.trim();
+  const municipio=$('cMunicipio').value.trim();
   if(!nombre || !telefono || !direccion){ showToast('Completa nombre, teléfono y dirección.'); return; }
+  if(!municipio){ showToast('El municipio / reparto es obligatorio.'); return; }
   if(!state.carnetUrl){ showToast('La foto del carnet es obligatoria.'); return; }
   if(!state.lineItems.length){ showToast('Añade al menos un producto.'); return; }
   for(const l of state.lineItems){
@@ -1814,9 +2018,7 @@ async function submitVale(){
         nombre, telefono, telefono2: $('cTelefono2').value.trim(),
         direccion, municipio: $('cMunicipio').value.trim(),
         referencia: $('cReferencia').value.trim(),
-        ubicacion: $('cUbicacion')?.value.trim()||'',
-        carnetUrl: state.carnetUrl,
-        gps: $('cGps').value.trim()
+        carnetUrl: state.carnetUrl
       },
       productos: state.lineItems.map(l=>({
         nombre:l.nombre, especificacion:l.especificacion||'',
@@ -1825,7 +2027,7 @@ async function submitVale(){
       })),
       precios: {
         totalProducto: calc.totalProducto, mensajeria: calc.mensajeria,
-        totalCobrar: calc.totalCobrar, comision: calc.comision,
+        totalCobrar: calc.totalCobrar, comision: calc.comisionFinal,
         tarjetaExtra: calc.tarjetaExtra||0
       },
       pagos: {
@@ -1855,8 +2057,10 @@ async function submitVale(){
 function switchValeMode(mode){
   state.valeMode = mode;
   if($('valeModeSelect')) $('valeModeSelect').value = mode;
+  syncChoiceLabel('valeModeSelect');
   if($('valeMensajeriaForm')) $('valeMensajeriaForm').classList.toggle('hidden', mode!=='mensajeria');
   if($('valeRecogidaForm')) $('valeRecogidaForm').classList.toggle('hidden', mode!=='recogida');
+  if(!$('voucherPreviewPanel')?.classList.contains('hidden')) renderVoucherPreview();
 }
 function onTipoPagoUnicoChange(){
   if($('tipoPagoOtroBox')) $('tipoPagoOtroBox').classList.toggle('hidden', $('tipoPagoUnico')?.value!=='Otro');
@@ -1867,6 +2071,153 @@ function onRMetodoPagoChange(){
 function waOtroMetodo(){
   const texto = encodeURIComponent('Tengo un cliente interesado su método de pago es ___ ¿lo aceptan?');
   window.open(`https://wa.me/5354410879?text=${texto}`, '_blank');
+}
+
+/* ============ VISTA PREVIA EN VIVO DEL VALE — punto #6 ============ */
+async function copyTextToClipboard(texto, successMsg){
+  try{
+    await navigator.clipboard.writeText(texto);
+    showToast(successMsg);
+  }catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = texto; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); showToast(successMsg); }
+    catch(e2){ showToast('No se pudo copiar automáticamente.'); }
+    ta.remove();
+  }
+}
+function buildFechaHoy(){
+  const d = new Date();
+  return d.toLocaleDateString('es-ES', {day:'2-digit', month:'2-digit', year:'numeric'});
+}
+function buildMensajeriaPreviewText(){
+  const nombre = $('cNombre')?.value.trim() || '—';
+  const carnetTxt = state.carnetUrl ? 'Adjuntada ✅' : 'Pendiente ⚠️';
+  const telefono = $('cTelefono')?.value.trim() || '—';
+  const telefono2 = $('cTelefono2')?.value.trim() || '—';
+  const direccion = $('cDireccion')?.value.trim() || '—';
+  const municipio = $('cMunicipio')?.value.trim() || '—';
+  const referencia = $('cReferencia')?.value.trim() || '—';
+  const items = state.lineItems||[];
+  const productosTxt = items.length ? items.map((l,i)=>`  ${i+1}. ${l.nombre||'—'} x${l.cantidad||1}`).join('\n') : '  —';
+  const especTxt = items.filter(l=>l.especificacion).length
+    ? items.filter(l=>l.especificacion).map((l,i)=>`  ${i+1}. ${l.especificacion}`).join('\n') : '  —';
+  const cantidadTxt = items.length ? items.map(l=>l.cantidad||1).join(', ') : '—';
+  const totalBase = items.reduce((s,l)=>s+((Number(l.cantidad)||0)*(Number(l.precioBase)||0)),0);
+  const totalGestor = items.reduce((s,l)=>s+((Number(l.cantidad)||0)*(Number(l.precioGestor)||0)),0);
+  const mensajeria = Number($('mensajeria')?.value||0);
+  const precioTotal = totalGestor + mensajeria;
+  const monedaProducto = $('tipoPagoUnico')?.value || '—';
+  const tipoPagoMsj = $('tipoPagoMsj')?.value || '—';
+  const vuelto = $('hayVuelto')?.checked ? `${$('vueltoCantidad')?.value||''} ${$('vueltoMoneda')?.value||''}`.trim() : 'No aplica';
+  const nombreGestor = state.user?.nombre || '—';
+  const comisionGestor = '$'+money($('comisionGestor')?.value || 0);
+  const dia = $('entregaDia')?.value || '—';
+  const hora = $('entregaHora')?.value || '—';
+  const detalles = $('detalles')?.value.trim() || '—';
+  return `*VALE DE MENSAJERIA - DIGITAL STORE*🌲💯📦
+
+Fecha: ${buildFechaHoy()}
+
+Datos del cliente:
+
+• nombre completo : ${nombre}
+• carnet (foto del carnet obligatorio): ${carnetTxt}
+• número de telefono: ${telefono}
+• número adicional: ${telefono2}
+• dirección exacta con # : ${direccion}
+• municipio y reparto : ${municipio}
+• referencia : ${referencia}
+
+Datos de la entrega
+
+• producto :
+${productosTxt}
+• especificacion del producto :
+${especTxt}
+• cantidad : ${cantidadTxt}
+• precio base : $${money(totalBase)}
+• precio del gestor : $${money(totalGestor)}
+• mensajeria : $${money(mensajeria)}
+• precio total: $${money(precioTotal)}
+• moneda de pago del producto: ${monedaProducto}
+• tipo de pago de la mensajeria: ${tipoPagoMsj}
+• vuelto : ${vuelto}
+
+Datos del gestor
+
+• nombre del gestor : ${nombreGestor}
+• comisión del gestor : ${comisionGestor}
+
+Preferencia del cliente
+
+• dia que quiere el cliente : ${dia}
+• hora que quiere el cliente : ${hora}
+
+Detalles :
+${detalles}`;
+}
+function buildRecogidaPreviewText(){
+  const nombre = $('rNombre')?.value.trim() || '—';
+  const ci = $('rCI')?.value.trim() || '—';
+  const items = state.lineItemsRecogida||[];
+  const productosTxt = items.length
+    ? items.map((l,i)=>`  ${i+1}. ${l.nombre||'—'} x${l.cantidad||1} — precio $${money(l.precioBase)} / gestor $${money(l.precioGestor)}`).join('\n')
+    : '  —';
+  const totalGestor = items.reduce((s,l)=>s+((Number(l.cantidad)||0)*(Number(l.precioGestor)||0)),0);
+  const metodoPago = $('rMetodoPago')?.value || '—';
+  const nombreGestor = state.user?.nombre || '—';
+  const comisionGestor = '$'+money($('comisionGestorRecogida')?.value || 0);
+  const dia = $('rDia')?.value || '—';
+  const hora = $('rHora')?.value || '—';
+  return `*VALE DE RECOGIDA - DIGITAL STORE*🏪💯📦
+
+Fecha: ${buildFechaHoy()}
+
+Datos del cliente:
+
+• nombre completo : ${nombre}
+• CI : ${ci}
+
+Artículos:
+${productosTxt}
+
+• total : $${money(totalGestor)}
+• moneda de pago : ${metodoPago}
+
+Datos del gestor
+
+• nombre del gestor : ${nombreGestor}
+• comisión del gestor : ${comisionGestor}
+
+Preferencia del cliente
+
+• dia que quiere el cliente : ${dia}
+• hora que va a pasar : ${hora}`;
+}
+function renderVoucherPreview(){
+  const box = $('voucherPreviewText');
+  if(!box) return;
+  box.textContent = state.valeMode==='recogida' ? buildRecogidaPreviewText() : buildMensajeriaPreviewText();
+}
+function toggleVoucherPreview(){
+  const panel = $('voucherPreviewPanel');
+  if(!panel) return;
+  const opening = panel.classList.contains('hidden');
+  panel.classList.toggle('hidden');
+  if(opening){
+    renderVoucherPreview();
+    if(!window._voucherPreviewListener){
+      window._voucherPreviewListener = ()=>renderVoucherPreview();
+      $('mainContent')?.addEventListener('input', window._voucherPreviewListener);
+      $('mainContent')?.addEventListener('change', window._voucherPreviewListener);
+    }
+  }
+}
+function copyVoucherPreview(){
+  const txt = $('voucherPreviewText')?.textContent || '';
+  copyTextToClipboard(txt, 'Vale copiado al portapapeles 📋');
 }
 
 /* ============ VALE DE RECOGIDA — punto #2 ============ */
@@ -1932,12 +2283,18 @@ function renderLineItemsRecogida(){
 function recalcRecogida(){
   const totalProducto = state.lineItemsRecogida.reduce((s,l)=>s+((Number(l.cantidad)||0)*(Number(l.precioGestor)||0)),0);
   const totalBase = state.lineItemsRecogida.reduce((s,l)=>s+((Number(l.cantidad)||0)*(Number(l.precioBase)||0)),0);
-  const comision = totalProducto - totalBase;
+  const comisionLibre = totalProducto - totalBase;
+  const comisionFija = state.lineItemsRecogida.reduce((s,l)=>s+((Number(l.cantidad)||0)*(Number(l.comision)||0)),0);
+  const comisionAuto = comisionFija + Math.max(0, comisionLibre);
+  if($('comisionGestorRecogida') && !state.comisionEditadaRecogida){
+    $('comisionGestorRecogida').value = comisionAuto ? comisionAuto.toFixed(2) : '';
+  }
+  const comisionFinal = $('comisionGestorRecogida') ? (Number($('comisionGestorRecogida').value)||0) : comisionAuto;
   if($('calcBoxRecogida')) $('calcBoxRecogida').innerHTML = `
     <div class="calc-row"><span>Precio</span><span>$${money(totalBase)}</span></div>
     <div class="calc-row"><span>Precio del gestor</span><span>$${money(totalProducto)}</span></div>
     <div class="calc-row total"><span>Total</span><span>$${money(totalProducto)}</span></div>`;
-  return { totalProducto, comision };
+  return { totalProducto, comision: comisionAuto, comisionFinal };
 }
 function resetRecogidaForm(skipConfirm){
   state.lineItemsRecogida = [];
@@ -1946,7 +2303,10 @@ function resetRecogidaForm(skipConfirm){
   if($('rDia')) $('rDia').value = todayISO();
   if($('rHora')) $('rHora').value = '';
   if($('rMetodoPago')) $('rMetodoPago').value = 'Efectivo USD';
+  syncChoiceLabel('rMetodoPago');
   if($('rMetodoPagoOtroBox')) $('rMetodoPagoOtroBox').classList.add('hidden');
+  state.comisionEditadaRecogida = false;
+  if($('comisionGestorRecogida')) $('comisionGestorRecogida').value = '';
   renderLineItemsRecogida();
   recalcRecogida();
 }
@@ -1971,7 +2331,7 @@ async function submitValeRecogida(){
         nombre:l.nombre, cantidad:Number(l.cantidad)||1, precioBase:Number(l.precioBase)||0,
         precioGestor:Number(l.precioGestor)||0, local:l.local||'2', comision:l.comision||0, productoId:l.productoId
       })),
-      precios: { totalProducto: calc.totalProducto, comision: calc.comision, totalCobrar: calc.totalProducto },
+      precios: { totalProducto: calc.totalProducto, comision: calc.comisionFinal, totalCobrar: calc.totalProducto },
       pagos: { metodoPago: $('rMetodoPago').value },
       recogida: { dia: $('rDia').value, hora: $('rHora').value },
       estado: 'pendiente'
@@ -1986,9 +2346,63 @@ async function submitValeRecogida(){
   }
 }
 
+/* ============ MODAL GENÉRICO DE SELECCIÓN (punto #2) ============ */
+let _choiceTargetId = null;
+function openChoiceSelect(selectId, title){
+  const sel = document.getElementById(selectId);
+  if(!sel) return;
+  _choiceTargetId = selectId;
+  if($('choiceModalTitle')) $('choiceModalTitle').textContent = title || '🌲 Selecciona una opción';
+  const currentVal = sel.value;
+  let html = '';
+  Array.from(sel.children).forEach(node=>{
+    if(node.tagName==='OPTGROUP'){
+      html += `<div class="csel-group-label">${escapeHtml(node.label)}</div>`;
+      Array.from(node.children).forEach(opt=>{
+        html += choiceItemHtml(opt, currentVal);
+      });
+    } else if(node.tagName==='OPTION'){
+      html += choiceItemHtml(node, currentVal);
+    }
+  });
+  if($('choiceModalList')) $('choiceModalList').innerHTML = html;
+  if($('choiceModal')) $('choiceModal').classList.remove('hidden');
+}
+function choiceItemHtml(opt, currentVal){
+  const selected = opt.value===currentVal ? ' selected' : '';
+  const val = escapeHtml(opt.value).replace(/"/g,'&quot;');
+  return `<div class="csel-item${selected}" onclick="pickChoiceOption('${val.replace(/'/g,"\\'")}')">
+    <span>${escapeHtml(opt.textContent)}</span>
+    <span class="csel-radio"></span>
+  </div>`;
+}
+function pickChoiceOption(value){
+  const sel = document.getElementById(_choiceTargetId);
+  if(sel){
+    sel.value = value;
+    sel.dispatchEvent(new Event('change', {bubbles:true}));
+    const labelEl = document.getElementById(_choiceTargetId+'_label');
+    const opt = Array.from(sel.options).find(o=>o.value===value);
+    if(labelEl && opt) labelEl.textContent = opt.textContent;
+  }
+  closeChoiceModal();
+}
+function closeChoiceModal(){
+  if($('choiceModal')) $('choiceModal').classList.add('hidden');
+  _choiceTargetId = null;
+}
+function syncChoiceLabel(selectId){
+  const sel = document.getElementById(selectId);
+  const labelEl = document.getElementById(selectId+'_label');
+  if(sel && labelEl && sel.selectedOptions[0]) labelEl.textContent = sel.selectedOptions[0].textContent;
+}
+
 /* ============ MODO OSCURO — punto #4 ============ */
 function applyDarkMode(){
+  document.documentElement.classList.toggle('dark', !!state.darkMode);
   document.body.classList.toggle('dark', !!state.darkMode);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', state.darkMode ? '#0F1512' : '#1A4A2E');
   const knob = $('ttKnob'); if(knob) knob.textContent = state.darkMode ? '🌙' : '☀️';
 }
 function toggleDarkMode(){
@@ -2338,28 +2752,44 @@ function pickFromDetail(id){
 
 
 /* ============ HISTORIAL ============ */
+function animateStatNumber(el, target){
+  if(!el) return;
+  const start = parseFloat(el.dataset.raw||'0') || 0;
+  if(Math.abs(target-start) < 0.005){ el.textContent = '$'+money(target); el.dataset.raw = target; return; }
+  const dur = 700, t0 = performance.now();
+  function step(now){
+    const p = Math.min(1, (now-t0)/dur);
+    const eased = 1 - Math.pow(1-p, 3);
+    el.textContent = '$'+money(start + (target-start)*eased);
+    if(p<1) requestAnimationFrame(step);
+    else { el.textContent = '$'+money(target); el.dataset.raw = target; }
+  }
+  requestAnimationFrame(step);
+}
 function renderHistorial(){
   const box=$('histList');
   const mine = state.pedidos.filter(o=>o.gestorId===(state.user.id||state.user.username))
     .sort((a,b)=>(b.fecha?.seconds||0)-(a.fecha?.seconds||0));
 
-  const totalFacturado = mine.reduce((s,o)=>s+(o.precios?.totalCobrar||0),0);
   const totalComision = mine.reduce((s,o)=>s+(o.precios?.comision||0),0);
   const pagos = (state.myGestorData && state.myGestorData.pagosComision) || [];
   const totalPagado = pagos.reduce((s,p)=>s+(p.monto||0),0);
   const pendiente = Math.max(0, totalComision - totalPagado);
-  if($('histStatFacturado')) $('histStatFacturado').textContent = '$'+money(totalFacturado);
-  if($('histStatPendiente')) $('histStatPendiente').textContent = '$'+money(pendiente);
+  animateStatNumber($('histStatComisionTotal'), totalComision);
+  animateStatNumber($('histStatPendiente'), pendiente);
+  animateStatNumber($('histStatRecaudado'), totalPagado);
+  if($('histStatPedidos')) $('histStatPedidos').textContent = mine.length;
 
   if(!mine.length){ box.innerHTML='<div class="hint">Aún no tienes pedidos.</div>'; return; }
   box.innerHTML = mine.map(o=>{
     const st = o.estado||'pendiente';
     const fecha = o.fecha?.seconds ? new Date(o.fecha.seconds*1000).toLocaleDateString() : '—';
-    return `<div class="hist-item">
+    return `<div class="hist-item tappable" onclick="openOrderDetailModal('${o.id}')">
       <div class="hist-top"><b>${escapeHtml(o.cliente?.nombre||'—')}</b>
         <span class="status ${st}"><span class="status-dot">${ICONS.dot}</span>${st}</span></div>
       <div class="hist-meta">${fecha} · ${(o.productos||[]).length} artículo(s) · Comisión $${money(o.precios?.comision)}</div>
       <div class="hist-total">$${money(o.precios?.totalCobrar)}</div>
+      <div class="hist-tap-hint">Toca para ver el detalle completo ›</div>
     </div>`;
   }).join('');
 }
@@ -2384,27 +2814,6 @@ function goHistComunidadWa(){
   window.open(link, '_blank');
 }
 function goHistNovedades(){ openNovedades(); }
-
-/* ============ RESUMEN GESTOR ============ */
-function renderGestorResumen(){
-  const mine = state.pedidos.filter(o=>o.gestorId===(state.user.id||state.user.username));
-  const totalComision = mine.reduce((s,o)=>s+(o.precios?.comision||0),0);
-  const pendiente = mine.filter(o=>(o.estado||'pendiente')==='pendiente').reduce((s,o)=>s+(o.precios?.comision||0),0);
-  const recaudado = mine.filter(o=>o.estado==='pagado'||o.estado==='completado').reduce((s,o)=>s+(o.precios?.comision||0),0);
-  $('gStatComision').textContent = '$'+money(totalComision);
-  $('gStatPendiente').textContent = '$'+money(pendiente);
-  $('gStatRecaudado').textContent = '$'+money(recaudado);
-  $('gStatPedidos').textContent = mine.length;
-  const box = $('gComisionList');
-  if(!mine.length){ box.innerHTML='<div class="hint">Sin pedidos todavía.</div>'; return; }
-  box.innerHTML = mine.sort((a,b)=>(b.fecha?.seconds||0)-(a.fecha?.seconds||0)).slice(0,20).map(o=>{
-    const fecha = o.fecha?.seconds ? new Date(o.fecha.seconds*1000).toLocaleDateString() : '—';
-    return `<div class="top3-item">
-      <span>${escapeHtml(o.cliente?.nombre||'—')} <small style="color:var(--muted);">${fecha} · ${o.estado||'pendiente'}</small></span>
-      <b>$${money(o.precios?.comision)}</b>
-    </div>`;
-  }).join('');
-}
 
 /* ============ PERFIL ============ */
 function renderPerfil(){
@@ -2496,9 +2905,12 @@ function openProductModal(id){
   $('pNombre').value = p?.nombre || '';
   $('pDescripcion').value = p?.descripcion || '';
   if(p?.categoria) $('pCategoria').value = p.categoria;
+  syncChoiceLabel('pCategoria');
   updateSubcats();
   if(p?.subcategoria) $('pSubcategoria').value = p.subcategoria;
+  syncChoiceLabel('pSubcategoria');
   $('pLocal').value = p?.local || '1';
+  syncChoiceLabel('pLocal');
   $('pPrecioBase').value = p?.precioBase || '';
   $('pComisionValor').value = p?.comisionValor ?? 0;
   $('pDisponible').checked = p?.disponible !== false;
@@ -2508,6 +2920,7 @@ function openProductModal(id){
   if($('pGarantia')) $('pGarantia').value = p?.garantia || '';
   if($('pNuevoSemana')) $('pNuevoSemana').checked = !!p?.nuevoSemana;
   if($('pCalidad')) $('pCalidad').value = p?.calidad || '';
+  syncChoiceLabel('pCalidad');
   state.photoUrls = Array.isArray(p?.imagenes) && p.imagenes.length ? [...p.imagenes] : (p?.imagenUrl ? [p.imagenUrl] : []);
   state.photoUrl = state.photoUrls[0]||'';
   $('photoUploadHint').innerHTML = 'Toca para añadir fotos';
@@ -2675,13 +3088,17 @@ function renderAdminPedidos(){
   if(!list.length){ box.innerHTML='<div class="hint">No hay pedidos todavía.</div>'; return; }
   box.innerHTML = list.map(o=>{
     const st=o.estado||'pendiente';
-    return `<div class="hist-item">
+    const selId = 'orderStatus_'+o.id;
+    return `<div class="hist-item" style="cursor:pointer;" onclick="openOrderDetailModal('${o.id}')">
       <div class="hist-top"><b>${escapeHtml(o.cliente?.nombre||'—')}</b>
-        <select onchange="updateOrderStatus('${o.id}',this.value)" style="width:auto;padding:4px 8px;font-size:11px;">
-          <option value="pendiente" ${st==='pendiente'?'selected':''}>Pendiente</option>
-          <option value="completado" ${st==='completado'?'selected':''}>Completado</option>
-          <option value="pagado" ${st==='pagado'?'selected':''}>Pagado</option>
-        </select>
+        <div onclick="event.stopPropagation();">
+          <button type="button" class="csel-display" style="width:auto;padding:4px 10px;font-size:11px;" onclick="openChoiceSelect('${selId}','Estado del pedido')"><span id="${selId}_label">${st==='pendiente'?'Pendiente':st==='completado'?'Completado':'Pagado'}</span><span class="csel-arrow">▾</span></button>
+          <select id="${selId}" class="csel-native" onchange="updateOrderStatus('${o.id}',this.value); syncChoiceLabel('${selId}');">
+            <option value="pendiente" ${st==='pendiente'?'selected':''}>Pendiente</option>
+            <option value="completado" ${st==='completado'?'selected':''}>Completado</option>
+            <option value="pagado" ${st==='pagado'?'selected':''}>Pagado</option>
+          </select>
+        </div>
       </div>
       <div class="hist-meta">Gestor: ${escapeHtml(o.gestorNombre)} · Tel: ${escapeHtml(o.cliente?.telefono||'—')}</div>
       <div class="hist-total">$${money(o.precios?.totalCobrar)} <span style="font-weight:400;color:var(--muted);font-size:11px;">(comisión $${money(o.precios?.comision)})</span></div>
@@ -2691,6 +3108,134 @@ function renderAdminPedidos(){
 async function updateOrderStatus(id, estado){
   await updateDoc(doc(db,'pedidos',id), { estado });
   showToast('Estado actualizado.');
+}
+
+/* ============ DETALLE DE PEDIDO (Admin) — punto #5 ============ */
+function fieldRow(label, value){
+  if(value===undefined||value===null||value==='') return '';
+  return `<div class="od-row"><span>${escapeHtml(label)}</span><span>${escapeHtml(String(value))}</span></div>`;
+}
+function openOrderDetailModal(id){
+  const o = state.pedidos.find(x=>x.id===id);
+  if(!o) return;
+  state._detailOrder = o;
+  const esRecogida = o.tipoVale==='recogida';
+  let html = '';
+  html += `<div class="od-section">Datos generales</div>`;
+  html += fieldRow('Tipo de vale', esRecogida ? 'Recogida en tienda' : 'Mensajería');
+  html += fieldRow('Estado', o.estado||'pendiente');
+  html += fieldRow('Gestor', o.gestorNombre);
+  html += `<div class="od-section">Cliente</div>`;
+  html += fieldRow('Nombre', o.cliente?.nombre);
+  if(!esRecogida){
+    html += fieldRow('Teléfono', o.cliente?.telefono);
+    html += fieldRow('Teléfono adicional', o.cliente?.telefono2);
+    html += fieldRow('Dirección', o.cliente?.direccion);
+    html += fieldRow('Municipio/Reparto', o.cliente?.municipio);
+    html += fieldRow('Referencia', o.cliente?.referencia);
+  } else {
+    html += fieldRow('CI', o.cliente?.ci);
+  }
+  html += `<div class="od-section">Productos</div>`;
+  (o.productos||[]).forEach((p,i)=>{
+    html += fieldRow(`#${i+1} Producto`, p.nombre);
+    if(p.especificacion) html += fieldRow('Especificación', p.especificacion);
+    html += fieldRow('Cantidad', p.cantidad);
+    html += fieldRow('Precio base', '$'+money(p.precioBase));
+    html += fieldRow('Precio del gestor', '$'+money(p.precioGestor));
+  });
+  html += `<div class="od-section">Precios y pago</div>`;
+  html += fieldRow('Total producto', '$'+money(o.precios?.totalProducto));
+  if(!esRecogida) html += fieldRow('Mensajería', '$'+money(o.precios?.mensajeria));
+  html += fieldRow('Comisión del gestor', '$'+money(o.precios?.comision));
+  html += fieldRow('Total a cobrar', '$'+money(o.precios?.totalCobrar));
+  html += fieldRow('Método de pago', o.pagos?.metodoPago);
+  if(!esRecogida){
+    html += fieldRow('Tipo pago mensajería', o.pagos?.tipoPagoMensajeria);
+    if(o.pagos?.vuelto) html += fieldRow('Vuelto', `${o.pagos?.vueltoCantidad} ${o.pagos?.vueltoMoneda||''}`);
+  }
+  html += `<div class="od-section">${esRecogida?'Recogida':'Entrega'}</div>`;
+  if(esRecogida){
+    html += fieldRow('Día', o.recogida?.dia);
+    html += fieldRow('Hora', o.recogida?.hora);
+  } else {
+    html += fieldRow('Día', o.entrega?.dia);
+    html += fieldRow('Hora', o.entrega?.hora);
+    html += fieldRow('Detalles', o.detalles);
+    html += fieldRow('Garantía', o.garantia);
+  }
+  if(!esRecogida && o.cliente?.carnetUrl){
+    html += `<div class="od-section">Carnet de identidad</div><img class="od-carnet-img" src="${o.cliente.carnetUrl}">`;
+  }
+  $('orderDetailBody').innerHTML = html;
+  if($('odDownloadCarnetBtn')) $('odDownloadCarnetBtn').style.display = (o.cliente?.carnetUrl) ? 'flex' : 'none';
+  $('orderDetailModal').classList.remove('hidden');
+  pushNavState();
+}
+function closeOrderDetailModal(){ $('orderDetailModal').classList.add('hidden'); state._detailOrder = null; }
+async function downloadImageAs(url, filename){
+  try{
+    const resp = await fetch(url, { mode:'cors' });
+    if(!resp.ok) throw new Error('HTTP '+resp.status);
+    const blob = await resp.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(blobUrl), 4000);
+  }catch(e){
+    showToast('No se pudo descargar directo, abriendo imagen…');
+    window.open(url, '_blank');
+  }
+}
+function downloadOrderCarnet(){
+  const o = state._detailOrder;
+  if(!o || !o.cliente?.carnetUrl) return;
+  const filename = 'carnet_'+(o.cliente?.nombre||'cliente').trim().replace(/[^a-z0-9-_ ]/gi,'').replace(/\s+/g,'_')+'.jpg';
+  downloadImageAs(o.cliente.carnetUrl, filename);
+}
+function copyOrderDetail(){
+  const o = state._detailOrder;
+  if(!o) return;
+  const esRecogida = o.tipoVale==='recogida';
+  const lineas = [];
+  lineas.push(`PEDIDO — ${esRecogida?'Vale de Recogida':'Vale de Mensajería'}`);
+  lineas.push(`Estado: ${o.estado||'pendiente'}`);
+  lineas.push(`Gestor: ${o.gestorNombre||''}`);
+  lineas.push('');
+  lineas.push('Cliente:');
+  lineas.push(`Nombre: ${o.cliente?.nombre||''}`);
+  if(!esRecogida){
+    lineas.push(`Teléfono: ${o.cliente?.telefono||''}`);
+    if(o.cliente?.telefono2) lineas.push(`Teléfono adicional: ${o.cliente.telefono2}`);
+    lineas.push(`Dirección: ${o.cliente?.direccion||''}`);
+    lineas.push(`Municipio/Reparto: ${o.cliente?.municipio||''}`);
+    if(o.cliente?.referencia) lineas.push(`Referencia: ${o.cliente.referencia}`);
+  } else {
+    lineas.push(`CI: ${o.cliente?.ci||''}`);
+  }
+  lineas.push('');
+  lineas.push('Productos:');
+  (o.productos||[]).forEach((p,i)=>{
+    lineas.push(`${i+1}. ${p.nombre} x${p.cantidad} — base $${money(p.precioBase)} / gestor $${money(p.precioGestor)}`);
+  });
+  lineas.push('');
+  lineas.push(`Total producto: $${money(o.precios?.totalProducto)}`);
+  if(!esRecogida) lineas.push(`Mensajería: $${money(o.precios?.mensajeria)}`);
+  lineas.push(`Comisión del gestor: $${money(o.precios?.comision)}`);
+  lineas.push(`Total a cobrar: $${money(o.precios?.totalCobrar)}`);
+  lineas.push(`Método de pago: ${o.pagos?.metodoPago||''}`);
+  lineas.push('');
+  if(esRecogida){
+    lineas.push(`Día de recogida: ${o.recogida?.dia||''}`);
+    lineas.push(`Hora de recogida: ${o.recogida?.hora||''}`);
+  } else {
+    lineas.push(`Día de entrega: ${o.entrega?.dia||''}`);
+    lineas.push(`Hora de entrega: ${o.entrega?.hora||''}`);
+    if(o.detalles) lineas.push(`Detalles: ${o.detalles}`);
+  }
+  const texto = lineas.join('\n');
+  copyTextToClipboard(texto, 'Información copiada al portapapeles 📋');
 }
 
 /* ============ ADMIN GESTORES ============ */
@@ -2918,14 +3463,17 @@ Object.assign(window, {
   switchHistClaim, submitComisionTransferencia, goHistComunidadWa, goHistNovedades,
   openGestorComisionModal, closeGestorComisionModal, registrarPagoComision,
   openTarifasModal, closeTarifasModal, switchTarifaLocal, switchTarifaTipo, renderTarifas, selectTarifa,
-  handleCarnetUpload, captureGPS, handlePerfilPhoto, pickCarnet, removeCarnet, clearValeDraft,
+  handleCarnetUpload, handlePerfilPhoto, pickCarnet, removeCarnet, clearValeDraft,
   openNovedades, closeNovedades, publishNovedad, deleteNovedad, dismissNovedad, onNovedadTap, closeConfirm,
   setAdminCat, installPWA, dismissPWA,
   setCatalogView, onGestorSearch, goCatalogCats, goCatalogCat, goCatalogSub,
   openProductDetail, closeProductDetail, pickFromDetail, removeProductPhoto,
-  applyAppUpdate, toggleNewCarousel, toggleDarkMode, switchValeMode,
+  applyAppUpdate, forceAppRefresh, toggleNewCarousel, toggleDarkMode, switchValeMode,
   onTipoPagoUnicoChange, onRMetodoPagoChange, waOtroMetodo,
   addLineItemRecogida, removeLineItemRecogida, updateLineItemRecogida, submitValeRecogida,
+  openChoiceSelect, closeChoiceModal, pickChoiceOption, syncChoiceLabel, cancelCarnetUpload,
+  openOrderDetailModal, closeOrderDetailModal, downloadOrderCarnet, copyOrderDetail,
+  toggleVoucherPreview, copyVoucherPreview,
   $: (id)=>document.getElementById(id)
 });
 
