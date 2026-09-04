@@ -3791,13 +3791,25 @@ async function saveGestor(){
   btns.forEach(b=>{ b.disabled=true; b.innerHTML='<span class="btn-spinner"></span> Guardando…'; });
   try{
     if(state.editingGestorId){
+      const g = state.gestores.find(x=>x.id===state.editingGestorId);
       const passActual = $('gPasswordActual')?.value || '';
       const passNueva = $('gPasswordNueva')?.value || '';
+      const data = { nombre, username, telefono };
       if(passNueva){
         if(!passActual){ showToast('Escribe la contraseña actual del gestor para poder cambiarla.'); return; }
-        await cambiarPasswordGestor(username, passActual, passNueva);
+        if(g?.authUid){
+          // Gestor ya migrado: cambia la contraseña de su cuenta real de Firebase Auth
+          await cambiarPasswordGestor(g.username||username, passActual, passNueva);
+        } else {
+          // Gestor aún no migrado: valida contra la contraseña vieja en texto plano de Firestore
+          // y de paso lo migra creando su cuenta real de Firebase Auth con la contraseña nueva.
+          if(String(g?.password||'') !== passActual){ showToast('La contraseña actual no es correcta.'); return; }
+          const uid = await crearCuentaGestor(username, passNueva);
+          data.authUid = uid;
+          data.password = deleteField();
+        }
       }
-      await updateDoc(doc(db,'gestores',state.editingGestorId), { nombre, username, telefono });
+      await updateDoc(doc(db,'gestores',state.editingGestorId), data);
     } else {
       const password = $('gPassword').value;
       if(!password){ showToast('La contraseña es obligatoria para un gestor nuevo.'); return; }
