@@ -199,6 +199,12 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 /* ===== Modal genérico de selección (punto #2) ===== */
 .csel-display{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-size:13.5px;font-weight:600;color:var(--text);display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;}
 .csel-display .csel-arrow{flex:none;color:var(--muted);font-size:12px;}
+.catalog-filter-btn{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--gold);background:linear-gradient(135deg,#FFF8E1,#FDF0C6);font-size:13.5px;font-weight:700;color:var(--text);display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;box-shadow:0 2px 6px rgba(232,184,37,.25);}
+.catalog-filter-btn .cfb-left{display:flex;align-items:center;gap:9px;min-width:0;}
+.catalog-filter-btn .cfb-ic{flex:none;width:19px;height:19px;color:#B8860B;display:inline-flex;}
+.catalog-filter-btn .cfb-ic svg{width:100%;height:100%;}
+.catalog-filter-btn .cfb-text{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.catalog-filter-btn .csel-arrow{color:#B8860B;}
 .csel-native{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}
 .csel-group-label{font-size:10.5px;font-weight:800;color:var(--green-dim);text-transform:uppercase;letter-spacing:.4px;padding:10px 4px 5px;}
 .csel-item{display:flex;justify-content:space-between;align-items:center;padding:11px 10px;border-radius:10px;cursor:pointer;font-size:13.5px;border-bottom:1px solid var(--line);}
@@ -288,6 +294,10 @@ body.dark .voucher-preview-btn{border-color:var(--gold);color:var(--gold);}
 .cat-tile .cat-emoji{font-size:28px;display:block;margin-bottom:6px;}
 .subcat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
 .subcat-tile{background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center;font-weight:700;font-size:11.5px;cursor:pointer;}
+.ver-todo-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;background:var(--green);color:#fff;border-radius:12px;padding:13px 12px;font-weight:800;font-size:13.5px;margin-bottom:12px;box-shadow:0 3px 10px rgba(26,74,46,.25);}
+.ver-todo-btn:active{transform:scale(.98);}
+.ver-todo-btn .vt-ic{flex:none;width:18px;height:18px;display:inline-flex;}
+.ver-todo-btn .vt-ic svg{width:100%;height:100%;}
 .back-cats{font-size:14.5px;font-weight:800;color:#fff;background:var(--green);margin-bottom:12px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;padding:12px 18px;border-radius:13px;box-shadow:0 3px 10px rgba(26,74,46,.28);-webkit-tap-highlight-color:transparent;user-select:none;}
 .back-cats:active{transform:scale(.96);background:var(--green-dim);}
 .back-cats svg{width:18px;height:18px;flex:none;stroke:#fff;}
@@ -982,14 +992,13 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
             <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Cambio de monedas</span><span class="faq-chevron">⌄</span></button>
             <div class="faq-a"><div class="faq-a-inner"><ul>
               <li><b>2do Local:</b> Se acepta USD, Euros y CUP.</li>
-              <li>Para otro tipo de pago, si aceptamos, preguntarme antes.</li>
+              <li>No aceptamos otros métodos de pagos que no sean los mencionados anteriormente, en caso de cambiar el método escribir antes si lo estamos recibiendo.</li>
             </ul></div></div>
           </div>
           <div class="faq-item">
             <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Transportación</span><span class="faq-chevron">⌄</span></button>
             <div class="faq-a"><div class="faq-a-inner"><ul>
-              <li>Para el 2do local, siempre escribir bien porque puede cambiar.</li>
-              <li><b>Importante:</b> Si el gestor le sube el precio al producto para obtener mayor ganancia, la mensajería la paga el cliente o la incluye el gestor dentro de su comisión si se lo permite.</li>
+              <li>Los precios de mensajería están agregados en el vale de mensajería.</li>
             </ul></div></div>
           </div>
           <div class="faq-item">
@@ -1050,15 +1059,18 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
       <div id="newCarouselBox" class="new-carousel-wrap hidden"></div>
       <div class="card" style="padding-bottom:8px;">
         <input type="text" id="gestorCatSearch" placeholder="Buscar en todo el catálogo…" oninput="onGestorSearch()" style="margin-bottom:10px;">
-        <button type="button" class="csel-display" style="margin-bottom:10px;" onclick="openChoiceSelect('catalogSortSelect','🔀 Ordenar / filtrar catálogo')"><span id="catalogSortSelect_label">Relevancia</span><span class="csel-arrow">▾</span></button>
+        <button type="button" class="catalog-filter-btn" style="margin-bottom:10px;" onclick="openChoiceSelect('catalogSortSelect','🔀 Ordenar / filtrar catálogo')">
+          <span class="cfb-left"><span class="cfb-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18M6 12h12M10 19h4"/></svg></span><span class="cfb-text" id="catalogSortSelect_label">Más recientes</span></span>
+          <span class="csel-arrow">▾</span>
+        </button>
         <select id="catalogSortSelect" class="csel-native" onchange="onCatalogSortChange()">
-          <option value="relevancia">Relevancia</option>
           <option value="recientes">Más recientes</option>
           <option value="precioAsc">Precio: menor a mayor</option>
           <option value="precioDesc">Precio: mayor a menor</option>
           <option value="nombreAsc">Nombre A-Z</option>
-          <option value="disponibles">Productos disponibles</option>
-          <option value="agotados">Productos agotados</option>
+          <option value="nuevos">Productos nuevos</option>
+          <option value="gradoA">Productos Grado A</option>
+          <option value="gradoAPlus">Productos Grado A Plus</option>
         </select>
         <div class="view-toggle">
           <button type="button" id="viewGridBtn" class="active" onclick="setCatalogView('grid')">▦ Cuadrícula</button>
@@ -1105,6 +1117,7 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 
       <div id="adminPanelGestores" class="admin-panel hidden">
         <button class="btn-primary" onclick="openGestorModal()" style="margin-bottom:12px;">+ Nuevo gestor</button>
+        <button class="btn-secondary" id="migrarGestoresBtn" onclick="migrarGestoresAAuth()" style="margin-bottom:12px;">🔐 Migrar gestores antiguos a Firebase Auth</button>
         <div id="adminGestoresList"><div class="hint">Cargando…</div></div>
       </div>
 
@@ -1262,7 +1275,13 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
     <div class="modal-head"><h3 id="gestorModalTitle">Nuevo gestor</h3><button onclick="closeGestorModal()">✕</button></div>
     <div class="field"><label>Nombre *</label><input type="text" id="gNombre"></div>
     <div class="field"><label>Usuario *</label><input type="text" id="gUsername"></div>
-    <div class="field"><label>Contraseña *</label><input type="text" id="gPassword"></div>
+    <div id="gPasswordNewWrap" class="field"><label>Contraseña *</label><input type="text" id="gPassword"><div class="hint" style="padding:4px 0 0;text-align:left;">Mínimo 6 caracteres.</div></div>
+    <div id="gPasswordChangeWrap" class="field hidden">
+      <label>Cambiar contraseña (opcional)</label>
+      <input type="text" id="gPasswordActual" placeholder="Contraseña actual" style="margin-bottom:8px;">
+      <input type="text" id="gPasswordNueva" placeholder="Contraseña nueva (mín. 6 caracteres)">
+      <div class="hint" style="padding:6px 0 0;text-align:left;">Déjalas en blanco si no vas a cambiar la contraseña.</div>
+    </div>
     <div class="field"><label>WhatsApp</label><input type="tel" id="gTelefono"></div>
     <button class="btn-primary" onclick="saveGestor()">Guardar gestor</button>
   </div>
@@ -1330,9 +1349,13 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
 import {
   initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager,
-  collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, setDoc, arrayUnion,
+  collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, setDoc, arrayUnion, deleteField,
   onSnapshot, query, where, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+import {
+  getAuth, signInAnonymously, onAuthStateChanged, setPersistence, browserLocalPersistence,
+  signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, signOut
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD8BhxfSPDmeCR2g1JyyqtV0Qt2Q4d_DfE",
@@ -1358,6 +1381,61 @@ try{
   });
 }catch(e){
   db = getFirestore(fbApp);
+}
+
+/* ============ AUTENTICACIÓN (punto #6 — requisito de las Reglas de seguridad) ============
+   La app usa login propio (usuario/contraseña guardados en Firestore), no Firebase Auth.
+   Para poder cerrar las Reglas de Firestore (y dejar de tener "allow read, write: if true"),
+   iniciamos sesión anónima en segundo plano: así request.auth existe para cualquiera que
+   cargue la app real, y las Reglas pueden exigir "request.auth != null" en vez de estar abiertas.
+   No bloquea el arranque ni el login sin conexión: si falla (sin señal), simplemente se
+   reintenta más tarde y mientras tanto se sigue usando la caché local de Firestore. */
+const fbAuth = getAuth(fbApp);
+try{ await setPersistence(fbAuth, browserLocalPersistence); }catch(e){}
+function ensureAnonAuth(){
+  if(fbAuth.currentUser) return;
+  signInAnonymously(fbAuth).catch(()=>{ /* sin conexión: se reintenta en el próximo arranque */ });
+}
+ensureAnonAuth();
+onAuthStateChanged(fbAuth, user=>{ if(!user) ensureAnonAuth(); });
+
+/* ============ CUENTAS DE GESTOR EN FIREBASE AUTH (migración de seguridad) ============
+   Antes, la contraseña de cada gestor se guardaba en texto plano en el documento de
+   Firestore, legible por cualquiera que pudiera leer la colección "gestores". Ahora cada
+   gestor tiene una cuenta real de Firebase Authentication (con un correo sintético a partir
+   de su usuario) y el documento de Firestore solo guarda su UID de Auth (authUid), nunca
+   la contraseña. Se usa una app secundaria de Firebase solo para crear/cambiar esas cuentas
+   desde el panel de Admin sin cerrar la sesión del Administrador que está usando la app. */
+const secondaryApp = initializeApp(firebaseConfig, "adminOps");
+const secondaryAuth = getAuth(secondaryApp);
+function gestorAuthEmail(username){
+  const clean = String(username||'').trim().toLowerCase().replace(/[^a-z0-9_.-]/g,'');
+  return clean + '@ds-gestor.app';
+}
+async function crearCuentaGestor(username, password){
+  const email = gestorAuthEmail(username);
+  const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+  const uid = cred.user.uid;
+  await signOut(secondaryAuth);
+  return uid;
+}
+async function cambiarPasswordGestor(username, passwordActual, passwordNueva){
+  const email = gestorAuthEmail(username);
+  const cred = await signInWithEmailAndPassword(secondaryAuth, email, passwordActual);
+  await updatePassword(cred.user, passwordNueva);
+  await signOut(secondaryAuth);
+}
+const ADMIN_AUTH_EMAIL = ADMIN_USER.toLowerCase() + '@ds-admin.app';
+async function ensureAdminAuth(){
+  // Crea (la primera vez) o inicia sesión en la cuenta real de Firebase Auth del Admin,
+  // necesaria para que las Reglas de Firestore lo reconozcan (ver colección "admins").
+  try{
+    await signInWithEmailAndPassword(fbAuth, ADMIN_AUTH_EMAIL, ADMIN_PASS);
+  }catch(e){
+    if(e?.code==='auth/user-not-found' || e?.code==='auth/invalid-credential'){
+      try{ await createUserWithEmailAndPassword(fbAuth, ADMIN_AUTH_EMAIL, ADMIN_PASS); }catch(e2){}
+    }
+  }
 }
 
 /* ============ CATEGORÍAS ============ */
@@ -1526,7 +1604,7 @@ const state = {
   myGestorData:null, viewingGestorId:null,
   tarifaLocal:1, tarifaTipo:'motos', catFilter:'', pickerCatFilter:'',
   deferredPrompt:null, perfilPhotoUrl:'',
-  catalogLevel:'cats', catalogCat:'', catalogSub:'', catalogView:'grid', catalogSort:'relevancia',
+  catalogLevel:'cats', catalogCat:'', catalogSub:'', catalogView:'grid', catalogSort:'recientes',
   detailPhotoIdx:0, detailProduct:null, confirmResolve:null,
   deletedNovIds: JSON.parse(localStorage.getItem('deleted_novs')||'[]'),
   pwaDismissed: localStorage.getItem('pwa_dismissed')==='1',
@@ -1749,12 +1827,41 @@ async function doLogin(){
       if($('rememberMe')?.checked) localStorage.setItem('ds_remember', JSON.stringify({u,p,role:'admin'}));
       else localStorage.removeItem('ds_remember');
       localStorage.setItem('ds_user', JSON.stringify(state.user));
+      ensureAdminAuth(); // en paralelo, no bloquea la entrada
       enterApp(); return;
     }
-    const list = await fetchGestoresParaLogin();
-    const found = list.find(g=>
-      String(g.username||'').toLowerCase()===u.toLowerCase() && String(g.password||'')===p
-    );
+
+    // 1) Gestor ya migrado a Firebase Authentication (método actual y seguro: sin contraseñas en Firestore)
+    const email = gestorAuthEmail(u);
+    let uidAutenticado = null;
+    try{
+      const cred = await signInWithEmailAndPassword(fbAuth, email, p);
+      uidAutenticado = cred.user.uid;
+    }catch(e){ /* puede que aún no esté migrado, la contraseña sea incorrecta, o no haya conexión */ }
+
+    let found = null;
+    if(uidAutenticado){
+      try{
+        const q = query(collection(db,'gestores'), where('authUid','==', uidAutenticado));
+        const snap = await getDocs(q);
+        if(!snap.empty) found = { id: snap.docs[0].id, ...snap.docs[0].data() };
+      }catch(e){}
+      if(!found){
+        try{
+          const cache = JSON.parse(localStorage.getItem('ds_gestores_cache')||'[]');
+          found = cache.find(g=>g.authUid===uidAutenticado) || null;
+        }catch(e){}
+      }
+    }
+
+    // 2) Compatibilidad temporal: gestor todavía sin migrar (contraseña aún en texto plano en Firestore)
+    if(!found){
+      const list = await fetchGestoresParaLogin();
+      found = list.find(g=>
+        String(g.username||'').toLowerCase()===u.toLowerCase() && !g.authUid && String(g.password||'')===p
+      ) || null;
+    }
+
     if(!found){ errBox.textContent='Usuario o contraseña incorrectos.'; errBox.classList.remove('hidden'); return; }
     state.user = { role:'gestor', nombre:found.nombre, username:found.username, id:found.id, telefono:found.telefono, fotoUrl:found.fotoUrl||'' };
     if($('rememberMe')?.checked) localStorage.setItem('ds_remember', JSON.stringify({u,p,role:'gestor'}));
@@ -2946,9 +3053,12 @@ function renderGestorCatalogo(){
   if(state.catalogLevel==='subs'){
     if(nav) nav.innerHTML = `<div class="back-cats" onclick="goCatalogCats()">${ICONS.back}Volver a categorías</div><div style="font-weight:800;margin-bottom:8px;">${escapeHtml(state.catalogCat)}</div>`;
     const subs = CATEGORIAS[state.catalogCat] || [];
-    box.innerHTML = `<div class="subcat-grid">${subs.map(s=>`
+    box.innerHTML = `<button type="button" class="ver-todo-btn" onclick="goCatalogSub('')">
+        <span class="vt-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span>
+        <span>Ver todo de ${escapeHtml(state.catalogCat)}</span>
+      </button>
+      <div class="subcat-grid">${subs.map(s=>`
       <div class="subcat-tile" onclick="goCatalogSub('${escapeHtml(s)}')">${escapeHtml(s)}</div>`).join('')}
-      <div class="subcat-tile" onclick="goCatalogSub('')">Todos de esta categoría</div>
     </div>`;
     return;
   }
@@ -2965,12 +3075,11 @@ function renderGestorCatalogo(){
 /* ============ ORDEN/FILTRO DE CATÁLOGO (punto #18) ============ */
 function onCatalogSortChange(){
   syncChoiceLabel('catalogSortSelect');
-  state.catalogSort = $('catalogSortSelect')?.value || 'relevancia';
+  state.catalogSort = $('catalogSortSelect')?.value || 'recientes';
   renderGestorCatalogo();
 }
 function sortCatalogItems(items){
-  const mode = state.catalogSort || 'relevancia';
-  const isAgotado = p => p.calidad==='agotado' || p.disponible===false;
+  const mode = state.catalogSort || 'recientes';
   let arr = [...items];
   switch(mode){
     case 'recientes':
@@ -2985,14 +3094,17 @@ function sortCatalogItems(items){
     case 'nombreAsc':
       arr.sort((a,b)=>(a.nombre||'').localeCompare(b.nombre||'','es',{sensitivity:'base'}));
       break;
-    case 'disponibles':
-      arr = arr.filter(p=>!isAgotado(p));
+    case 'nuevos':
+      arr = arr.filter(p=>p.calidad==='nuevo');
       break;
-    case 'agotados':
-      arr = arr.filter(isAgotado);
+    case 'gradoA':
+      arr = arr.filter(p=>p.calidad==='gradoA');
+      break;
+    case 'gradoAPlus':
+      arr = arr.filter(p=>p.calidad==='gradoAPlus');
       break;
     default:
-      break; // relevancia: orden original
+      break;
   }
   return arr;
 }
@@ -3118,6 +3230,28 @@ function animateStatNumber(el, target){
   }
   requestAnimationFrame(step);
 }
+/* "Comisión recaudada" (punto #4): no debe acumular igual que la "Comisión total generada".
+   Tras marcar un pago como pagado en el Admin, se muestra ese monto por 10 minutos y luego vuelve a $0. */
+const RECAUDADO_VENTANA_MS = 10*60*1000;
+function recaudadoTemporal(pagos){
+  const now = Date.now();
+  let vencimientoMasCercano = Infinity;
+  const suma = pagos.reduce((s,p)=>{
+    const t = p.fecha ? new Date(p.fecha).getTime() : 0;
+    if(!t) return s;
+    const restante = RECAUDADO_VENTANA_MS - (now - t);
+    if(restante > 0){
+      if(restante < vencimientoMasCercano) vencimientoMasCercano = restante;
+      return s + (p.monto||0);
+    }
+    return s;
+  }, 0);
+  clearTimeout(window._recaudadoTimer);
+  if(vencimientoMasCercano !== Infinity){
+    window._recaudadoTimer = setTimeout(()=>{ if(state.currentTab==='historial') renderHistorial(); }, vencimientoMasCercano + 250);
+  }
+  return suma;
+}
 function renderHistorial(){
   const box=$('histList');
   const mine = state.pedidos.filter(o=>o.gestorId===(state.user.id||state.user.username))
@@ -3129,7 +3263,7 @@ function renderHistorial(){
   const pendiente = Math.max(0, totalComision - totalPagado);
   animateStatNumber($('histStatComisionTotal'), totalComision);
   animateStatNumber($('histStatPendiente'), pendiente);
-  animateStatNumber($('histStatRecaudado'), totalPagado);
+  animateStatNumber($('histStatRecaudado'), recaudadoTemporal(pagos));
   if($('histStatPedidos')) $('histStatPedidos').textContent = mine.length;
 
   if(!mine.length){ box.innerHTML='<div class="hint">Aún no tienes pedidos.</div>'; return; }
@@ -3621,7 +3755,7 @@ function renderAdminGestores(){
       ${g.fotoUrl?`<img src="${g.fotoUrl}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;">`:`<div style="width:44px;height:44px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;">${(g.nombre||'?').charAt(0)}</div>`}
       <div style="flex:1;">
         <div class="hist-top"><b>${escapeHtml(g.nombre)}</b></div>
-        <div class="hist-meta">@${escapeHtml(g.username)} ${g.telefono? ' · '+escapeHtml(g.telefono):''}</div>
+        <div class="hist-meta">@${escapeHtml(g.username)} ${g.telefono? ' · '+escapeHtml(g.telefono):''}${(!g.authUid && g.password)?' · <span style="color:var(--danger);font-weight:700;">sin migrar</span>':''}</div>
         <div class="prod-actions" style="margin-top:8px;">
           <button title="Comisiones" style="width:auto;padding:0 10px;font-size:11px;font-weight:700;" onclick="openGestorComisionModal('${g.id}')">💰 Comisiones</button>
           <button title="Editar" onclick="openGestorModal('${g.id}')">${ICONS.pencil}</button>
@@ -3636,27 +3770,71 @@ function openGestorModal(id){
   $('gestorModalTitle').textContent = id ? 'Editar gestor' : 'Nuevo gestor';
   $('gNombre').value = g?.nombre || '';
   $('gUsername').value = g?.username || '';
-  $('gPassword').value = g?.password || '';
   $('gTelefono').value = g?.telefono || '';
+  if(id){
+    $('gPasswordNewWrap').classList.add('hidden');
+    $('gPasswordChangeWrap').classList.remove('hidden');
+    $('gPasswordActual').value = ''; $('gPasswordNueva').value = '';
+  } else {
+    $('gPasswordNewWrap').classList.remove('hidden');
+    $('gPasswordChangeWrap').classList.add('hidden');
+    $('gPassword').value = '';
+  }
   $('gestorModal').classList.remove('hidden');
   pushNavState();
 }
 function closeGestorModal(){ $('gestorModal').classList.add('hidden'); }
 async function saveGestor(){
-  const nombre=$('gNombre').value.trim(), username=$('gUsername').value.trim(), password=$('gPassword').value;
-  if(!nombre || !username || !password){ showToast('Nombre, usuario y contraseña son obligatorios.'); return; }
-  const data = { nombre, username, password, telefono: $('gTelefono').value.trim() };
+  const nombre=$('gNombre').value.trim(), username=$('gUsername').value.trim(), telefono=$('gTelefono').value.trim();
+  if(!nombre || !username){ showToast('Nombre y usuario son obligatorios.'); return; }
   const btns = document.querySelectorAll('#gestorModal .btn-primary');
   btns.forEach(b=>{ b.disabled=true; b.innerHTML='<span class="btn-spinner"></span> Guardando…'; });
   try{
-    if(state.editingGestorId) await updateDoc(doc(db,'gestores',state.editingGestorId), data);
-    else await addDoc(collection(db,'gestores'), data);
+    if(state.editingGestorId){
+      const passActual = $('gPasswordActual')?.value || '';
+      const passNueva = $('gPasswordNueva')?.value || '';
+      if(passNueva){
+        if(!passActual){ showToast('Escribe la contraseña actual del gestor para poder cambiarla.'); return; }
+        await cambiarPasswordGestor(username, passActual, passNueva);
+      }
+      await updateDoc(doc(db,'gestores',state.editingGestorId), { nombre, username, telefono });
+    } else {
+      const password = $('gPassword').value;
+      if(!password){ showToast('La contraseña es obligatoria para un gestor nuevo.'); return; }
+      const uid = await crearCuentaGestor(username, password);
+      await addDoc(collection(db,'gestores'), { nombre, username, telefono, authUid: uid });
+    }
     showToast('Gestor guardado.');
     closeGestorModal();
-  }catch(e){ showToast('Error al guardar gestor.'); }
+  }catch(e){
+    if(e?.code==='auth/email-already-in-use') showToast('Ese nombre de usuario ya está en uso.');
+    else if(e?.code==='auth/weak-password') showToast('La contraseña debe tener al menos 6 caracteres.');
+    else if(e?.code==='auth/wrong-password' || e?.code==='auth/invalid-credential') showToast('La contraseña actual no es correcta.');
+    else showToast('Error al guardar gestor.');
+  }
   finally {
     btns.forEach(b=>{ b.disabled=false; b.textContent='Guardar gestor'; });
   }
+}
+async function migrarGestoresAAuth(){
+  const pendientes = state.gestores.filter(g=>!g.authUid && g.password);
+  if(!pendientes.length){ showToast('No hay gestores pendientes de migrar.'); return; }
+  if(!confirm(`Se migrarán ${pendientes.length} gestor(es) a Firebase Authentication y se borrará su contraseña en texto plano de Firestore. ¿Continuar?`)) return;
+  const btn = $('migrarGestoresBtn');
+  if(btn){ btn.disabled=true; btn.innerHTML='<span class="btn-spinner"></span> Migrando…'; }
+  let ok=0, fallidos=[];
+  for(const g of pendientes){
+    try{
+      const uid = await crearCuentaGestor(g.username, g.password);
+      await updateDoc(doc(db,'gestores', g.id), { authUid: uid, password: deleteField() });
+      ok++;
+    }catch(e){
+      fallidos.push(`${g.username} (${e?.code||'error'})`);
+    }
+  }
+  if(btn){ btn.disabled=false; btn.textContent='🔐 Migrar gestores antiguos a Firebase Auth'; }
+  if(fallidos.length) showToast(`${ok} migrado(s). Fallaron: ${fallidos.join(', ')}`);
+  else showToast(`${ok} gestor(es) migrado(s) correctamente.`);
 }
 async function removeGestor(id){
   if(!confirm('¿Eliminar este gestor?')) return;
@@ -3833,7 +4011,7 @@ Object.assign(window, {
   addLineItem, removeLineItem, updateLineItem, toggleVuelto, recalcVale, submitVale,
   openCatalogPicker, closeCatalogPicker, renderCatalogPicker, pickCatalogProduct, setPickerCat,
   openProductModal, closeProductModal, handlePhotoUpload, saveProduct, removeProduct, updateSubcats, toggleStockField,
-  updateOrderStatus, openGestorModal, closeGestorModal, saveGestor, removeGestor, saveConfig,
+  updateOrderStatus, openGestorModal, closeGestorModal, saveGestor, removeGestor, saveConfig, migrarGestoresAAuth,
   switchHistClaim, submitComisionTransferencia, goHistComunidadWa, goHistNovedades,
   openGestorComisionModal, closeGestorComisionModal, registrarPagoComision,
   openTarifasModal, closeTarifasModal, switchTarifaLocal, switchTarifaTipo, renderTarifas, selectTarifa,
