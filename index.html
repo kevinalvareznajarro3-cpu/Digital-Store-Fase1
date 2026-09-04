@@ -140,6 +140,10 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 .admin-tab-btn .aic svg{width:100%;height:100%;}
 
 .modal-back{position:fixed;inset:0;background:rgba(10,15,10,.6);z-index:50;display:flex;align-items:flex-end;justify-content:center;}
+/* #choiceModal y #tarifasModal pueden abrirse ENCIMA de otro modal ya abierto (Producto, Comisiones, etc.);
+   sin esto quedaban invisibles/intocables detrás del modal padre por estar antes en el DOM (punto #20) */
+#choiceModal{z-index:65;}
+#tarifasModal{z-index:65;}
 .modal{background:var(--surface);border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));
   width:100%;max-width:520px;max-height:88vh;overflow-y:auto;}
 .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
@@ -210,13 +214,22 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 .od-row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px;}
 .od-row span:first-child{color:var(--muted);flex:none;}
 .od-row span:last-child{text-align:right;font-weight:600;}
-.od-carnet-img{width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin-top:6px;background:var(--surface-2);}
+.od-carnet-img{width:100%;max-height:220px;object-fit:contain;border-radius:12px;margin-top:6px;background:var(--surface-2);cursor:pointer;}
 
 /* ===== Vista previa del vale (punto #6) ===== */
-.voucher-preview-fab{position:fixed;right:16px;bottom:96px;width:58px;height:58px;border-radius:50%;z-index:60;display:flex;align-items:center;justify-content:center;padding:0;}
-.voucher-preview-fab .vpf-glow{position:absolute;inset:-5px;border-radius:50%;background:conic-gradient(from 0deg,#ff3b30,#ff9500,#ffcc00,#34c759,#00c7be,#007aff,#5856d6,#ff2d55,#ff3b30);animation:vpfSpin 3s linear infinite;filter:blur(5px);opacity:.9;}
-.voucher-preview-fab .vpf-icon{position:relative;z-index:1;width:50px;height:50px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 14px rgba(0,0,0,.35);}
-@keyframes vpfSpin{to{transform:rotate(360deg);}}
+.voucher-preview-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:14px 16px;margin:4px 0 12px;border-radius:14px;border:1.5px dashed var(--green-dim);
+  background:var(--surface);color:var(--green-dim);font-weight:800;font-size:14.5px;cursor:pointer;
+  position:relative;overflow:hidden;}
+body.dark .voucher-preview-btn{border-color:var(--gold);color:var(--gold);}
+.voucher-preview-btn:active{transform:scale(.98);}
+.voucher-preview-btn .vpb-tree{font-size:22px;display:inline-block;transform-origin:bottom center;animation:vpbSway 2.4s ease-in-out infinite;}
+@keyframes vpbSway{0%,100%{transform:rotate(-5deg) scale(1);}50%{transform:rotate(5deg) scale(1.06);}}
+.voucher-preview-btn::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(100deg,transparent,rgba(232,184,37,.14),transparent);
+  transform:translateX(-60%);animation:vpbSheen 4.5s ease-in-out infinite;}
+@keyframes vpbSheen{0%{transform:translateX(-60%);}55%,100%{transform:translateX(260%);}}
+.voucher-preview-btn .csel-arrow{opacity:.7;font-size:12px;}
 .voucher-preview-panel{position:fixed;left:0;right:0;bottom:0;max-height:60vh;background:var(--surface);border-radius:18px 18px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.35);z-index:59;display:flex;flex-direction:column;padding:14px 16px calc(14px + env(safe-area-inset-bottom));}
 .vpp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex:none;}
 .voucher-preview-text{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;white-space:pre-wrap;font-family:inherit;font-size:12.5px;line-height:1.55;background:var(--surface-2);border-radius:12px;padding:12px;margin:0;color:var(--text);}
@@ -253,8 +266,15 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 
 /* Photo with remove X */
 .photo-preview{position:relative;display:inline-block;max-width:100%;}
-.photo-preview img{max-width:100%;max-height:140px;border-radius:10px;display:block;}
+.photo-preview img{max-width:100%;max-height:140px;border-radius:10px;display:block;cursor:pointer;}
 .photo-remove{position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;background:var(--danger);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;z-index:3;box-shadow:0 2px 6px rgba(0,0,0,.25);}
+
+/* Lightbox de foto de carnet (punto #17) */
+.lightbox-back{position:fixed;inset:0;background:rgba(6,10,7,.9);z-index:70;display:flex;align-items:center;justify-content:center;padding:20px;}
+.lightbox-inner{position:relative;max-width:100%;max-height:100%;display:flex;flex-direction:column;align-items:center;gap:14px;}
+.lightbox-inner img{max-width:100%;max-height:72vh;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.5);object-fit:contain;background:var(--surface);}
+.lightbox-close{position:absolute;top:-46px;right:0;width:38px;height:38px;border-radius:50%;background:var(--surface);color:var(--text);font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.3);}
+.lightbox-remove{width:auto;padding:10px 18px;}
 
 /* Login extras */
 .forgot-link{display:block;text-align:center;margin-top:14px;font-size:13px;color:var(--blue);font-weight:600;text-decoration:none;}
@@ -394,6 +414,58 @@ body.dark .hist-hero{box-shadow:0 12px 26px rgba(0,0,0,.55);}
 .coin-stack .coin1{width:42px;height:42px;left:6px;top:16px;animation:coinFloat 2.8s ease-in-out infinite .5s;}
 @keyframes coinFloat{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-6px) rotate(-6deg);}}
 
+/* ===== Ayuda: bloques FAQ animados (punto #21) ===== */
+.faq-block{margin-bottom:16px;}
+.faq-hero{position:relative;overflow:hidden;border-radius:18px 18px 0 0;padding:20px 84px 18px 18px;color:#fff;}
+.faq-hero-deco{position:absolute;top:-10px;right:6px;font-size:64px;opacity:.16;line-height:1;pointer-events:none;filter:blur(.2px);}
+.faq-hero-ic{position:relative;z-index:1;font-size:26px;display:inline-block;margin-bottom:6px;}
+.faq-hero-title{position:relative;z-index:1;font-size:15.5px;font-weight:800;letter-spacing:.1px;}
+.faq-hero-sub{position:relative;z-index:1;font-size:11.5px;opacity:.88;font-weight:600;margin-top:3px;line-height:1.4;}
+.faq-hero::after{content:'';position:absolute;left:-30%;top:0;bottom:0;width:55%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.16),transparent);
+  animation:histHeroSheen 6s ease-in-out infinite;pointer-events:none;}
+.faq-group{background:var(--surface);border-radius:0 0 18px 18px;padding:2px 14px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.faq-group-label{font-size:10.5px;font-weight:800;color:var(--green-dim);text-transform:uppercase;letter-spacing:.5px;padding:14px 2px 2px;}
+body.dark .faq-group-label{color:var(--gold);}
+.faq-item{border-bottom:1px solid var(--line);}
+.faq-item:last-child{border-bottom:none;}
+.faq-q{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 2px;text-align:left;font-size:13.3px;font-weight:700;color:var(--text);}
+.faq-chevron{flex:none;transition:transform .25s ease;color:var(--muted);font-size:13px;}
+.faq-item.open .faq-chevron{transform:rotate(180deg);color:var(--green);}
+body.dark .faq-item.open .faq-chevron{color:var(--gold);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .32s ease;}
+.faq-item.open .faq-a{max-height:900px;}
+.faq-a-inner{padding:0 2px 15px;font-size:12.6px;line-height:1.65;color:var(--muted);}
+.faq-a-inner b{color:var(--green-dim);}
+body.dark .faq-a-inner b{color:var(--gold);}
+.faq-a-inner ul{margin:6px 0 0;padding-left:18px;}
+.faq-a-inner li{margin-bottom:5px;}
+.faq-empty{padding:6px 2px 16px;font-size:12.6px;color:var(--muted);}
+
+/* --- variantes de color/animación por bloque, siempre en la paleta verde/crema/dorado --- */
+.faq-hero--gestor{background:linear-gradient(135deg,var(--green) 0%,var(--green-dim) 65%,#0F2E1E 100%);box-shadow:0 10px 22px rgba(15,46,30,.3);}
+.faq-hero--gestor .faq-hero-deco{animation:faqGrow 3.2s ease-in-out infinite;}
+@keyframes faqGrow{0%,100%{transform:scale(1) translateY(0);}50%{transform:scale(1.12) translateY(-4px);}}
+
+.faq-hero--catalogo{background:linear-gradient(135deg,#B98A0E 0%,var(--gold) 60%,#F4D160 100%);color:#3a2c00;box-shadow:0 10px 22px rgba(184,138,20,.28);}
+.faq-hero--catalogo .faq-hero-deco{color:#3a2c00;animation:faqBounce 2.4s ease-in-out infinite;}
+@keyframes faqBounce{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-7px) rotate(6deg);}}
+
+.faq-hero--comisiones{background:linear-gradient(135deg,var(--green-dim) 0%,#3C7A4F 45%,var(--gold) 130%);box-shadow:0 10px 22px rgba(39,107,67,.3);}
+.faq-hero--comisiones .faq-hero-deco{animation:coinFloat 2.8s ease-in-out infinite;}
+
+.faq-hero--local1{background:radial-gradient(circle at 30% 20%,#2E6B44,var(--green) 60%,#0F2E1E 100%);box-shadow:0 10px 22px rgba(15,46,30,.32);}
+.faq-hero--local1 .faq-hero-deco{animation:faqPulseGlow 2.6s ease-in-out infinite;}
+@keyframes faqPulseGlow{0%,100%{opacity:.14;transform:scale(1);}50%{opacity:.28;transform:scale(1.08);}}
+
+.faq-hero--local2{background:linear-gradient(150deg,var(--bg) 0%,#EAD9A0 55%,var(--gold) 100%);color:#3a2c00;box-shadow:0 8px 18px rgba(184,138,20,.22);}
+.faq-hero--local2 .faq-hero-deco{color:#3a2c00;animation:faqSway 3.4s ease-in-out infinite;}
+@keyframes faqSway{0%,100%{transform:rotate(-4deg);}50%{transform:rotate(4deg);}}
+.faq-hero--local2::after{background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);}
+
+.faq-hero--otras{background:linear-gradient(135deg,#3C7A4F 0%,var(--green-dim) 55%,var(--green) 100%);box-shadow:0 10px 22px rgba(39,107,67,.3);}
+.faq-hero--otras .faq-hero-deco{animation:faqPulseGlow 2.2s ease-in-out infinite;}
+
 .hist-stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
 .hist-stat-card{background:var(--surface);border-radius:14px;padding:13px 12px;display:flex;flex-direction:column;gap:9px;
   border-left:4px solid var(--line);box-shadow:0 1px 4px rgba(0,0,0,.05);}
@@ -423,6 +495,7 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 .quality-badge.nuevo{background:var(--blue);animation:qualityPulse 1.8s ease-in-out infinite;}
 .quality-badge.gradoA{background:var(--ok);animation:qualityPulse 1.8s ease-in-out infinite;}
 .quality-badge.gradoAPlus{background:linear-gradient(135deg,var(--gold),#F4D160);color:#4a3800;animation:qualityPulse 1.8s ease-in-out infinite;}
+.quality-badge.agotado{background:var(--red);color:#fff;}
 @keyframes qualityPulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.07);opacity:.88;}}
 .detail-photos{overflow:visible;}
 .detail-photos .quality-badge{top:0;left:0;font-size:10px;padding:4px 9px;}
@@ -616,6 +689,7 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
         <div class="field"><label>Garantía</label><input type="text" id="garantia" placeholder="Ej: 30 días, 1 año…"></div>
       </div>
 
+      <button type="button" class="voucher-preview-btn" onclick="toggleVoucherPreview()"><span class="vpb-tree">🌲</span> Vista previa del vale <span class="csel-arrow">▾</span></button>
       <button class="btn-primary" id="submitValeBtn" onclick="submitVale()">🌲 Enviar Vale de mensajería</button>
       </div>
 
@@ -667,14 +741,11 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
           <b>Referencia:</b> Frente a la facultad de comunicaciones. Un portón gris grande, en el sótano.
         </div>
 
+        <button type="button" class="voucher-preview-btn" onclick="toggleVoucherPreview()"><span class="vpb-tree">🌲</span> Vista previa del vale <span class="csel-arrow">▾</span></button>
         <button class="btn-primary" id="submitRecogidaBtn" onclick="submitValeRecogida()">🏪 Enviar Vale de Recogida</button>
       </div>
 
-      <!-- Vista previa en vivo del vale — punto #6 -->
-      <button type="button" class="voucher-preview-fab" onclick="toggleVoucherPreview()" title="Vista previa del vale">
-        <span class="vpf-glow"></span>
-        <span class="vpf-icon">🌲</span>
-      </button>
+      <!-- Vista previa en vivo del vale -->
       <div id="voucherPreviewPanel" class="voucher-preview-panel hidden">
         <div class="vpp-head">
           <b>👁️ Vista previa del vale</b>
@@ -744,13 +815,210 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
       </div>
     </section>
 
-    <!-- AYUDA -->
+    <!-- AYUDA (punto #21) -->
     <section id="view-ayuda" class="view hidden">
-      <div class="card" style="text-align:center;padding:32px 18px;">
-        <div style="font-size:38px;margin-bottom:8px;">🌲</div>
-        <h2 style="justify-content:center;">Ayuda</h2>
-        <div class="hint" style="padding:4px 0 0;">Próximamente encontrarás aquí guías y respuestas a tus preguntas más frecuentes como gestor.</div>
+
+      <div class="faq-block">
+        <div class="faq-hero faq-hero--gestor">
+          <div class="faq-hero-deco" aria-hidden="true">🌱</div>
+          <div class="faq-hero-ic">🌲</div>
+          <div class="faq-hero-title">Ser gestor de ventas</div>
+          <div class="faq-hero-sub">Lo básico para arrancar y vender con confianza</div>
+        </div>
+        <div class="faq-group">
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>¿Qué necesito para ser gestor de ventas?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner">Para ser gestor de ventas no hace falta experiencia previa. Solo necesitas tener conectividad a Internet (mínima), un celular y ganas de trabajar. Con disciplina y perseverancia, los resultados llegarán. No importa si nunca has vendido antes, nosotros te damos las herramientas y el catálogo.</div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>¿Qué hago con los productos del catálogo?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner">Los productos del catálogo te sirven para mostrárselos a tus clientes potenciales. Si algún cliente está interesado, puede comprarlos a través de ti. Tú eres el puente entre el producto y el cliente final.</div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>¿Dónde encuentro clientes?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner">Hay muchas maneras de encontrar clientela. Puedes buscar clientes en Revolico, Facebook, WhatsApp, Telegram e incluso en la vida real. Cualquier persona que tenga una necesidad o que quiera ayudar a una amistad a encontrar algo que necesita, es un cliente potencial. El boca a boca también es muy poderoso.</div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>De tener un cliente interesado, ¿qué hago?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner">Asesóralo, ayúdalo y compréndelo. Escucha sus necesidades y recomiéndale el producto que mejor se adapte. Luego rellenas el vale de mensajería o de recogida. En lo demás viene por nuestra parte: nosotros hacemos el domicilio hacia la casa del cliente y listo. Todos contentos. Es un proceso sencillo y transparente.</div></div>
+          </div>
+        </div>
       </div>
+
+      <div class="faq-block">
+        <div class="faq-hero faq-hero--catalogo">
+          <div class="faq-hero-deco" aria-hidden="true">📦</div>
+          <div class="faq-hero-ic">🛍️</div>
+          <div class="faq-hero-title">Gestionar productos y catálogo</div>
+          <div class="faq-hero-sub">Fotos, etiquetas de calidad, locales y disponibilidad</div>
+        </div>
+        <div class="faq-group">
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>¿Cómo añado la foto del carnet del cliente?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner">Para añadir la foto del carnet del cliente, debes ir al formulario del vale de mensajería, ubicar el campo "Carnet (foto obligatoria)" y tocar el botón que aparece para subir la imagen. Puedes elegir entre tomar una foto directamente con la cámara trasera del teléfono o seleccionar la imagen desde la galería. Una vez que la foto esté cargada, verás la vista previa. Si te equivocas, puedes eliminarla tocando la "X" que aparece sobre la imagen.</div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>¿Es obligatorio la foto del carnet del cliente?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner">Sí, es obligatorio la foto del carnet del cliente por medidas de seguridad por nuestra parte para evitar estafas y malas experiencias. La foto del carnet del cliente es obligatoria y no se usará para ningún objetivo que no sea procesar el pedido.</div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>¿Qué significan las etiquetas de "Nuevo", "Grado A" o "Grado A Plus"?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <ul>
+                <li><b>Grado A:</b> Producto que es de uso y que viene con algunos detalles estéticos. Siempre debes mostrarle al cliente las fotos, ya que estarán en el catálogo.</li>
+                <li><b>Grado A Plus:</b> Es un producto que tiene menos uso, casi intacto, con algunos detalles estéticos, pero con el funcionamiento correcto.</li>
+                <li><b>Nuevo:</b> Producto nuevo en caja. Todos nuestros productos nuevos vienen sellados en caja, listos para estrenar por el cliente.</li>
+              </ul>
+            </div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>¿Cómo sé de qué local viene un producto (1er o 2do Local)?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner">Normalmente está especificado en las fotos de cada producto. Siempre podrás saber de qué local es cada producto antes de ofrecerlo al cliente.</div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>¿Cómo sé si un producto está agotado?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner">Se estará publicando en la sección de Novedades de la aplicación. Si quieres enterarte, entra a la categoría principal de productos agotados y sabrás. Toca el lápiz, agrega el nombre del producto, y si sale "agotado" es porque no está disponible.</div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>¿Qué tiempo estimado tienen los productos de uso?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner">La mayoría de productos no vienen con una fecha estimada de uso. Son productos comprados a otras empresas y puestos en venta. De necesitar tiempo de uso, me escriben para ver si tiene y puedo proporcionárselas.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-block">
+        <div class="faq-hero faq-hero--comisiones">
+          <div class="faq-hero-deco" aria-hidden="true">💰</div>
+          <div class="faq-hero-ic">💸</div>
+          <div class="faq-hero-title">Comisiones</div>
+          <div class="faq-hero-sub">Cómo y cuándo se cobran, en cada local</div>
+        </div>
+        <div class="faq-group">
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>¿Cómo se pagan las comisiones?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner">
+              <ul>
+                <li>Se les estará pagando en transferencia y efectivo.</li>
+                <li><b>Transferencia:</b> en menos de 24 horas.</li>
+                <li><b>Efectivo:</b> de manera quincenal. Se avisará en la sección de avisos de la comunidad de Digital Store en WhatsApp o en la sección de novedades de la aplicación. Cuando se avise, pueden pasar a buscar su comisión.</li>
+                <li>Las comisiones son libres.</li>
+              </ul>
+            </div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>¿Qué pasa si no puedo recoger mi comisión en efectivo?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner">Si no puedes recoger tu comisión en efectivo cuando se avise, se quedará acumulada para el próximo cierre. Es importante estar atento a los avisos para no perder el plazo.</div></div>
+          </div>
+
+          <div class="faq-group-label">🏪 Comisiones — 1er Local</div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>¿Cómo funcionan las comisiones en el 1er local?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner"><b>Comisiones libres para productos de -200 USD:</b> No se incluye domicilio incluido ni comisión fija. Deben buscar margen. Es decir, el gestor pone el precio que quiera sobre el precio base y esa diferencia es su ganancia.</div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>¿Cómo funcionan las comisiones fijas para productos de +200 USD en el 1er local?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner"><b>Comisiones fijas para productos de +200 USD:</b> Se incluye domicilio incluido. El gestor gana una comisión fija establecida por el administrador. Si el gestor sube el precio del producto, se deja de incluir el domicilio incluido. Si esto pasa, debe pagar la mensajería el cliente o el gestor de su comisión si se lo permite. Si sube el precio, el gestor gana la comisión fija más la comisión que le haya subido (libre).</div></div>
+          </div>
+
+          <div class="faq-group-label">🏬 Comisiones — 2do Local</div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>¿Cómo funcionan las comisiones en el 2do local?</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner"><b>Comisiones libres para todos los productos:</b> Deben buscar el margen. Es decir, el gestor pone el precio que quiera sobre el precio base y esa diferencia es su ganancia.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-block">
+        <div class="faq-hero faq-hero--local1">
+          <div class="faq-hero-deco" aria-hidden="true">🏪</div>
+          <div class="faq-hero-ic">🏪</div>
+          <div class="faq-hero-title">Todo sobre el 1er Local</div>
+          <div class="faq-hero-sub">Monedas, transportación, recogida y garantía</div>
+        </div>
+        <div class="faq-group">
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Cambio de monedas</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner"><ul>
+              <li><b>USD:</b> Aceptado.</li>
+              <li><b>CUP:</b> Se acepta a 10 pesos por encima de El Toque.</li>
+              <li><b>EURO:</b> Se acepta a 1x1.</li>
+              <li><b>ZELLE:</b> Aceptado.</li>
+              <li><b>TARJETA DE CRÉDITO:</b> Se acepta con un 7% de comisión tanto para el cliente como para el gestor.</li>
+            </ul></div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Transportación</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner"><ul>
+              <li>Los precios de mensajería están divididos en dos tarifas distintas, una para cada local, con costos bien ejemplificados.</li>
+              <li>Domicilio incluido para productos de más de 200 USD en el 1er local, con comisión fija.</li>
+              <li><b>Importante:</b> Si el gestor le sube el precio al producto para obtener mayor ganancia, la mensajería la paga el cliente o la incluye el gestor dentro de su comisión si se lo permite.</li>
+            </ul></div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Recogida en tienda</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner">1er Local: No aceptamos recogida en tienda. Estamos en construcción. Solo servicio a domicilio.</div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Garantía</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner"><ul>
+              <li><b>Laptops nuevas:</b> 15 días.</li>
+              <li><b>Laptops (Grado A) de uso:</b> 30 días.</li>
+              <li><b>Demás productos:</b> 5 días.</li>
+            </ul>
+            <b>Importante:</b> La garantía solo aplica por fallos del equipo, no por mal uso del cliente. Avísenle desde el principio para evitar malentendidos.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-block">
+        <div class="faq-hero faq-hero--local2">
+          <div class="faq-hero-deco" aria-hidden="true">🏬</div>
+          <div class="faq-hero-ic">🏬</div>
+          <div class="faq-hero-title">Todo sobre el 2do Local</div>
+          <div class="faq-hero-sub">Monedas, transportación, recogida y garantía</div>
+        </div>
+        <div class="faq-group">
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Cambio de monedas</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner"><ul>
+              <li><b>2do Local:</b> Se acepta USD, Euros y CUP.</li>
+              <li>Para otro tipo de pago, si aceptamos, preguntarme antes.</li>
+            </ul></div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Transportación</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner"><ul>
+              <li>Para el 2do local, siempre escribir bien porque puede cambiar.</li>
+              <li><b>Importante:</b> Si el gestor le sube el precio al producto para obtener mayor ganancia, la mensajería la paga el cliente o la incluye el gestor dentro de su comisión si se lo permite.</li>
+            </ul></div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Recogida en tienda</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner">2do Local: Aceptamos recogida y domicilio por costo adicional.</div></div>
+          </div>
+          <div class="faq-item">
+            <button type="button" class="faq-q" onclick="toggleFaq(this)"><span>Garantía</span><span class="faq-chevron">⌄</span></button>
+            <div class="faq-a"><div class="faq-a-inner"><b>2do Local (Electrodomésticos):</b><ul>
+              <li>Electrodomésticos pesados: 6 meses.</li>
+              <li>Electrodomésticos pequeños: 3 meses.</li>
+              <li>Todos se entregan con factura y garantía.</li>
+            </ul></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="faq-block">
+        <div class="faq-hero faq-hero--otras">
+          <div class="faq-hero-deco" aria-hidden="true">❓</div>
+          <div class="faq-hero-ic">🌲</div>
+          <div class="faq-hero-title">Otras preguntas</div>
+          <div class="faq-hero-sub">Un poco de todo lo demás</div>
+        </div>
+        <div class="faq-group">
+          <div class="faq-empty">Iremos añadiendo aquí nuevas preguntas próximamente.</div>
+        </div>
+      </div>
+
     </section>
 
     <!-- PERFIL -->
@@ -782,6 +1050,16 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
       <div id="newCarouselBox" class="new-carousel-wrap hidden"></div>
       <div class="card" style="padding-bottom:8px;">
         <input type="text" id="gestorCatSearch" placeholder="Buscar en todo el catálogo…" oninput="onGestorSearch()" style="margin-bottom:10px;">
+        <button type="button" class="csel-display" style="margin-bottom:10px;" onclick="openChoiceSelect('catalogSortSelect','🔀 Ordenar / filtrar catálogo')"><span id="catalogSortSelect_label">Relevancia</span><span class="csel-arrow">▾</span></button>
+        <select id="catalogSortSelect" class="csel-native" onchange="onCatalogSortChange()">
+          <option value="relevancia">Relevancia</option>
+          <option value="recientes">Más recientes</option>
+          <option value="precioAsc">Precio: menor a mayor</option>
+          <option value="precioDesc">Precio: mayor a menor</option>
+          <option value="nombreAsc">Nombre A-Z</option>
+          <option value="disponibles">Productos disponibles</option>
+          <option value="agotados">Productos agotados</option>
+        </select>
         <div class="view-toggle">
           <button type="button" id="viewGridBtn" class="active" onclick="setCatalogView('grid')">▦ Cuadrícula</button>
           <button type="button" id="viewListBtn" onclick="setCatalogView('list')">☰ Listado</button>
@@ -916,6 +1194,15 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
   </div>
 </div>
 
+<!-- LIGHTBOX: vista ampliada de foto (carnet, punto #17) -->
+<div id="imageLightbox" class="lightbox-back hidden" onclick="if(event.target===this) closeImageLightbox()">
+  <div class="lightbox-inner">
+    <button type="button" class="lightbox-close" onclick="closeImageLightbox()">✕</button>
+    <img id="lightboxImg" src="" alt="Foto ampliada">
+    <button type="button" id="lightboxRemoveBtn" class="btn-secondary lightbox-remove hidden" onclick="lightboxRemoveCarnet()">🗑️ Quitar foto</button>
+  </div>
+</div>
+
 <!-- MODAL: Producto -->
 <div id="productModal" class="modal-back hidden">
   <div class="modal">
@@ -953,6 +1240,7 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
         <option value="nuevo">Nuevo</option>
         <option value="gradoA">Grado A</option>
         <option value="gradoAPlus">Grado A Plus</option>
+        <option value="agotado">Agotado</option>
       </select>
     </div>
     <div class="field">
@@ -1080,7 +1368,8 @@ const CATEGORIAS = {
   "COMPUTACIÓN Y TECNOLOGÍA": ["Laptop Grado A","Laptops Nuevas","PC y Periféricos","Accesorios para PC y Laptops","Discos","Memorias USB","Adaptadores de Video","Adaptadores de audio","Adaptadores de PC","Red y Conectividad","Electrónica (General y Otros Artículos de Interés)","Impresoras y Accesorios"],
   "ENTRETENIMIENTO Y GAMING": ["Gaming","Accesorios y Periféricos para Gaming","Juguetes y Coleccionables","Juguetes Sexuales","Instrumentos Musicales","Creación de Contenido","Entrenamiento y Artículos Deportivos"],
   "2NDO LOCAL": ["Neveras de Exhibición","Estantes Comerciales","Frigoríficos","Equipos de Refrigeración Profesionales","Insumos Desechables","Electrodomésticos","Luminarias","Electrónica","Deportivos","Útiles del Hogar","Muebles","Muebles Comprimidos","Ferretería","Juguetes"],
-  "VEHÍCULOS Y HERRAMIENTAS": ["Vehículos","Accesorios para Vehículos","Herramientas","Seguridad"]
+  "VEHÍCULOS Y HERRAMIENTAS": ["Vehículos","Accesorios para Vehículos","Herramientas","Seguridad"],
+  "PRODUCTOS AGOTADOS": []
 };
 
 /* ============ TARIFAS 1er LOCAL ============ */
@@ -1237,7 +1526,7 @@ const state = {
   myGestorData:null, viewingGestorId:null,
   tarifaLocal:1, tarifaTipo:'motos', catFilter:'', pickerCatFilter:'',
   deferredPrompt:null, perfilPhotoUrl:'',
-  catalogLevel:'cats', catalogCat:'', catalogSub:'', catalogView:'grid',
+  catalogLevel:'cats', catalogCat:'', catalogSub:'', catalogView:'grid', catalogSort:'relevancia',
   detailPhotoIdx:0, detailProduct:null, confirmResolve:null,
   deletedNovIds: JSON.parse(localStorage.getItem('deleted_novs')||'[]'),
   pwaDismissed: localStorage.getItem('pwa_dismissed')==='1',
@@ -1289,6 +1578,7 @@ function closeTopModalIfAny(){
     ['novedadesModal', closeNovedades],
     ['choiceModal', closeChoiceModal],
     ['orderDetailModal', closeOrderDetailModal],
+    ['imageLightbox', closeImageLightbox],
     ['voucherPreviewPanel', toggleVoucherPreview]
   ];
   for(const [id, fn] of map){
@@ -1746,7 +2036,7 @@ function loadValeDraft(){
     state.carnetUrl = d.carnetUrl||'';
     const hint = $('carnetUploadHint');
     if(state.carnetUrl && hint){
-      hint.innerHTML = `<div class="photo-preview"><img src="${escapeHtml(state.carnetUrl)}" alt="Carnet"><button type="button" class="photo-remove" onclick="removeCarnet()">✕</button></div>`;
+      hint.innerHTML = `<div class="photo-preview"><img src="${escapeHtml(state.carnetUrl)}" alt="Carnet" onclick="openImageLightbox('${escapeHtml(state.carnetUrl)}', true)"><button type="button" class="photo-remove" onclick="removeCarnet()">✕</button></div>`;
       if($('carnetChoices')) $('carnetChoices').style.display='none';
     } else if(hint){
       hint.innerHTML = 'Toca para añadir foto del carnet';
@@ -1931,6 +2221,20 @@ function pickCarnet(mode){
   if(mode==='camera') $('carnetCamera').click();
   else $('carnetInput').click();
 }
+/* ============ LIGHTBOX de foto (punto #17) ============ */
+function openImageLightbox(url, removable){
+  if(!url) return;
+  const img = $('lightboxImg'); if(img) img.src = url;
+  const btn = $('lightboxRemoveBtn');
+  if(btn) btn.classList.toggle('hidden', !removable);
+  $('imageLightbox')?.classList.remove('hidden');
+  pushNavState();
+}
+function closeImageLightbox(){ $('imageLightbox')?.classList.add('hidden'); }
+function lightboxRemoveCarnet(){
+  removeCarnet();
+  closeImageLightbox();
+}
 function removeCarnet(){
   state.carnetUrl = '';
   $('carnetUploadHint').innerHTML = 'Toca para añadir foto del carnet';
@@ -1951,7 +2255,7 @@ async function handleCarnetUpload(ev){
     }, (xhr)=>{ state._carnetXhr = xhr; });
     state._carnetXhr = null;
     state.carnetUrl = url;
-    hint.innerHTML = `<div class="photo-preview"><img src="${url}"><button type="button" class="photo-remove" onclick="removeCarnet()">✕</button></div>`;
+    hint.innerHTML = `<div class="photo-preview"><img src="${url}" onclick="openImageLightbox('${url}', true)"><button type="button" class="photo-remove" onclick="removeCarnet()">✕</button></div>`;
     saveValeDraft();
   }catch(e){
     state._carnetXhr = null;
@@ -2391,6 +2695,17 @@ function closeChoiceModal(){
   if($('choiceModal')) $('choiceModal').classList.add('hidden');
   _choiceTargetId = null;
 }
+/* ============ AYUDA: acordeón FAQ (punto #21) ============ */
+function toggleFaq(btn){
+  const item = btn.closest('.faq-item');
+  if(!item) return;
+  const group = item.closest('.faq-group');
+  const wasOpen = item.classList.contains('open');
+  if(group){
+    group.querySelectorAll('.faq-item.open').forEach(i=>{ if(i!==item) i.classList.remove('open'); });
+  }
+  item.classList.toggle('open', !wasOpen);
+}
 function syncChoiceLabel(selectId){
   const sel = document.getElementById(selectId);
   const labelEl = document.getElementById(selectId+'_label');
@@ -2611,7 +2926,8 @@ function renderGestorCatalogo(){
 
   if(state.catalogLevel==='search' && q){
     if(nav) nav.innerHTML = `<div class="back-cats" onclick="goCatalogCats()">${ICONS.back}Volver a categorías</div>`;
-    const items = state.productos.filter(p=>(p.nombre||'').toLowerCase().includes(q)||(p.categoria||'').toLowerCase().includes(q)||(p.subcategoria||'').toLowerCase().includes(q));
+    let items = state.productos.filter(p=>(p.nombre||'').toLowerCase().includes(q)||(p.categoria||'').toLowerCase().includes(q)||(p.subcategoria||'').toLowerCase().includes(q));
+    items = sortCatalogItems(items);
     box.innerHTML = renderProdList(items);
     return;
   }
@@ -2619,7 +2935,7 @@ function renderGestorCatalogo(){
   if(state.catalogLevel==='cats' || !state.catalogCat){
     if(nav) nav.innerHTML = '';
     const cats = Object.keys(CATEGORIAS);
-    const emojis = {'ELECTRODOMÉSTICOS Y HOGAR':'🏠','MÓVILES Y ACCESORIOS':'📱','MODA Y ESTILO':'👗','COMPUTACIÓN Y TECNOLOGÍA':'💻','ENTRETENIMIENTO Y GAMING':'🎮','2NDO LOCAL':'🏪','VEHÍCULOS Y HERRAMIENTAS':'🔧'};
+    const emojis = {'ELECTRODOMÉSTICOS Y HOGAR':'🏠','MÓVILES Y ACCESORIOS':'📱','MODA Y ESTILO':'👗','COMPUTACIÓN Y TECNOLOGÍA':'💻','ENTRETENIMIENTO Y GAMING':'🎮','2NDO LOCAL':'🏪','VEHÍCULOS Y HERRAMIENTAS':'🔧','PRODUCTOS AGOTADOS':'🚫'};
     box.innerHTML = `<div class="cat-grid">${cats.map(c=>`
       <div class="cat-tile" onclick="goCatalogCat('${escapeHtml(c)}')">
         <span class="cat-emoji">${emojis[c]||'📦'}</span>${escapeHtml(c)}
@@ -2642,7 +2958,43 @@ function renderGestorCatalogo(){
     <div style="font-weight:800;margin-bottom:8px;font-size:13px;">${escapeHtml(state.catalogSub||'Todos')} · ${escapeHtml(state.catalogCat)}</div>`;
   let items = state.productos.filter(p=>p.categoria===state.catalogCat);
   if(state.catalogSub) items = items.filter(p=>p.subcategoria===state.catalogSub);
+  items = sortCatalogItems(items);
   box.innerHTML = renderProdList(items);
+}
+
+/* ============ ORDEN/FILTRO DE CATÁLOGO (punto #18) ============ */
+function onCatalogSortChange(){
+  syncChoiceLabel('catalogSortSelect');
+  state.catalogSort = $('catalogSortSelect')?.value || 'relevancia';
+  renderGestorCatalogo();
+}
+function sortCatalogItems(items){
+  const mode = state.catalogSort || 'relevancia';
+  const isAgotado = p => p.calidad==='agotado' || p.disponible===false;
+  let arr = [...items];
+  switch(mode){
+    case 'recientes':
+      arr.sort((a,b)=>(b.fechaCreacion?.seconds||0)-(a.fechaCreacion?.seconds||0));
+      break;
+    case 'precioAsc':
+      arr.sort((a,b)=>(Number(a.precioBase)||0)-(Number(b.precioBase)||0));
+      break;
+    case 'precioDesc':
+      arr.sort((a,b)=>(Number(b.precioBase)||0)-(Number(a.precioBase)||0));
+      break;
+    case 'nombreAsc':
+      arr.sort((a,b)=>(a.nombre||'').localeCompare(b.nombre||'','es',{sensitivity:'base'}));
+      break;
+    case 'disponibles':
+      arr = arr.filter(p=>!isAgotado(p));
+      break;
+    case 'agotados':
+      arr = arr.filter(isAgotado);
+      break;
+    default:
+      break; // relevancia: orden original
+  }
+  return arr;
 }
 
 function renderProdList(items){
@@ -2881,7 +3233,10 @@ function renderAdminCatalogo(){
   if(!items.length){ box.innerHTML='<div class="hint">No hay productos. Toca "+ Nuevo producto".</div>'; return; }
   box.innerHTML = items.map(p=>`
     <div class="prod-card">
-      ${p.imagenUrl ? `<img class="prod-thumb" src="${p.imagenUrl}">` : `<div class="prod-thumb empty">${ICONS.box}</div>`}
+      <div class="prod-thumb-box">
+        ${p.imagenUrl ? `<img class="prod-thumb" src="${p.imagenUrl}">` : `<div class="prod-thumb empty">${ICONS.box}</div>`}
+        ${qualityBadgeHtml(p.calidad)}
+      </div>
       <div class="prod-info">
         <b>${escapeHtml(p.nombre)}</b>
         <div class="cat">${escapeHtml(p.categoria||'')} ${p.subcategoria?'· '+escapeHtml(p.subcategoria):''}</div>
@@ -2987,6 +3342,7 @@ async function saveProduct(){
     calidad: $('pCalidad')?.value || '',
     activo: $('pActivo').checked
   };
+  if(!state.editingProductId){ data.fechaCreacion = serverTimestamp(); }
   try{
     // Snapshot inmutable del producto anterior (evita referencias vivas)
     const prev = state._prevProduct ? JSON.parse(JSON.stringify(state._prevProduct)) : null;
@@ -3005,7 +3361,7 @@ async function saveProduct(){
   }
 }
 
-const QUALITY_LABELS = { nuevo:'Nuevo', gradoA:'Grado A', gradoAPlus:'Grado A+' };
+const QUALITY_LABELS = { nuevo:'Nuevo', gradoA:'Grado A', gradoAPlus:'Grado A+', agotado:'Agotado' };
 function qualityBadgeHtml(calidad){
   if(!calidad || !QUALITY_LABELS[calidad]) return '';
   return `<span class="quality-badge ${calidad}">${QUALITY_LABELS[calidad]}</span>`;
@@ -3014,7 +3370,7 @@ function qualityBadgeHtml(calidad){
 const CAT_EMOJI = {
   'ELECTRODOMÉSTICOS Y HOGAR':'🏠','MÓVILES Y ACCESORIOS':'📱','MODA Y ESTILO':'👗',
   'COMPUTACIÓN Y TECNOLOGÍA':'💻','ENTRETENIMIENTO Y GAMING':'🎮','2NDO LOCAL':'🏪',
-  'VEHÍCULOS Y HERRAMIENTAS':'🔧'
+  'VEHÍCULOS Y HERRAMIENTAS':'🔧','PRODUCTOS AGOTADOS':'🚫'
 };
 async function autoNovedadNewProduct(p){
   const emoji = CAT_EMOJI[p.categoria] || '✨';
@@ -3120,23 +3476,33 @@ function openOrderDetailModal(id){
   if(!o) return;
   state._detailOrder = o;
   const esRecogida = o.tipoVale==='recogida';
+  const fechaTxt = o.fecha?.seconds ? new Date(o.fecha.seconds*1000).toLocaleString('es-CU') : '—';
   let html = '';
+
+  // Datos generales (fecha, tipo de vale, estado)
   html += `<div class="od-section">Datos generales</div>`;
+  html += fieldRow('Fecha', fechaTxt);
   html += fieldRow('Tipo de vale', esRecogida ? 'Recogida en tienda' : 'Mensajería');
   html += fieldRow('Estado', o.estado||'pendiente');
-  html += fieldRow('Gestor', o.gestorNombre);
-  html += `<div class="od-section">Cliente</div>`;
-  html += fieldRow('Nombre', o.cliente?.nombre);
+
+  // Datos del cliente (+ foto del carnet, ampliable)
+  html += `<div class="od-section">Datos del cliente</div>`;
+  html += fieldRow('Nombre completo', o.cliente?.nombre);
   if(!esRecogida){
     html += fieldRow('Teléfono', o.cliente?.telefono);
     html += fieldRow('Teléfono adicional', o.cliente?.telefono2);
-    html += fieldRow('Dirección', o.cliente?.direccion);
+    html += fieldRow('Dirección exacta', o.cliente?.direccion);
     html += fieldRow('Municipio/Reparto', o.cliente?.municipio);
     html += fieldRow('Referencia', o.cliente?.referencia);
+    if(o.cliente?.carnetUrl){
+      html += `<img class="od-carnet-img" src="${o.cliente.carnetUrl}" onclick="openImageLightbox('${o.cliente.carnetUrl}', false)" alt="Carnet de identidad">`;
+    }
   } else {
     html += fieldRow('CI', o.cliente?.ci);
   }
-  html += `<div class="od-section">Productos</div>`;
+
+  // Datos de la entrega (productos + precios + pago)
+  html += `<div class="od-section">Datos de la entrega</div>`;
   (o.productos||[]).forEach((p,i)=>{
     html += fieldRow(`#${i+1} Producto`, p.nombre);
     if(p.especificacion) html += fieldRow('Especificación', p.especificacion);
@@ -3144,29 +3510,37 @@ function openOrderDetailModal(id){
     html += fieldRow('Precio base', '$'+money(p.precioBase));
     html += fieldRow('Precio del gestor', '$'+money(p.precioGestor));
   });
-  html += `<div class="od-section">Precios y pago</div>`;
   html += fieldRow('Total producto', '$'+money(o.precios?.totalProducto));
   if(!esRecogida) html += fieldRow('Mensajería', '$'+money(o.precios?.mensajeria));
-  html += fieldRow('Comisión del gestor', '$'+money(o.precios?.comision));
   html += fieldRow('Total a cobrar', '$'+money(o.precios?.totalCobrar));
-  html += fieldRow('Método de pago', o.pagos?.metodoPago);
+  html += fieldRow('Moneda de pago del producto', o.pagos?.metodoPago);
   if(!esRecogida){
-    html += fieldRow('Tipo pago mensajería', o.pagos?.tipoPagoMensajeria);
+    html += fieldRow('Tipo de pago de la mensajería', o.pagos?.tipoPagoMensajeria);
     if(o.pagos?.vuelto) html += fieldRow('Vuelto', `${o.pagos?.vueltoCantidad} ${o.pagos?.vueltoMoneda||''}`);
   }
-  html += `<div class="od-section">${esRecogida?'Recogida':'Entrega'}</div>`;
+
+  // Datos del gestor
+  html += `<div class="od-section">Datos del gestor</div>`;
+  html += fieldRow('Nombre del gestor', o.gestorNombre);
+  html += fieldRow('Comisión del gestor', '$'+money(o.precios?.comision));
+
+  // Preferencia del cliente
+  html += `<div class="od-section">Preferencia del cliente</div>`;
   if(esRecogida){
-    html += fieldRow('Día', o.recogida?.dia);
-    html += fieldRow('Hora', o.recogida?.hora);
+    html += fieldRow('Día que quiere', o.recogida?.dia);
+    html += fieldRow('Hora que va a pasar', o.recogida?.hora);
   } else {
-    html += fieldRow('Día', o.entrega?.dia);
-    html += fieldRow('Hora', o.entrega?.hora);
+    html += fieldRow('Día que quiere', o.entrega?.dia);
+    html += fieldRow('Hora que quiere', o.entrega?.hora);
+  }
+
+  // Detalles (y garantía, si aplica)
+  if(!esRecogida && (o.detalles || o.garantia)){
+    html += `<div class="od-section">Detalles</div>`;
     html += fieldRow('Detalles', o.detalles);
     html += fieldRow('Garantía', o.garantia);
   }
-  if(!esRecogida && o.cliente?.carnetUrl){
-    html += `<div class="od-section">Carnet de identidad</div><img class="od-carnet-img" src="${o.cliente.carnetUrl}">`;
-  }
+
   $('orderDetailBody').innerHTML = html;
   if($('odDownloadCarnetBtn')) $('odDownloadCarnetBtn').style.display = (o.cliente?.carnetUrl) ? 'flex' : 'none';
   $('orderDetailModal').classList.remove('hidden');
@@ -3466,13 +3840,14 @@ Object.assign(window, {
   handleCarnetUpload, handlePerfilPhoto, pickCarnet, removeCarnet, clearValeDraft,
   openNovedades, closeNovedades, publishNovedad, deleteNovedad, dismissNovedad, onNovedadTap, closeConfirm,
   setAdminCat, installPWA, dismissPWA,
-  setCatalogView, onGestorSearch, goCatalogCats, goCatalogCat, goCatalogSub,
+  setCatalogView, onGestorSearch, goCatalogCats, goCatalogCat, goCatalogSub, onCatalogSortChange, toggleFaq,
   openProductDetail, closeProductDetail, pickFromDetail, removeProductPhoto,
   applyAppUpdate, forceAppRefresh, toggleNewCarousel, toggleDarkMode, switchValeMode,
   onTipoPagoUnicoChange, onRMetodoPagoChange, waOtroMetodo,
   addLineItemRecogida, removeLineItemRecogida, updateLineItemRecogida, submitValeRecogida,
   openChoiceSelect, closeChoiceModal, pickChoiceOption, syncChoiceLabel, cancelCarnetUpload,
   openOrderDetailModal, closeOrderDetailModal, downloadOrderCarnet, copyOrderDetail,
+  openImageLightbox, closeImageLightbox, lightboxRemoveCarnet,
   toggleVoucherPreview, copyVoucherPreview,
   $: (id)=>document.getElementById(id)
 });
