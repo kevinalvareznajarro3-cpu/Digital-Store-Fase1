@@ -591,7 +591,7 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 
 
 <!-- PANTALLA DE CONEXIÓN: bloquea el acceso al login hasta confirmar internet real -->
-<div id="connGate">
+<div id="connGate" class="hidden">
   <div class="login-box" style="text-align:center;">
     <div class="login-logo"><img src="logo.jpg" alt="Digital Store" onerror="this.src='icons/icon-192.png'"></div>
     <h1 class="login-title">Digital Store</h1>
@@ -4513,6 +4513,7 @@ function waitForConnection(){
   return new Promise(async (resolve)=>{
     const gate=$('connGate'), bar=$('connGateBar'), pct=$('connGatePct'), status=$('connGateStatus');
     if(!gate){ resolve(); return; }
+    gate.classList.remove('hidden'); // solo se muestra en este momento, nunca por defecto
     let progress = 4;
     const setProgress = (p)=>{
       progress = p;
