@@ -1281,6 +1281,10 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
       <input type="text" id="gPasswordActual" placeholder="Contraseña actual" style="margin-bottom:8px;">
       <input type="text" id="gPasswordNueva" placeholder="Contraseña nueva (mín. 6 caracteres)">
       <div class="hint" style="padding:6px 0 0;text-align:left;">Déjalas en blanco si no vas a cambiar la contraseña.</div>
+      <div class="hint" style="padding:14px 0 0;text-align:left;">¿El gestor olvidó su contraseña y no la sabes? Restablécele el acceso con un usuario y contraseña nuevos, sin necesitar los anteriores:</div>
+      <input type="text" id="gResetUsername" placeholder="Usuario nuevo" style="margin-top:8px;margin-bottom:8px;">
+      <input type="text" id="gResetPassword" placeholder="Contraseña nueva (mín. 6 caracteres)" style="margin-bottom:8px;">
+      <button type="button" class="btn-secondary" onclick="resetearAccesoGestor()">Restablecer acceso</button>
     </div>
     <div class="field"><label>WhatsApp</label><input type="tel" id="gTelefono"></div>
     <button class="btn-primary" onclick="saveGestor()">Guardar gestor</button>
@@ -1833,11 +1837,11 @@ async function doLogin(){
 
     // 1) Gestor ya migrado a Firebase Authentication (método actual y seguro: sin contraseñas en Firestore)
     const email = gestorAuthEmail(u);
-    let uidAutenticado = null;
+    let uidAutenticado = null, authErrorCode = null;
     try{
       const cred = await signInWithEmailAndPassword(fbAuth, email, p);
       uidAutenticado = cred.user.uid;
-    }catch(e){ /* puede que aún no esté migrado, la contraseña sea incorrecta, o no haya conexión */ }
+    }catch(e){ authErrorCode = e?.code || null; /* puede que aún no esté migrado, la contraseña sea incorrecta, o no haya conexión */ }
 
     let found = null;
     if(uidAutenticado){
@@ -1862,7 +1866,14 @@ async function doLogin(){
       ) || null;
     }
 
-    if(!found){ errBox.textContent='Usuario o contraseña incorrectos.'; errBox.classList.remove('hidden'); return; }
+    if(!found){
+      if(authErrorCode==='auth/too-many-requests'){
+        errBox.textContent='Demasiados intentos fallidos con este usuario. Firebase bloqueó esta cuenta temporalmente por seguridad — espera unos minutos y vuelve a intentar, o avísale al Administrador.';
+      } else {
+        errBox.textContent='Usuario o contraseña incorrectos.';
+      }
+      errBox.classList.remove('hidden'); return;
+    }
     state.user = { role:'gestor', nombre:found.nombre, username:found.username, id:found.id, telefono:found.telefono, fotoUrl:found.fotoUrl||'' };
     if($('rememberMe')?.checked) localStorage.setItem('ds_remember', JSON.stringify({u,p,role:'gestor'}));
     else localStorage.removeItem('ds_remember');
@@ -3775,6 +3786,8 @@ function openGestorModal(id){
     $('gPasswordNewWrap').classList.add('hidden');
     $('gPasswordChangeWrap').classList.remove('hidden');
     $('gPasswordActual').value = ''; $('gPasswordNueva').value = '';
+    if($('gResetUsername')) $('gResetUsername').value='';
+    if($('gResetPassword')) $('gResetPassword').value='';
   } else {
     $('gPasswordNewWrap').classList.remove('hidden');
     $('gPasswordChangeWrap').classList.add('hidden');
@@ -3822,10 +3835,28 @@ async function saveGestor(){
     if(e?.code==='auth/email-already-in-use') showToast('Ese nombre de usuario ya está en uso.');
     else if(e?.code==='auth/weak-password') showToast('La contraseña debe tener al menos 6 caracteres.');
     else if(e?.code==='auth/wrong-password' || e?.code==='auth/invalid-credential') showToast('La contraseña actual no es correcta.');
+    else if(e?.code==='auth/too-many-requests') showToast('Firebase bloqueó esta cuenta temporalmente por demasiados intentos fallidos. Espera unos minutos y vuelve a intentar.');
     else showToast('Error al guardar gestor.');
   }
   finally {
     btns.forEach(b=>{ b.disabled=false; b.textContent='Guardar gestor'; });
+  }
+}
+async function resetearAccesoGestor(){
+  if(!state.editingGestorId) return;
+  const nuevoUsuario = $('gResetUsername').value.trim();
+  const nuevaPassword = $('gResetPassword').value;
+  if(!nuevoUsuario || !nuevaPassword){ showToast('Escribe el usuario nuevo y la contraseña nueva.'); return; }
+  try{
+    const uid = await crearCuentaGestor(nuevoUsuario, nuevaPassword);
+    await updateDoc(doc(db,'gestores', state.editingGestorId), { username: nuevoUsuario, authUid: uid, password: deleteField() });
+    $('gUsername').value = nuevoUsuario;
+    $('gResetUsername').value=''; $('gResetPassword').value='';
+    showToast('Acceso restablecido. El gestor ya puede entrar con el usuario y la contraseña nuevos.');
+  }catch(e){
+    if(e?.code==='auth/email-already-in-use') showToast('Ese nombre de usuario ya está en uso por otro gestor.');
+    else if(e?.code==='auth/weak-password') showToast('La contraseña debe tener al menos 6 caracteres.');
+    else showToast('Error al restablecer el acceso.');
   }
 }
 async function migrarGestoresAAuth(){
@@ -4023,7 +4054,7 @@ Object.assign(window, {
   addLineItem, removeLineItem, updateLineItem, toggleVuelto, recalcVale, submitVale,
   openCatalogPicker, closeCatalogPicker, renderCatalogPicker, pickCatalogProduct, setPickerCat,
   openProductModal, closeProductModal, handlePhotoUpload, saveProduct, removeProduct, updateSubcats, toggleStockField,
-  updateOrderStatus, openGestorModal, closeGestorModal, saveGestor, removeGestor, saveConfig, migrarGestoresAAuth,
+  updateOrderStatus, openGestorModal, closeGestorModal, saveGestor, removeGestor, saveConfig, migrarGestoresAAuth, resetearAccesoGestor,
   switchHistClaim, submitComisionTransferencia, goHistComunidadWa, goHistNovedades,
   openGestorComisionModal, closeGestorComisionModal, registrarPagoComision,
   openTarifasModal, closeTarifasModal, switchTarifaLocal, switchTarifaTipo, renderTarifas, selectTarifa,
