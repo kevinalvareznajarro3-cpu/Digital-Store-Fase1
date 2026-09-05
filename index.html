@@ -599,6 +599,7 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
       <input type="checkbox" id="rememberMe"><label for="rememberMe" style="margin:0;">Recordarme en este dispositivo</label>
     </div>
     <div class="login-error hidden" id="loginError"></div>
+    <div id="loginErrorTech" style="font-size:10px;color:var(--muted);margin-top:-6px;margin-bottom:10px;word-break:break-word;"></div>
     <button class="btn-primary" id="loginBtn" onclick="doLogin()" style="margin-top:6px;">Entrar</button>
     <a class="forgot-link" href="https://wa.me/5354410879?text=Hola%20he%20olvidado%20mi%20contrase%C3%B1a%20recu%C3%A9rdamela" target="_blank" rel="noopener">¿Has olvidado tu contraseña?</a>
 
@@ -1136,6 +1137,11 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
       </div>
 
       <div id="adminPanelResumen" class="admin-panel">
+        <div id="migracionBanner" class="hidden" style="background:linear-gradient(135deg,#7a1e1e,var(--red));color:#fff;border-radius:14px;padding:14px 16px;margin-bottom:14px;box-shadow:0 6px 16px rgba(0,0,0,.14);">
+          <div style="font-weight:800;font-size:13.5px;margin-bottom:4px;">⚠️ <span id="migracionBannerTitulo"></span></div>
+          <div id="migracionBannerLista" style="font-size:12.3px;opacity:.92;margin-bottom:10px;"></div>
+          <button type="button" class="btn-secondary" style="background:rgba(255,255,255,.92);color:#7a1e1e;" onclick="adminSwitch('gestores');migrarGestoresAAuth()">🔐 Migrar ahora</button>
+        </div>
         <div class="stat-grid">
           <div class="stat-box"><div class="n" id="statTotalVentas">$0</div><div class="l">Ventas del mes</div></div>
           <div class="stat-box"><div class="n" id="statComisiones">$0</div><div class="l">Comisiones</div></div>
@@ -1329,6 +1335,13 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
       <input type="text" id="gResetUsername" placeholder="Usuario nuevo" style="margin-top:8px;margin-bottom:8px;">
       <input type="text" id="gResetPassword" placeholder="Contraseña nueva (mín. 6 caracteres)" style="margin-bottom:8px;">
       <button type="button" class="btn-secondary" onclick="resetearAccesoGestor()">Restablecer acceso</button>
+      <div class="field" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line);">
+        <label>🧪 Probar acceso (sin cerrar tu sesión de Admin)</label>
+        <input type="text" id="gTestUsername" placeholder="Usuario a probar" style="margin-bottom:8px;">
+        <input type="text" id="gTestPassword" placeholder="Contraseña a probar" style="margin-bottom:8px;">
+        <button type="button" id="gTestBtn" class="btn-secondary" onclick="probarAccesoGestorUI()">🧪 Probar acceso</button>
+        <div id="gTestResult" class="hint" style="padding:8px 0 0;text-align:left;font-weight:700;"></div>
+      </div>
     </div>
     <div class="field"><label>WhatsApp</label><input type="tel" id="gTelefono"></div>
     <button class="btn-primary" onclick="saveGestor()">Guardar gestor</button>
@@ -1454,6 +1467,32 @@ function ensureAnonAuth(){
 ensureAnonAuth();
 onAuthStateChanged(fbAuth, user=>{ if(!user) ensureAnonAuth(); });
 
+/* Arreglo de la condición de carrera de login intermitente: Firebase Auth restaura la
+   sesión (o crea la anónima) de forma asíncrona en segundo plano. Si arrancamos los
+   onSnapshot de Firestore (Admin/Gestor) antes de que esa restauración termine, las Reglas
+   ven request.auth como null por un instante y niegan el permiso — de ahí el error que
+   solo pasaba "a veces" y se arreglaba solo tras reintentar. Esta función espera a que
+   Firebase Auth confirme su estado (o a un tope de tiempo si no hay conexión) antes de
+   dejar entrar a la app. */
+function waitForAuthReady(timeoutMs=4000){
+  return new Promise(resolve=>{
+    if(fbAuth.currentUser){ resolve(fbAuth.currentUser); return; }
+    let done=false;
+    const unsub = onAuthStateChanged(fbAuth, user=>{
+      if(done) return;
+      done=true;
+      try{ unsub(); }catch(e){}
+      resolve(user);
+    });
+    setTimeout(()=>{
+      if(done) return;
+      done=true;
+      try{ unsub(); }catch(e){}
+      resolve(fbAuth.currentUser||null);
+    }, timeoutMs);
+  });
+}
+
 /* ============ CUENTAS DE GESTOR EN FIREBASE AUTH (migración de seguridad) ============
    Antes, la contraseña de cada gestor se guardaba en texto plano en el documento de
    Firestore, legible por cualquiera que pudiera leer la colección "gestores". Ahora cada
@@ -1480,15 +1519,41 @@ async function cambiarPasswordGestor(username, passwordActual, passwordNueva){
   await updatePassword(cred.user, passwordNueva);
   await signOut(secondaryAuth);
 }
+/* Punto #1: probador de acceso para el Admin — prueba usuario/contraseña de un gestor SIN
+   cerrar la sesión de Admin (usa la app secundaria "adminOps") y SIN esperar a que el
+   gestor confirme si le funciona o no. */
+async function probarAccesoGestor(username, password, gestorConocido){
+  const g = gestorConocido || state.gestores.find(x=>String(x.username||'').toLowerCase()===String(username||'').toLowerCase());
+  if(g && !g.authUid){
+    // Cuenta aún sin migrar: la contraseña real vive en texto plano en el documento de Firestore.
+    if(String(g.password||'')===password) return { ok:true, motivo:'Correcto (cuenta aún sin migrar a Firebase Auth).' };
+    return { ok:false, motivo:'La contraseña no coincide con la guardada en Firestore (cuenta sin migrar).' };
+  }
+  const email = gestorAuthEmail(username);
+  try{
+    await signInWithEmailAndPassword(secondaryAuth, email, password);
+    await signOut(secondaryAuth);
+    return { ok:true, motivo:'Correcto.' };
+  }catch(e){
+    try{ await signOut(secondaryAuth); }catch(e2){}
+    if(e?.code==='auth/user-not-found') return { ok:false, motivo:'No existe ninguna cuenta de Firebase Auth con ese usuario (revisa que el usuario esté bien escrito).' };
+    if(e?.code==='auth/wrong-password' || e?.code==='auth/invalid-credential') return { ok:false, motivo:'La contraseña es incorrecta para esa cuenta.' };
+    if(e?.code==='auth/too-many-requests') return { ok:false, motivo:'Firebase bloqueó esta cuenta temporalmente por demasiados intentos fallidos. Espera unos minutos.' };
+    if(e?.code==='auth/network-request-failed') return { ok:false, motivo:'No hay conexión a internet en este momento.' };
+    return { ok:false, motivo:'Error inesperado de Firebase Auth ('+(e?.code||'desconocido')+').' };
+  }
+}
 const ADMIN_AUTH_EMAIL = ADMIN_USER.toLowerCase() + '@ds-admin.app';
 async function ensureAdminAuth(){
   // Crea (la primera vez) o inicia sesión en la cuenta real de Firebase Auth del Admin,
   // necesaria para que las Reglas de Firestore lo reconozcan (ver colección "admins").
+  // Con tope de tiempo: si no hay red, no debe dejar la app entrando colgada para siempre.
+  const withTimeout = p => Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), 7000))]);
   try{
-    await signInWithEmailAndPassword(fbAuth, ADMIN_AUTH_EMAIL, ADMIN_PASS);
+    await withTimeout(signInWithEmailAndPassword(fbAuth, ADMIN_AUTH_EMAIL, ADMIN_PASS));
   }catch(e){
     if(e?.code==='auth/user-not-found' || e?.code==='auth/invalid-credential'){
-      try{ await createUserWithEmailAndPassword(fbAuth, ADMIN_AUTH_EMAIL, ADMIN_PASS); }catch(e2){}
+      try{ await withTimeout(createUserWithEmailAndPassword(fbAuth, ADMIN_AUTH_EMAIL, ADMIN_PASS)); }catch(e2){}
     }
   }
 }
@@ -1887,16 +1952,22 @@ async function fetchGestoresParaLogin(){
 async function doLogin(){
   const u=$('loginUser').value.trim(), p=$('loginPass').value;
   const errBox=$('loginError'); errBox.classList.add('hidden');
+  const errTech=$('loginErrorTech'); if(errTech) errTech.textContent='';
   const btn=$('loginBtn');
   if(!u || !p){ errBox.textContent='Escribe usuario y contraseña.'; errBox.classList.remove('hidden'); return; }
   if(btn){ btn.disabled=true; btn.innerHTML='<span class="btn-spinner"></span> Entrando…'; }
+  // Punto #5: rastro técnico de cada paso del login, para que si un gestor no puede entrar
+  // y te manda una captura, sepas AL INSTANTE si el problema es de Firebase Auth, de las
+  // Reglas de Firestore, de conexión, o simplemente una contraseña mal escrita — sin tener
+  // que adivinar ni reproducir el error tú mismo.
+  const diag = [];
   try{
     if(u.toLowerCase()===ADMIN_USER && p===ADMIN_PASS){
       state.user = { role:'admin', nombre:'Administrador', username:ADMIN_USER };
       if($('rememberMe')?.checked) localStorage.setItem('ds_remember', JSON.stringify({u,p,role:'admin'}));
       else localStorage.removeItem('ds_remember');
       localStorage.setItem('ds_user', JSON.stringify(state.user));
-      ensureAdminAuth(); // en paralelo, no bloquea la entrada
+      await ensureAdminAuth(); // se espera a que termine para evitar el error intermitente de permisos
       enterApp(); return;
     }
 
@@ -1906,7 +1977,10 @@ async function doLogin(){
     try{
       const cred = await signInWithEmailAndPassword(fbAuth, email, p);
       uidAutenticado = cred.user.uid;
-    }catch(e){ authErrorCode = e?.code || null; /* puede que aún no esté migrado, la contraseña sea incorrecta, o no haya conexión */ }
+    }catch(e){
+      authErrorCode = e?.code || null;
+      diag.push('Firebase Auth: '+(authErrorCode||'error desconocido'));
+    }
 
     let found = null;
     if(uidAutenticado){
@@ -1914,11 +1988,13 @@ async function doLogin(){
         const q = query(collection(db,'gestores'), where('authUid','==', uidAutenticado));
         const snap = await getDocs(q);
         if(!snap.empty) found = { id: snap.docs[0].id, ...snap.docs[0].data() };
-      }catch(e){}
+        else diag.push('Firestore: autenticó bien pero no existe un documento en "gestores" con ese authUid');
+      }catch(e){ diag.push('Firestore (leer gestores por authUid): '+(e?.code||'error desconocido')+' — revisa las Reglas de seguridad'); }
       if(!found){
         try{
           const cache = JSON.parse(localStorage.getItem('ds_gestores_cache')||'[]');
           found = cache.find(g=>g.authUid===uidAutenticado) || null;
+          if(found) diag.push('Se usó la copia de respaldo local (sin conexión a Firestore en ese momento)');
         }catch(e){}
       }
     }
@@ -1926,9 +2002,14 @@ async function doLogin(){
     // 2) Compatibilidad temporal: gestor todavía sin migrar (contraseña aún en texto plano en Firestore)
     if(!found){
       const list = await fetchGestoresParaLogin();
+      if(!list.length) diag.push('Firestore: no se pudo leer la colección "gestores" (revisa Reglas de seguridad o la conexión)');
       found = list.find(g=>
         String(g.username||'').toLowerCase()===u.toLowerCase() && !g.authUid && String(g.password||'')===p
       ) || null;
+      if(!found && list.length){
+        const existeUsuario = list.some(g=>String(g.username||'').toLowerCase()===u.toLowerCase());
+        diag.push(existeUsuario ? 'El usuario existe en Firestore pero la contraseña no coincide' : 'No existe ningún gestor con ese usuario en Firestore');
+      }
     }
 
     if(!found){
@@ -1937,7 +2018,9 @@ async function doLogin(){
       } else {
         errBox.textContent='Usuario o contraseña incorrectos.';
       }
-      errBox.classList.remove('hidden'); return;
+      errBox.classList.remove('hidden');
+      if(errTech) errTech.textContent = 'Detalle técnico (para el Admin): ' + (diag.join(' · ') || 'sin más detalle');
+      return;
     }
     state.user = { role:'gestor', nombre:found.nombre, username:found.username, id:found.id, telefono:found.telefono, fotoUrl:found.fotoUrl||'' };
     if($('rememberMe')?.checked) localStorage.setItem('ds_remember', JSON.stringify({u,p,role:'gestor'}));
@@ -1946,6 +2029,7 @@ async function doLogin(){
     enterApp();
   }catch(e){
     errBox.textContent='Error de conexión. Revisa tu internet.'; errBox.classList.remove('hidden');
+    if(errTech) errTech.textContent = 'Detalle técnico (para el Admin): excepción no controlada — ' + (e?.code || e?.message || 'desconocido');
   } finally {
     if(btn){ btn.disabled=false; btn.textContent='Entrar'; }
   }
@@ -3461,6 +3545,21 @@ function renderResumen(){
   $('top3Box').innerHTML = top3.length ? top3.map(([nombre,total],i)=>`
     <div class="top3-item"><span>${i+1}. ${escapeHtml(nombre)}</span><b>$${money(total)}</b></div>
   `).join('') : '<div class="hint">Sin ventas este mes todavía.</div>';
+
+  // Punto #2: aviso imposible de ignorar si queda algún gestor sin migrar a Firebase Auth
+  const pendientesMigrar = state.gestores.filter(g=>!g.authUid && g.password);
+  const banner = $('migracionBanner');
+  if(banner){
+    if(pendientesMigrar.length){
+      banner.classList.remove('hidden');
+      $('migracionBannerTitulo').textContent = pendientesMigrar.length===1
+        ? '1 gestor sin migrar — su acceso puede fallar en cualquier momento'
+        : `${pendientesMigrar.length} gestores sin migrar — su acceso puede fallar en cualquier momento`;
+      $('migracionBannerLista').textContent = pendientesMigrar.map(g=>g.username).join(', ');
+    } else {
+      banner.classList.add('hidden');
+    }
+  }
 }
 
 /* ============ ADMIN CATÁLOGO ============ */
@@ -3936,6 +4035,9 @@ function openGestorModal(id){
     $('gPasswordActual').value = ''; $('gPasswordNueva').value = '';
     if($('gResetUsername')) $('gResetUsername').value='';
     if($('gResetPassword')) $('gResetPassword').value='';
+    if($('gTestUsername')) $('gTestUsername').value = g?.username || '';
+    if($('gTestPassword')) $('gTestPassword').value = '';
+    if($('gTestResult')) $('gTestResult').textContent = '';
   } else {
     $('gPasswordNewWrap').classList.remove('hidden');
     $('gPasswordChangeWrap').classList.add('hidden');
@@ -3945,6 +4047,25 @@ function openGestorModal(id){
   pushNavState();
 }
 function closeGestorModal(){ $('gestorModal').classList.add('hidden'); }
+async function probarAccesoGestorUI(){
+  if(!state.editingGestorId) return;
+  const g = state.gestores.find(x=>x.id===state.editingGestorId);
+  const u = ($('gTestUsername')?.value || g?.username || '').trim();
+  const p = $('gTestPassword')?.value || '';
+  const out = $('gTestResult');
+  if(!u || !p){ if(out){ out.textContent='Escribe el usuario y la contraseña que quieres probar.'; out.style.color='var(--muted)'; } return; }
+  const btn = $('gTestBtn');
+  if(btn){ btn.disabled=true; btn.innerHTML='<span class="btn-spinner"></span> Probando…'; }
+  try{
+    const r = await probarAccesoGestor(u, p, g);
+    if(out){
+      out.textContent = (r.ok ? '✅ ' : '❌ ') + r.motivo;
+      out.style.color = r.ok ? 'var(--ok)' : 'var(--danger)';
+    }
+  } finally {
+    if(btn){ btn.disabled=false; btn.textContent='🧪 Probar acceso'; }
+  }
+}
 async function saveGestor(){
   const nombre=$('gNombre').value.trim(), username=$('gUsername').value.trim(), telefono=$('gTelefono').value.trim();
   if(!nombre || !username){ showToast('Nombre y usuario son obligatorios.'); return; }
@@ -4242,7 +4363,7 @@ Object.assign(window, {
   addLineItem, removeLineItem, updateLineItem, toggleVuelto, recalcVale, submitVale,
   openCatalogPicker, closeCatalogPicker, renderCatalogPicker, pickCatalogProduct, setPickerCat,
   openProductModal, closeProductModal, handlePhotoUpload, saveProduct, removeProduct, updateSubcats, toggleStockField,
-  updateOrderStatus, openGestorModal, closeGestorModal, saveGestor, removeGestor, saveConfig, migrarGestoresAAuth, resetearAccesoGestor,
+  updateOrderStatus, openGestorModal, closeGestorModal, saveGestor, removeGestor, saveConfig, migrarGestoresAAuth, resetearAccesoGestor, probarAccesoGestorUI,
   switchHistClaim, submitComisionTransferencia, goHistComunidadWa, goHistNovedades,
   openGestorComisionModal, closeGestorComisionModal, registrarPagoComision,
   openTarifasModal, closeTarifasModal, switchTarifaLocal, switchTarifaTipo, renderTarifas, selectTarifa,
@@ -4263,7 +4384,7 @@ Object.assign(window, {
 });
 
 /* ============ INIT: restaurar sesión (offline-first) ============ */
-(function initApp(){
+(async function initApp(){
   applyDarkMode();
   // Sesión guardada en localStorage: sobrevive a cerrar la app por completo (no solo
   // recargar la pestaña), así el gestor entra directo a su última vista sin esperar
@@ -4277,6 +4398,12 @@ Object.assign(window, {
     }
     if(sess){
       state.user = JSON.parse(sess);
+      // Arreglo del error intermitente: hay que dejar que Firebase Auth confirme su
+      // sesión (o cree la del Admin) ANTES de arrancar los onSnapshot; si no, las
+      // Reglas de Firestore ven request.auth como null por un instante y niegan el
+      // permiso la primera vez que se abre la app.
+      if(state.user.role==='admin'){ await ensureAdminAuth(); }
+      else { await waitForAuthReady(); }
       enterApp();
       bindDraftAutosave();
       return;
