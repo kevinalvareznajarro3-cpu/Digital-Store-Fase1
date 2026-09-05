@@ -72,7 +72,40 @@ header.topbar{position:sticky;top:0;z-index:20;background:var(--surface);border-
 .nov-btn .badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;font-weight:800;border-radius:50px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px;animation:pulse 1.5s infinite;}
 @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
 @keyframes slideIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
-.nov-item{animation:slideIn .3s ease;}
+.nov-item{animation:slideIn .3s ease;display:flex;gap:10px;align-items:flex-start;}
+.nov-item-body{flex:1;min-width:0;}
+
+/* Novedades: panel más grande (punto #2) */
+#novedadesModal .modal{max-width:660px;max-height:92vh;padding-top:16px;}
+#novedadesModal #novedadesList{max-height:calc(92vh - 150px);overflow-y:auto;padding-right:2px;}
+
+/* Novedades: pestañas por tipo (punto #1) */
+.nov-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;}
+.nov-tabs::-webkit-scrollbar{display:none;}
+.nov-tab{flex:none;padding:8px 13px;border-radius:20px;background:var(--surface-2);font-size:11.5px;font-weight:700;color:var(--muted);white-space:nowrap;border:1.5px solid transparent;}
+.nov-tab.active{background:var(--green);color:#fff;}
+body.dark .nov-tab.active{background:var(--gold);color:#3a2c00;}
+
+/* Novedades: ícono animado por tipo (punto #3) */
+.nov-icon{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--surface-2);margin-top:1px;}
+.nov-icon svg{width:20px;height:20px;}
+.nov-ic-nuevo{color:var(--gold);animation:novGlow 1.8s ease-in-out infinite;}
+.nov-ic-agotado{color:var(--danger);animation:novShake 2.6s ease-in-out infinite;}
+.nov-ic-disponible{color:var(--ok);animation:novGlow 1.8s ease-in-out infinite;}
+.nov-ic-stock{color:var(--blue);animation:novBounce 1.5s ease-in-out infinite;}
+.nov-ic-precio{color:var(--ok);animation:novGlow 1.8s ease-in-out infinite;}
+.nov-ic-default{color:var(--muted);}
+@keyframes novGlow{0%,100%{transform:scale(1);filter:drop-shadow(0 0 0 transparent);}50%{transform:scale(1.14);filter:drop-shadow(0 0 4px currentColor);}}
+@keyframes novBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
+@keyframes novShake{0%,100%{transform:rotate(0deg);}20%{transform:rotate(-9deg);}40%{transform:rotate(9deg);}60%{transform:rotate(-5deg);}80%{transform:rotate(5deg);}}
+
+/* Gestores: presencia y actividad (punto #6) */
+.gestor-presence{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);font-weight:600;margin-top:5px;flex-wrap:wrap;}
+.presence-dot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--muted);}
+.presence-dot.online{background:var(--ok);box-shadow:0 0 0 3px rgba(47,143,91,.18);animation:pulse 1.8s infinite;}
+.presence-dot.offline{background:#9a9a90;}
+.gestor-presence .sep{opacity:.5;}
+.gestor-presence.sale{color:var(--muted);}
 
 main{max-width:640px;margin:0 auto;padding:14px 14px 90px;}
 
@@ -1118,6 +1151,7 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
       <div id="adminPanelGestores" class="admin-panel hidden">
         <button class="btn-primary" onclick="openGestorModal()" style="margin-bottom:12px;">+ Nuevo gestor</button>
         <button class="btn-secondary" id="migrarGestoresBtn" onclick="migrarGestoresAAuth()" style="margin-bottom:12px;">🔐 Migrar gestores antiguos a Firebase Auth</button>
+        <div class="hint" style="text-align:left;padding:0 2px 10px;font-size:11px;">ℹ️ "En línea" se calcula por la última señal que envía la app del gestor (cada 1-2 min); si pasan más de ~4 min sin señal se marca como desconectado. No hay forma 100% instantánea de detectar que alguien cerró la pestaña sin un servidor propio.</div>
         <div id="adminGestoresList"><div class="hint">Cargando…</div></div>
       </div>
 
@@ -1322,6 +1356,13 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 <div id="novedadesModal" class="modal-back hidden" onclick="if(event.target===this) closeNovedades()">
   <div class="modal">
     <div class="modal-head"><h3>🔔 Novedades</h3><button onclick="closeNovedades()">✕</button></div>
+    <div class="nov-tabs" id="novTabs">
+      <button type="button" class="nov-tab active" data-nt="todas" onclick="switchNovTab('todas')">Todas</button>
+      <button type="button" class="nov-tab" data-nt="nuevo" onclick="switchNovTab('nuevo')">🆕 Nuevos</button>
+      <button type="button" class="nov-tab" data-nt="agotado" onclick="switchNovTab('agotado')">🚫 Agotados</button>
+      <button type="button" class="nov-tab" data-nt="stock" onclick="switchNovTab('stock')">📦 Stock</button>
+      <button type="button" class="nov-tab" data-nt="precio" onclick="switchNovTab('precio')">💲 Precios</button>
+    </div>
     <div id="novedadesList"><div class="hint">Sin novedades</div></div>
   </div>
 </div>
@@ -1621,6 +1662,20 @@ const state = {
 function $(id){ return document.getElementById(id); }
 function escapeHtml(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function money(n){ return Number(n||0).toFixed(2); }
+/* Punto #6: formato relativo de tiempo ("hace 2 h", "hace 3 días"...) reutilizado
+   tanto para "última conexión" como para "última venta" de cada gestor. */
+function relTime(seconds){
+  if(!seconds) return 'Nunca';
+  const diffMs = Date.now() - seconds*1000;
+  if(diffMs < 60000) return 'hace instantes';
+  const min = Math.floor(diffMs/60000);
+  if(min < 60) return `hace ${min} min`;
+  const hrs = Math.floor(min/60);
+  if(hrs < 24) return `hace ${hrs} h`;
+  const days = Math.floor(hrs/24);
+  if(days === 1) return 'hace 1 día';
+  return `hace ${days} días`;
+}
 function moneyInt(n){ return Number(n||0).toLocaleString('es-CU'); }
 function todayISO(){ return new Date().toISOString().slice(0,10); }
 function uid(){ return Math.random().toString(36).slice(2,10); }
@@ -1891,11 +1946,30 @@ function doLogout(){
   localStorage.removeItem('ds_user');
   localStorage.removeItem('ds_tab');
   localStorage.removeItem('ds_remember');
+  stopGestorHeartbeat();
+  if(window._gestoresPresenceInterval){ clearInterval(window._gestoresPresenceInterval); window._gestoresPresenceInterval=null; }
   $('app').classList.add('hidden');
   $('loginScreen').classList.remove('hidden');
   $('loginUser').value=''; $('loginPass').value='';
   if($('rememberMe')) $('rememberMe').checked=false;
   try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
+}
+
+/* Punto #6: heartbeat de presencia. Mientras el gestor tiene la app abierta,
+   se actualiza ultimaConexion cada 90s; el Admin considera "en línea" a quien
+   tenga esa marca de menos de ~4 minutos (ver isGestorOnline). No hay forma
+   100% instantánea de detectar el cierre de la pestaña sin backend propio. */
+async function updateGestorHeartbeat(){
+  if(!state.user || state.user.role!=='gestor' || !state.user.id) return;
+  try{ await updateDoc(doc(db,'gestores', state.user.id), { ultimaConexion: serverTimestamp() }); }catch(e){}
+}
+function startGestorHeartbeat(){
+  updateGestorHeartbeat();
+  stopGestorHeartbeat();
+  window._heartbeatInterval = setInterval(updateGestorHeartbeat, 90000);
+}
+function stopGestorHeartbeat(){
+  if(window._heartbeatInterval){ clearInterval(window._heartbeatInterval); window._heartbeatInterval=null; }
 }
 
 function enterApp(){
@@ -1916,6 +1990,7 @@ function enterApp(){
     switchTab(tab);
     startGestorListeners();
     loadValeDraft();
+    startGestorHeartbeat();
   }
   _skipNavPush = false;
   replaceNavState();
@@ -2043,6 +2118,7 @@ function startAdminListeners(){
     state.pedidos = snap.docs.map(d=>({id:d.id, ...d.data()}));
     if(state.adminTab==='pedidos') renderAdminPedidos();
     if(state.adminTab==='resumen') renderResumen();
+    if(state.adminTab==='gestores') renderAdminGestores();
     if(state.viewingGestorId && !$('gestorComisionModal').classList.contains('hidden')) renderGestorComision();
   });
   onSnapshot(collection(db,'gestores'), snap=>{
@@ -2051,6 +2127,13 @@ function startAdminListeners(){
     if(state.adminTab==='resumen') renderResumen();
     if(state.viewingGestorId && !$('gestorComisionModal').classList.contains('hidden')) renderGestorComision();
   });
+  // Punto #6: refresca los contadores relativos ("hace X min/h/días") y el estado
+  // en línea/desconectado cada 30s mientras el Admin tiene abierta esta pestaña,
+  // para que no se queden congelados aunque no llegue ningún dato nuevo.
+  if(window._gestoresPresenceInterval) clearInterval(window._gestoresPresenceInterval);
+  window._gestoresPresenceInterval = setInterval(()=>{
+    if(state.user?.role==='admin' && state.adminTab==='gestores') renderAdminGestores();
+  }, 30000);
 }
 function startNovedadesListener(){
   onSnapshot(collection(db,'novedades'), snap=>{
@@ -3488,6 +3571,10 @@ async function saveProduct(){
     activo: $('pActivo').checked
   };
   if(!state.editingProductId){ data.fechaCreacion = serverTimestamp(); }
+  // Punto #4: si la etiqueta de calidad es "agotado", el producto se teletransporta
+  // solo a la categoría "PRODUCTOS AGOTADOS" (guardando su categoría/subcategoría
+  // original para poder devolverlo cuando se le quite esa etiqueta).
+  applyAgotadoAutomation(state._prevProduct?.calidad || '', data, state._prevProduct);
   try{
     // Snapshot inmutable del producto anterior (evita referencias vivas)
     const prev = state._prevProduct ? JSON.parse(JSON.stringify(state._prevProduct)) : null;
@@ -3512,17 +3599,34 @@ function qualityBadgeHtml(calidad){
   return `<span class="quality-badge ${calidad}">${QUALITY_LABELS[calidad]}</span>`;
 }
 
-const CAT_EMOJI = {
-  'ELECTRODOMÉSTICOS Y HOGAR':'🏠','MÓVILES Y ACCESORIOS':'📱','MODA Y ESTILO':'👗',
-  'COMPUTACIÓN Y TECNOLOGÍA':'💻','ENTRETENIMIENTO Y GAMING':'🎮','2NDO LOCAL':'🏪',
-  'VEHÍCULOS Y HERRAMIENTAS':'🔧','PRODUCTOS AGOTADOS':'🚫'
-};
+function applyAgotadoAutomation(prevCalidad, data, prev){
+  const wasAgotado = prevCalidad === 'agotado';
+  const willBeAgotado = data.calidad === 'agotado';
+  if(willBeAgotado && !wasAgotado){
+    // Pasa a "agotado": guarda su ubicación original y lo mueve a "PRODUCTOS AGOTADOS"
+    data.categoriaOriginal = data.categoria;
+    data.subcategoriaOriginal = data.subcategoria;
+    data.categoria = 'PRODUCTOS AGOTADOS';
+    data.subcategoria = '';
+  } else if(!willBeAgotado && wasAgotado){
+    // Deja de estar "agotado": lo regresa a donde estaba antes
+    data.categoria = prev?.categoriaOriginal || data.categoria;
+    data.subcategoria = prev?.subcategoriaOriginal || data.subcategoria;
+    data.categoriaOriginal = deleteField();
+    data.subcategoriaOriginal = deleteField();
+  } else if(willBeAgotado && wasAgotado){
+    // Sigue "agotado": conserva la ubicación original ya guardada
+    data.categoria = 'PRODUCTOS AGOTADOS';
+    data.subcategoria = '';
+    data.categoriaOriginal = prev?.categoriaOriginal || data.categoriaOriginal || '';
+    data.subcategoriaOriginal = prev?.subcategoriaOriginal || data.subcategoriaOriginal || '';
+  }
+}
 async function autoNovedadNewProduct(p){
-  const emoji = CAT_EMOJI[p.categoria] || '✨';
   try{
     await addDoc(collection(db,'novedades'), {
-      titulo: `${emoji} Nuevo producto: ${p.nombre}`,
-      mensaje: `Se agregó ${p.nombre} al catálogo.`,
+      titulo: 'Nuevo producto',
+      mensaje: p.nombre,
       fecha: serverTimestamp(),
       tipo: 'nuevo',
       productoId: p.id
@@ -3544,9 +3648,18 @@ async function autoNovedadOnProductChange(prev, curr){
   const items = [];
   const prevDisp = _normBoolDisp(prev.disponible);
   const currDisp = _normBoolDisp(curr.disponible);
-  // Solo si cambió de disponible → agotado
+  // Solo si cambió de disponible → agotado (checkbox "Disponible")
   if(prevDisp === true && currDisp === false){
-    items.push({titulo:`⚠️ Producto agotado: ${curr.nombre}`, mensaje:`${curr.nombre} se marcó como agotado.`, tipo:'agotado'});
+    items.push({titulo:'Agotado', mensaje:curr.nombre, tipo:'agotado'});
+  }
+  // Punto #4: "agotado"/"disponible de nuevo" disparado por la etiqueta de Calidad,
+  // independiente del checkbox "Disponible" de arriba.
+  const prevCalidad = prev.calidad || '';
+  const currCalidad = curr.calidad || '';
+  if(currCalidad==='agotado' && prevCalidad!=='agotado'){
+    items.push({titulo:'Agotado', mensaje:curr.nombre, tipo:'agotado'});
+  } else if(currCalidad!=='agotado' && prevCalidad==='agotado'){
+    items.push({titulo:'Disponible de nuevo', mensaje:curr.nombre, tipo:'disponible'});
   }
   const ps = _normStock(prev.stock);
   const cs = _normStock(curr.stock);
@@ -3555,22 +3668,22 @@ async function autoNovedadOnProductChange(prev, curr){
     const psv = ps===null ? -1 : ps;
     const csv = cs===null ? -1 : cs;
     if(csv > psv){
-      items.push({titulo:`📦 Stock actualizado: ${curr.nombre}`, mensaje:`Stock de ${curr.nombre} actualizado.`, tipo:'stock_up'});
+      items.push({titulo:curr.nombre, mensaje:`Ahora hay ${cs ?? 0}`, tipo:'stock_up'});
     } else if(csv < psv && currDisp){
-      items.push({titulo:`⚠️ Stock bajo: ${curr.nombre}`, mensaje:`Bajó el stock de ${curr.nombre}.`, tipo:'stock_down'});
+      items.push({titulo:curr.nombre, mensaje:`Quedan ${cs ?? 0}`, tipo:'stock_down'});
     }
   }
   const pc = _normNum(prev.comisionValor);
   const cc = _normNum(curr.comisionValor);
   if(pc !== cc){
-    items.push({titulo:`💰 Comisión actualizada: ${curr.nombre}`, mensaje:`Nueva comisión de ${curr.nombre}.`, tipo:'comision'});
+    items.push({titulo:curr.nombre, mensaje:`Comisión ${cc>pc?'subió':'bajó'} a $${money(cc)}`, tipo:'comision'});
   }
   const pp = _normNum(prev.precioBase);
   const cp = _normNum(curr.precioBase);
   if(pp > cp){
-    items.push({titulo:`🏷 Precio reducido: ${curr.nombre}`, mensaje:`${curr.nombre} bajó de precio.`, tipo:'precio_down'});
+    items.push({titulo:curr.nombre, mensaje:`Precio bajó a $${money(cp)}`, tipo:'precio_down'});
   } else if(pp < cp){
-    items.push({titulo:`⚠️ Precio actualizado: ${curr.nombre}`, mensaje:`Subió el precio de ${curr.nombre}.`, tipo:'precio_up'});
+    items.push({titulo:curr.nombre, mensaje:`Precio subió a $${money(cp)}`, tipo:'precio_up'});
   }
   for(const it of items){
     try{ await addDoc(collection(db,'novedades'), {...it, fecha:serverTimestamp(), productoId:curr.id}); }catch(e){}
@@ -3758,22 +3871,45 @@ function copyOrderDetail(){
 }
 
 /* ============ ADMIN GESTORES ============ */
+function isGestorOnline(g){
+  const secs = g.ultimaConexion?.seconds;
+  if(!secs) return false;
+  return (Date.now() - secs*1000) < 4*60*1000; // ~4 min sin heartbeat = desconectado
+}
+function lastSaleSeconds(gestorId){
+  const mine = state.pedidos.filter(o=>o.gestorId===gestorId);
+  if(!mine.length) return null;
+  return mine.reduce((max,o)=> Math.max(max, o.fecha?.seconds||0), 0) || null;
+}
 function renderAdminGestores(){
   const box=$('adminGestoresList');
   if(!state.gestores.length){ box.innerHTML='<div class="hint">No hay gestores. Toca "+ Nuevo gestor".</div>'; return; }
-  box.innerHTML = state.gestores.map(g=>`
+  box.innerHTML = state.gestores.map(g=>{
+    const online = isGestorOnline(g);
+    const ultVenta = lastSaleSeconds(g.id);
+    return `
     <div class="hist-item" style="display:flex;gap:12px;align-items:center;">
       ${g.fotoUrl?`<img src="${g.fotoUrl}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;">`:`<div style="width:44px;height:44px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;">${(g.nombre||'?').charAt(0)}</div>`}
       <div style="flex:1;">
         <div class="hist-top"><b>${escapeHtml(g.nombre)}</b></div>
         <div class="hist-meta">@${escapeHtml(g.username)} ${g.telefono? ' · '+escapeHtml(g.telefono):''}${(!g.authUid && g.password)?' · <span style="color:var(--danger);font-weight:700;">sin migrar</span>':''}</div>
+        <div class="gestor-presence">
+          <span class="presence-dot ${online?'online':'offline'}"></span>
+          <span>${online?'En línea':'Desconectado'}</span>
+          <span class="sep">·</span>
+          <span>Entró ${g.ultimaConexion?relTime(g.ultimaConexion.seconds):'nunca'}</span>
+        </div>
+        <div class="gestor-presence sale">
+          <span>🛒 Última venta: ${ultVenta?relTime(ultVenta):'Sin ventas todavía'}</span>
+        </div>
         <div class="prod-actions" style="margin-top:8px;">
           <button title="Comisiones" style="width:auto;padding:0 10px;font-size:11px;font-weight:700;" onclick="openGestorComisionModal('${g.id}')">💰 Comisiones</button>
           <button title="Editar" onclick="openGestorModal('${g.id}')">${ICONS.pencil}</button>
           <button title="Eliminar" class="del" onclick="removeGestor('${g.id}')">${ICONS.trash}</button>
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 function openGestorModal(id){
   state.editingGestorId = id || null;
@@ -3938,6 +4074,29 @@ async function registrarPagoComision(){
 }
 
 /* ============ NOVEDADES ============ */
+function novIconSvg(tipo){
+  const ICONS_NOV = {
+    nuevo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2Z"/></svg>',
+    agotado: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg>',
+    disponible: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>',
+    stock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>',
+    precio: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 12.6 12 21.2 2.8 12 11.4 3.4H20.6v9.2Z"/><circle cx="16" cy="8" r="1.4" fill="currentColor" stroke="none"/></svg>'
+  };
+  const cls = {nuevo:'nuevo', agotado:'agotado', disponible:'disponible', stock_up:'stock', stock_down:'stock', comision:'precio', precio_up:'precio', precio_down:'precio'}[tipo] || 'default';
+  const svg = ICONS_NOV[cls] || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a2.5 2.5 0 0 0 2.4-2H9.6a2.5 2.5 0 0 0 2.4 2Z"/><path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 3h16l-2-3Z"/></svg>';
+  return `<div class="nov-icon nov-ic-${cls}">${svg}</div>`;
+}
+function novMatchesTab(n, tab){
+  if(tab==='todas') return true;
+  if(tab==='stock') return n.tipo==='stock_up' || n.tipo==='stock_down';
+  if(tab==='precio') return n.tipo==='precio_up' || n.tipo==='precio_down' || n.tipo==='comision';
+  return n.tipo===tab;
+}
+function switchNovTab(tab){
+  state.novTab = tab;
+  document.querySelectorAll('.nov-tab').forEach(b=>b.classList.toggle('active', b.dataset.nt===tab));
+  renderNovedadesList();
+}
 function updateNovBadge(){
   const badge = $('novBadge');
   const count = state.novedades.filter(n=>!state.deletedNovIds.includes(n.id)).length;
@@ -3947,23 +4106,32 @@ function updateNovBadge(){
 function openNovedades(){
   $('novedadesModal').classList.remove('hidden');
   pushNavState();
+  state.novTab = 'todas';
+  document.querySelectorAll('.nov-tab').forEach(b=>b.classList.toggle('active', b.dataset.nt==='todas'));
+  renderNovedadesList();
+}
+function renderNovedadesList(){
   const box = $('novedadesList');
-  const visible = state.novedades.filter(n=>!state.deletedNovIds.includes(n.id));
-  if(!visible.length){ box.innerHTML='<div class="hint">No hay novedades todavía.</div>'; return; }
+  const tab = state.novTab || 'todas';
+  const visible = state.novedades.filter(n=>!state.deletedNovIds.includes(n.id) && novMatchesTab(n, tab));
+  if(!visible.length){ box.innerHTML='<div class="hint">No hay novedades en esta pestaña.</div>'; return; }
   box.innerHTML = visible.map(n=>{
     const fecha = n.fecha?.seconds ? new Date(n.fecha.seconds*1000).toLocaleDateString('es-CU',{day:'numeric',month:'short',year:'numeric'}) : '';
     return `<div class="card nov-item" style="margin-bottom:10px;position:relative;cursor:pointer;" onclick="onNovedadTap('${n.id}')">
-      <button type="button" class="photo-remove" style="top:8px;right:8px;" onclick="event.stopPropagation();dismissNovedad('${n.id}')">✕</button>
-      <div style="font-weight:800;font-size:14px;margin-bottom:4px;padding-right:28px;">${escapeHtml(n.titulo)}</div>
-      <div style="font-size:13px;line-height:1.4;">${escapeHtml(n.mensaje)}</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px;">${fecha}</div>
+      ${novIconSvg(n.tipo)}
+      <div class="nov-item-body">
+        <button type="button" class="photo-remove" style="top:8px;right:8px;" onclick="event.stopPropagation();dismissNovedad('${n.id}')">✕</button>
+        <div style="font-weight:800;font-size:14px;margin-bottom:4px;padding-right:28px;">${escapeHtml(n.titulo)}</div>
+        <div style="font-size:13px;line-height:1.4;">${escapeHtml(n.mensaje)}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;">${fecha}</div>
+      </div>
     </div>`;
   }).join('');
 }
 function dismissNovedad(id){
   state.deletedNovIds.push(id);
   localStorage.setItem('deleted_novs', JSON.stringify(state.deletedNovIds));
-  openNovedades();
+  renderNovedadesList();
   updateNovBadge();
 }
 function onNovedadTap(id){
@@ -4060,6 +4228,7 @@ Object.assign(window, {
   openTarifasModal, closeTarifasModal, switchTarifaLocal, switchTarifaTipo, renderTarifas, selectTarifa,
   handleCarnetUpload, handlePerfilPhoto, pickCarnet, removeCarnet, clearValeDraft,
   openNovedades, closeNovedades, publishNovedad, deleteNovedad, dismissNovedad, onNovedadTap, closeConfirm,
+  switchNovTab,
   setAdminCat, installPWA, dismissPWA,
   setCatalogView, onGestorSearch, goCatalogCats, goCatalogCat, goCatalogSub, onCatalogSortChange, toggleFaq,
   openProductDetail, closeProductDetail, pickFromDetail, removeProductPhoto,
