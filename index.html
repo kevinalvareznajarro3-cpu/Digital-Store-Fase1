@@ -53,13 +53,17 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-b
 .conn-gate-bar-track{width:100%;height:10px;border-radius:20px;background:rgba(255,255,255,.12);overflow:hidden;margin:22px 0 8px;}
 body.dark .conn-gate-bar-track{background:rgba(255,255,255,.08);}
 .conn-gate-bar-fill{height:100%;width:4%;border-radius:20px;background:linear-gradient(90deg,var(--green-dim),var(--green));transition:width .25s ease;}
-.conn-gate-pct{text-align:center;font-size:22px;font-weight:800;color:var(--green);margin-bottom:6px;}
-.conn-gate-status{text-align:center;font-size:12.5px;color:var(--muted);min-height:16px;}
+.conn-gate-pct{text-align:center;font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;}
+.conn-gate-status{text-align:center;font-size:12.5px;color:rgba(255,255,255,.78);min-height:16px;}
 .login-box{background:var(--surface);border-radius:18px;padding:28px 22px;width:100%;max-width:360px;box-shadow:0 12px 40px rgba(0,0,0,.35);}
 .login-logo{width:74px;height:74px;border-radius:18px;overflow:hidden;margin:0 auto 14px;box-shadow:0 4px 14px rgba(0,0,0,.25);}
 .login-logo img{width:100%;height:100%;object-fit:cover;}
-.login-title{text-align:center;font-size:18px;font-weight:800;margin:0 0 2px;color:var(--green);}
-.login-sub{text-align:center;font-size:12px;color:var(--muted);margin:0 0 20px;text-transform:uppercase;letter-spacing:1.2px;}
+.login-title{text-align:center;font-size:18px;font-weight:800;margin:0 0 2px;color:#fff;}
+.login-sub{text-align:center;font-size:12px;color:rgba(255,255,255,.78);margin:0 0 20px;text-transform:uppercase;letter-spacing:1.2px;}
+.conn-gate-helpers{display:flex;flex-direction:column;gap:8px;margin-top:18px;animation:slideIn .3s ease;}
+.conn-gate-helper-btn{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.35);color:#fff;
+  border-radius:20px;padding:9px 14px;font-size:12px;font-weight:700;}
+.conn-gate-helper-btn:disabled{opacity:.6;}
 .login-error{color:var(--danger);font-size:12.5px;text-align:center;margin:8px 0;font-weight:600;}
 .pass-wrap{position:relative;}
 .pass-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted);}
@@ -591,7 +595,7 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 
 
 <!-- PANTALLA DE CONEXIÓN: bloquea el acceso al login hasta confirmar internet real -->
-<div id="connGate" class="hidden">
+<div id="connGate">
   <div class="login-box" style="text-align:center;">
     <div class="login-logo"><img src="logo.jpg" alt="Digital Store" onerror="this.src='icons/icon-192.png'"></div>
     <h1 class="login-title">Digital Store</h1>
@@ -599,6 +603,10 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
     <div class="conn-gate-bar-track"><div class="conn-gate-bar-fill" id="connGateBar"></div></div>
     <div class="conn-gate-pct" id="connGatePct">0%</div>
     <div class="conn-gate-status" id="connGateStatus">Buscando conexión…</div>
+    <div class="conn-gate-helpers">
+      <button type="button" id="connNotifyBtn" class="conn-gate-helper-btn hidden" onclick="requestConnNotify()">🔔 Notificarme cuando haya conexión</button>
+      <button type="button" id="connSkipBtn" class="conn-gate-helper-btn hidden" onclick="skipConnectionGate()">Intentar entrar de todas formas</button>
+    </div>
   </div>
 </div>
 
@@ -2151,6 +2159,7 @@ function stopGestorHeartbeat(){
 }
 
 function enterApp(){
+  if($('connGate')) $('connGate').classList.add('hidden'); // seguro: nunca debe quedar visible al mostrar la app
   $('loginScreen').classList.add('hidden');
   $('app').classList.remove('hidden');
   $('userName').textContent = state.user.nombre;
@@ -4472,6 +4481,7 @@ async function saveConfig(){
 /* ============ EXPORT ============ */
 Object.assign(window, {
   togglePassEye, doLogin, doLogout, switchTab, adminSwitch,
+  skipConnectionGate, requestConnNotify,
   addLineItem, removeLineItem, updateLineItem, toggleVuelto, recalcVale, submitVale,
   openCatalogPicker, closeCatalogPicker, renderCatalogPicker, pickCatalogProduct, setPickerCat,
   openProductModal, closeProductModal, handlePhotoUpload, saveProduct, removeProduct, updateSubcats, toggleStockField,
@@ -4497,8 +4507,12 @@ Object.assign(window, {
 
 /* ============ PANTALLA DE CONEXIÓN (previa al login) ============
    No deja ver el formulario de usuario/contraseña hasta confirmar que hay
-   internet real (no solo que el dispositivo "cree" tener wifi/datos). */
-function checkRealConnectivity(){
+   internet real (no solo que el dispositivo "cree" tener wifi/datos) Y que,
+   específicamente, se puede contactar al servidor de Firebase Authentication.
+   Son DOS cosas distintas: en redes inestables se puede llegar bien a un nodo
+   estático de Google (CDN) y fallar justo el viaje más largo hasta el servicio
+   de autenticación, o al revés — ninguna de las dos pruebas reemplaza a la otra. */
+function checkGoogleConnectivity(){
   return new Promise(resolve=>{
     if(!navigator.onLine){ resolve(false); return; }
     let done=false;
@@ -4509,11 +4523,55 @@ function checkRealConnectivity(){
       .catch(()=>{ clearTimeout(timer); finish(false); });
   });
 }
+function checkFirebaseAuthConnectivity(){
+  return new Promise(resolve=>{
+    let done=false;
+    const finish=(ok)=>{ if(done) return; done=true; resolve(ok); };
+    const timer = setTimeout(()=>finish(false), 4500);
+    // Cualquier respuesta HTTP real del servidor (incluso un error por token inválido)
+    // ya confirma que se pudo contactar — no hace falta ninguna credencial válida.
+    fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${firebaseConfig.apiKey}`, {
+      method:'POST', mode:'cors', cache:'no-store',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({idToken:'conn-check'})
+    })
+      .then(()=>{ clearTimeout(timer); finish(true); })
+      .catch(()=>{ clearTimeout(timer); finish(false); });
+  });
+}
+let _connSkipRequested = false;
+let _connNotifyOnSuccess = false;
+function skipConnectionGate(){
+  _connSkipRequested = true;
+  const btn = $('connSkipBtn');
+  if(btn){ btn.disabled = true; btn.textContent = 'Entrando…'; }
+}
+async function requestConnNotify(){
+  const btn = $('connNotifyBtn');
+  if(!('Notification' in window)){
+    if(btn){ btn.disabled = true; btn.textContent = 'No disponible en este navegador'; }
+    return;
+  }
+  try{
+    const perm = await Notification.requestPermission();
+    if(perm === 'granted'){
+      _connNotifyOnSuccess = true;
+      if(btn){ btn.disabled = true; btn.textContent = '🔔 Te avisaremos cuando haya conexión'; }
+    } else if(btn){
+      btn.disabled = true;
+      btn.textContent = 'Permiso de notificación denegado';
+    }
+  }catch(e){}
+}
 function waitForConnection(){
   return new Promise(async (resolve)=>{
     const gate=$('connGate'), bar=$('connGateBar'), pct=$('connGatePct'), status=$('connGateStatus');
     if(!gate){ resolve(); return; }
-    gate.classList.remove('hidden'); // solo se muestra en este momento, nunca por defecto
+    gate.classList.remove('hidden'); // ya es visible por defecto desde el HTML; esto es un refuerzo
+    _connSkipRequested = false;
+    const notifyBtn=$('connNotifyBtn'), skipBtn=$('connSkipBtn');
+    if(notifyBtn){ notifyBtn.classList.add('hidden'); notifyBtn.disabled=false; notifyBtn.textContent='🔔 Notificarme cuando haya conexión'; }
+    if(skipBtn){ skipBtn.classList.add('hidden'); skipBtn.disabled=false; skipBtn.textContent='Intentar entrar de todas formas'; }
     let progress = 4;
     const setProgress = (p)=>{
       progress = p;
@@ -4524,22 +4582,52 @@ function waitForConnection(){
     const ticker = setInterval(()=>{
       if(progress < 88) setProgress(progress + (88-progress)*0.06 + 0.4);
     }, 150);
-    if(status) status.textContent = 'Buscando conexión…';
-    let ok = false;
-    let intentos = 0;
-    while(!ok){
-      ok = await checkRealConnectivity();
-      if(!ok){
-        intentos++;
-        if(status) status.textContent = intentos===1 ? 'Sin conexión — reintentando…' : `Sin conexión — reintentando… (${intentos})`;
-        await new Promise(r=>setTimeout(r, 1800));
+    const startedAt = Date.now();
+    let helpersShown = false;
+    let intentosInternet = 0, intentosAuth = 0;
+    let skippedWithoutConfirming = false;
+    while(true){
+      if(_connSkipRequested){ skippedWithoutConfirming = true; break; }
+      // Tras ~15s de reintentos seguidos, ofrecemos dos salidas: avisar por notificación
+      // cuando haya conexión (si el navegador lo permite), o entrar de todas formas.
+      if(!helpersShown && Date.now()-startedAt > 15000){
+        helpersShown = true;
+        if(notifyBtn) notifyBtn.classList.remove('hidden');
+        if(skipBtn) skipBtn.classList.remove('hidden');
       }
+      status.textContent = intentosInternet===0 ? 'Verificando conexión a internet…' : `Sin conexión — reintentando… (${intentosInternet})`;
+      const internetOk = await checkGoogleConnectivity();
+      if(!internetOk){
+        intentosInternet++;
+        await new Promise(r=>setTimeout(r, 1800));
+        continue;
+      }
+      if(_connSkipRequested){ skippedWithoutConfirming = true; break; }
+      if(progress < 55) setProgress(55);
+      status.textContent = intentosAuth===0 ? 'Verificando servidor de autenticación…' : `Verificando servidor de autenticación… (${intentosAuth})`;
+      const authOk = await checkFirebaseAuthConnectivity();
+      if(!authOk){
+        intentosAuth++;
+        await new Promise(r=>setTimeout(r, 1800));
+        continue;
+      }
+      break; // ambas verificaciones pasaron
     }
     clearInterval(ticker);
     setProgress(100);
-    if(status) status.textContent = '¡Listo! Conectado ✅';
+    if(skippedWithoutConfirming){
+      status.textContent = 'Continuando sin confirmar conexión…';
+    } else {
+      status.textContent = '¡Listo! Conectado ✅';
+      if(_connNotifyOnSuccess && 'Notification' in window && Notification.permission==='granted'){
+        try{ new Notification('Digital Store', {body:'Ya hay conexión — ya puedes entrar', icon:'icons/icon-192.png'}); }catch(e){}
+        _connNotifyOnSuccess = false;
+      }
+    }
     await new Promise(r=>setTimeout(r, 450));
     gate.classList.add('hidden');
+    if(notifyBtn) notifyBtn.classList.add('hidden');
+    if(skipBtn) skipBtn.classList.add('hidden');
     if($('loginScreen')) $('loginScreen').classList.remove('hidden');
     resolve();
   });
