@@ -48,22 +48,11 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-b
 
 #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
   background:linear-gradient(160deg,#0F2E1E,#1A4A2E 55%,#2E6EB5);}
-#connGate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
-  background:linear-gradient(160deg,#0F2E1E,#1A4A2E 55%,#2E6EB5);}
-.conn-gate-bar-track{width:100%;height:10px;border-radius:20px;background:rgba(255,255,255,.12);overflow:hidden;margin:22px 0 8px;}
-body.dark .conn-gate-bar-track{background:rgba(255,255,255,.08);}
-.conn-gate-bar-fill{height:100%;width:4%;border-radius:20px;background:linear-gradient(90deg,var(--green-dim),var(--green));transition:width .25s ease;}
-.conn-gate-pct{text-align:center;font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;}
-.conn-gate-status{text-align:center;font-size:12.5px;color:rgba(255,255,255,.78);min-height:16px;}
 .login-box{background:var(--surface);border-radius:18px;padding:28px 22px;width:100%;max-width:360px;box-shadow:0 12px 40px rgba(0,0,0,.35);}
 .login-logo{width:74px;height:74px;border-radius:18px;overflow:hidden;margin:0 auto 14px;box-shadow:0 4px 14px rgba(0,0,0,.25);}
 .login-logo img{width:100%;height:100%;object-fit:cover;}
-.login-title{text-align:center;font-size:18px;font-weight:800;margin:0 0 2px;color:#fff;}
-.login-sub{text-align:center;font-size:12px;color:rgba(255,255,255,.78);margin:0 0 20px;text-transform:uppercase;letter-spacing:1.2px;}
-.conn-gate-helpers{display:flex;flex-direction:column;gap:8px;margin-top:18px;animation:slideIn .3s ease;}
-.conn-gate-helper-btn{background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.35);color:#fff;
-  border-radius:20px;padding:9px 14px;font-size:12px;font-weight:700;}
-.conn-gate-helper-btn:disabled{opacity:.6;}
+.login-title{text-align:center;font-size:18px;font-weight:800;margin:0 0 2px;color:var(--green);}
+.login-sub{text-align:center;font-size:12px;color:var(--muted);margin:0 0 20px;text-transform:uppercase;letter-spacing:1.2px;}
 .login-error{color:var(--danger);font-size:12.5px;text-align:center;margin:8px 0;font-weight:600;}
 .pass-wrap{position:relative;}
 .pass-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted);}
@@ -210,14 +199,6 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 .upload-spinner{font-size:12px;color:var(--green-dim);font-weight:700;}
 
 .hint{color:var(--muted);font-size:12.5px;text-align:center;padding:20px 0;}
-.err-code-list{display:flex;flex-direction:column;gap:8px;}
-.err-code-item{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:2px 12px;}
-.err-code-item summary{padding:9px 0;font-size:13px;font-weight:600;cursor:pointer;list-style:none;}
-.err-code-item summary::-webkit-details-marker{display:none;}
-.err-code-item summary b{color:var(--green);}
-.err-code-item summary::before{content:'▸ ';color:var(--muted);}
-.err-code-item[open] summary::before{content:'▾ ';}
-.err-code-item div{font-size:12.5px;line-height:1.5;color:var(--muted);padding:0 0 10px;}
 .top3-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px;}
 .top3-item:last-child{border-bottom:none;}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
@@ -594,24 +575,8 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 </div>
 
 
-<!-- PANTALLA DE CONEXIÓN: bloquea el acceso al login hasta confirmar internet real -->
-<div id="connGate">
-  <div class="login-box" style="text-align:center;">
-    <div class="login-logo"><img src="logo.jpg" alt="Digital Store" onerror="this.src='icons/icon-192.png'"></div>
-    <h1 class="login-title">Digital Store</h1>
-    <p class="login-sub">Pine Forest Innovaciones</p>
-    <div class="conn-gate-bar-track"><div class="conn-gate-bar-fill" id="connGateBar"></div></div>
-    <div class="conn-gate-pct" id="connGatePct">0%</div>
-    <div class="conn-gate-status" id="connGateStatus">Buscando conexión…</div>
-    <div class="conn-gate-helpers">
-      <button type="button" id="connNotifyBtn" class="conn-gate-helper-btn hidden" onclick="requestConnNotify()">🔔 Notificarme cuando haya conexión</button>
-      <button type="button" id="connSkipBtn" class="conn-gate-helper-btn hidden" onclick="skipConnectionGate()">Intentar entrar de todas formas</button>
-    </div>
-  </div>
-</div>
-
 <!-- LOGIN -->
-<div id="loginScreen" class="hidden">
+<div id="loginScreen">
   <div class="login-box">
     <div class="login-logo"><img src="logo.jpg" alt="Digital Store" onerror="this.src='icons/icon-192.png'"></div>
     <h1 class="login-title">Digital Store</h1>
@@ -634,7 +599,7 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
       <input type="checkbox" id="rememberMe"><label for="rememberMe" style="margin:0;">Recordarme en este dispositivo</label>
     </div>
     <div class="login-error hidden" id="loginError"></div>
-    <div id="loginErrorTech" style="font-size:10.5px;font-weight:700;color:var(--muted);margin-top:-6px;margin-bottom:10px;letter-spacing:.3px;"></div>
+    <div id="loginErrorTech" style="font-size:10px;color:var(--muted);margin-top:-6px;margin-bottom:10px;word-break:break-word;"></div>
     <button class="btn-primary" id="loginBtn" onclick="doLogin()" style="margin-top:6px;">Entrar</button>
     <a class="forgot-link" href="https://wa.me/5354410879?text=Hola%20he%20olvidado%20mi%20contrase%C3%B1a%20recu%C3%A9rdamela" target="_blank" rel="noopener">¿Has olvidado tu contraseña?</a>
 
@@ -1223,26 +1188,6 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
           <div class="field"><label>Enlace de la comunidad de WhatsApp</label><input type="text" id="cfgComunidad" placeholder="https://chat.whatsapp.com/..."></div>
           <button class="btn-primary" onclick="saveConfig()">Guardar</button>
         </div>
-
-        <div class="card">
-          <h2>🔑 Códigos de error de login</h2>
-          <div class="hint" style="margin-bottom:10px;">Cuando un gestor no puede entrar, solo ve un mensaje genérico y un código corto (ej. "Código: E1"). Pídele ese código y búscalo aquí para saber exactamente qué pasó y qué hacer — el gestor nunca ve estos detalles.</div>
-          <div class="err-code-list">
-            <details class="err-code-item"><summary><b>E1</b> — Contraseña incorrecta</summary><div>El usuario existe, pero la contraseña no coincide. Pídele que la vuelva a escribir con cuidado (mayúsculas/espacios), o cámbiasela desde Gestores.</div></details>
-            <details class="err-code-item"><summary><b>E2</b> — El usuario no existe</summary><div>No hay ningún gestor con ese nombre de usuario. Revisa que lo haya escrito bien, o que su cuenta exista en la sección Gestores.</div></details>
-            <details class="err-code-item"><summary><b>E3</b> — Demasiados intentos fallidos</summary><div>Firebase bloqueó la cuenta temporalmente por seguridad tras varios intentos fallidos seguidos. Debe esperar unos minutos y volver a intentar.</div></details>
-            <details class="err-code-item"><summary><b>E4</b> — Sin conexión a internet</summary><div>El dispositivo del gestor no pudo contactar al servidor en ese momento. No es un problema de usuario/contraseña — debe revisar su wifi o datos móviles e intentar de nuevo.</div></details>
-            <details class="err-code-item"><summary><b>E5</b> — Cuenta sin perfil vinculado</summary><div>Se autenticó correctamente, pero no existe ningún gestor en Firestore conectado a esa cuenta. Es un problema de configuración de esa cuenta, no de la contraseña — revisa el campo authUid de ese gestor.</div></details>
-            <details class="err-code-item"><summary><b>E6</b> — No se pudo verificar la cuenta</summary><div>No se pudo leer la colección de gestores (puede ser Reglas de seguridad o conexión inestable). Pídele que reintente; si persiste, revisa las Reglas de Firestore.</div></details>
-            <details class="err-code-item"><summary><b>E7</b> — Error inesperado</summary><div>Ocurrió una excepción no controlada durante el login. Pídele que reintente; si se repite seguido, revisa la consola del navegador en ese dispositivo.</div></details>
-          </div>
-        </div>
-
-        <div class="card">
-          <h2>🕓 Errores de login recientes</h2>
-          <div class="hint" style="margin-bottom:10px;">Cada intento fallido queda registrado aquí automáticamente (usuario, código y detalle técnico), para que tengas contexto real de lo que va pasando — no solo la explicación general de arriba. Se guardan los últimos 30.</div>
-          <div id="loginErrorsList"><div class="hint">Cargando…</div></div>
-        </div>
       </div>
     </section>
   </main>
@@ -1473,7 +1418,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/fireba
 import {
   initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager,
   collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, setDoc, arrayUnion, deleteField,
-  onSnapshot, query, where, orderBy, limit, serverTimestamp
+  onSnapshot, query, where, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 import {
   getAuth, signInAnonymously, onAuthStateChanged, setPersistence, browserLocalPersistence,
@@ -1785,7 +1730,6 @@ const state = {
   pwaDismissed: localStorage.getItem('pwa_dismissed')==='1',
   valeMode:'mensajeria', lineItemsRecogida:[], pickerTarget:'mensajeria',
   comisionEditada:false, comisionEditadaRecogida:false,
-  loginErrors:[], loginErrorsUnavailable:false,
   darkMode: localStorage.getItem('dark_mode')==='1',
   carouselCollapsed: localStorage.getItem('new_carousel_collapsed')==='1'
 };
@@ -2012,27 +1956,11 @@ async function doLogin(){
   const btn=$('loginBtn');
   if(!u || !p){ errBox.textContent='Escribe usuario y contraseña.'; errBox.classList.remove('hidden'); return; }
   if(btn){ btn.disabled=true; btn.innerHTML='<span class="btn-spinner"></span> Entrando…'; }
-  // El gestor NUNCA ve detalles técnicos (ni Firebase, ni Firestore, ni Reglas de seguridad).
-  // Solo ve un mensaje genérico + un código corto (E1, E2, etc). El significado de cada
-  // código queda documentado SOLO para el Admin en Admin → Configuración → "Códigos de
-  // error de login". `diag` es el detalle real y solo se imprime en la consola del navegador.
+  // Punto #5: rastro técnico de cada paso del login, para que si un gestor no puede entrar
+  // y te manda una captura, sepas AL INSTANTE si el problema es de Firebase Auth, de las
+  // Reglas de Firestore, de conexión, o simplemente una contraseña mal escrita — sin tener
+  // que adivinar ni reproducir el error tú mismo.
   const diag = [];
-  const fail = (code, msg)=>{
-    errBox.textContent = msg;
-    errBox.classList.remove('hidden');
-    if(errTech) errTech.textContent = 'Código: '+code;
-    console.warn('[Login '+code+']', diag.join(' · ') || '(sin detalle adicional)');
-    // Registro persistente para que el Admin tenga contexto real (no solo la tabla de
-    // significados) — se guarda aunque el intento haya fallado y el gestor no esté
-    // autenticado. Si la escritura falla (p.ej. sin conexión, o falta la regla de
-    // seguridad correspondiente), se ignora en silencio: nunca debe romper el login.
-    try{
-      addDoc(collection(db,'loginErrors'), {
-        usuario: u, codigo: code, detalle: diag.join(' · ') || null,
-        fecha: serverTimestamp()
-      }).catch(()=>{});
-    }catch(e){}
-  };
   try{
     if(u.toLowerCase()===ADMIN_USER && p===ADMIN_PASS){
       state.user = { role:'admin', nombre:'Administrador', username:ADMIN_USER };
@@ -2054,18 +1982,6 @@ async function doLogin(){
       diag.push('Firebase Auth: '+(authErrorCode||'error desconocido'));
     }
 
-    // Cortocircuito de conexión: si Firebase Auth no pudo ni siquiera contactar al servidor,
-    // NO seguimos probando el método viejo (eso era el bug: terminaba mezclando "sin red" con
-    // "contraseña no coincide" en el mismo mensaje, algo contradictorio y confuso).
-    if(authErrorCode==='auth/network-request-failed'){
-      fail('E4', 'No se pudo conectar. Revisa tu conexión a internet e intenta de nuevo.');
-      return;
-    }
-    if(authErrorCode==='auth/too-many-requests'){
-      fail('E3', 'Demasiados intentos fallidos. Espera unos minutos e intenta de nuevo.');
-      return;
-    }
-
     let found = null;
     if(uidAutenticado){
       try{
@@ -2081,38 +1997,30 @@ async function doLogin(){
           if(found) diag.push('Se usó la copia de respaldo local (sin conexión a Firestore en ese momento)');
         }catch(e){}
       }
-      if(!found){
-        // Se autenticó correctamente en Firebase Auth, pero no hay ningún perfil de gestor
-        // vinculado a esa cuenta — esto es un problema de configuración, no de contraseña.
-        fail('E5', 'Tu cuenta no está vinculada correctamente. Avisa al Administrador.');
-        return;
-      }
     }
 
     // 2) Compatibilidad temporal: gestor todavía sin migrar (contraseña aún en texto plano en Firestore)
     if(!found){
-      let list = [];
-      try{ list = await fetchGestoresParaLogin(); }
-      catch(e){ diag.push('Firestore (leer "gestores"): '+(e?.code||e?.message||'error desconocido')); }
-      if(!list.length){
-        diag.push('No se pudo leer la colección "gestores" (Reglas de seguridad o conexión)');
-        fail('E6', 'No se pudo verificar tu cuenta en este momento. Intenta de nuevo o avisa al Administrador.');
-        return;
-      }
+      const list = await fetchGestoresParaLogin();
+      if(!list.length) diag.push('Firestore: no se pudo leer la colección "gestores" (revisa Reglas de seguridad o la conexión)');
       found = list.find(g=>
         String(g.username||'').toLowerCase()===u.toLowerCase() && !g.authUid && String(g.password||'')===p
       ) || null;
-      if(!found){
+      if(!found && list.length){
         const existeUsuario = list.some(g=>String(g.username||'').toLowerCase()===u.toLowerCase());
-        if(existeUsuario){
-          diag.push('El usuario existe pero la contraseña no coincide');
-          fail('E1', 'Usuario o contraseña incorrectos.');
-        } else {
-          diag.push('No existe ningún gestor con ese usuario');
-          fail('E2', 'Usuario o contraseña incorrectos.');
-        }
-        return;
+        diag.push(existeUsuario ? 'El usuario existe en Firestore pero la contraseña no coincide' : 'No existe ningún gestor con ese usuario en Firestore');
       }
+    }
+
+    if(!found){
+      if(authErrorCode==='auth/too-many-requests'){
+        errBox.textContent='Demasiados intentos fallidos con este usuario. Firebase bloqueó esta cuenta temporalmente por seguridad — espera unos minutos y vuelve a intentar, o avísale al Administrador.';
+      } else {
+        errBox.textContent='Usuario o contraseña incorrectos.';
+      }
+      errBox.classList.remove('hidden');
+      if(errTech) errTech.textContent = 'Detalle técnico (para el Admin): ' + (diag.join(' · ') || 'sin más detalle');
+      return;
     }
     state.user = { role:'gestor', nombre:found.nombre, username:found.username, id:found.id, telefono:found.telefono, fotoUrl:found.fotoUrl||'' };
     if($('rememberMe')?.checked) localStorage.setItem('ds_remember', JSON.stringify({u,p,role:'gestor'}));
@@ -2120,8 +2028,8 @@ async function doLogin(){
     localStorage.setItem('ds_user', JSON.stringify(state.user));
     enterApp();
   }catch(e){
-    diag.push('Excepción no controlada: '+(e?.code||e?.message||'desconocido'));
-    fail('E7', 'Ocurrió un error inesperado. Intenta de nuevo.');
+    errBox.textContent='Error de conexión. Revisa tu internet.'; errBox.classList.remove('hidden');
+    if(errTech) errTech.textContent = 'Detalle técnico (para el Admin): excepción no controlada — ' + (e?.code || e?.message || 'desconocido');
   } finally {
     if(btn){ btn.disabled=false; btn.textContent='Entrar'; }
   }
@@ -2159,7 +2067,6 @@ function stopGestorHeartbeat(){
 }
 
 function enterApp(){
-  if($('connGate')) $('connGate').classList.add('hidden'); // seguro: nunca debe quedar visible al mostrar la app
   $('loginScreen').classList.add('hidden');
   $('app').classList.remove('hidden');
   $('userName').textContent = state.user.nombre;
@@ -2314,14 +2221,6 @@ function startAdminListeners(){
     if(state.adminTab==='resumen') renderResumen();
     if(state.viewingGestorId && !$('gestorComisionModal').classList.contains('hidden')) renderGestorComision();
   });
-  // Contexto real de errores de login para el Admin (además de la tabla estática de
-  // significados) — si la colección no existe o faltan permisos, se ignora en silencio.
-  try{
-    onSnapshot(query(collection(db,'loginErrors'), orderBy('fecha','desc'), limit(30)), snap=>{
-      state.loginErrors = snap.docs.map(d=>({id:d.id, ...d.data()}));
-      if(state.adminTab==='config') renderLoginErrors();
-    }, ()=>{ state.loginErrorsUnavailable = true; if(state.adminTab==='config') renderLoginErrors(); });
-  }catch(e){}
   // Punto #6: refresca los contadores relativos ("hace X min/h/días") y el estado
   // en línea/desconectado cada 30s mientras el Admin tiene abierta esta pestaña,
   // para que no se queden congelados aunque no llegue ningún dato nuevo.
@@ -4443,26 +4342,6 @@ async function deleteNovedad(id){
 function renderAdminConfig(){
   $('cfgWhatsapp').value = state.settings.waNumber || '';
   if($('cfgComunidad')) $('cfgComunidad').value = state.settings.waComunidad || '';
-  renderLoginErrors();
-}
-function renderLoginErrors(){
-  const box = $('loginErrorsList');
-  if(!box) return;
-  if(state.loginErrorsUnavailable){
-    box.innerHTML = '<div class="hint">No se pudo cargar el historial (falta crear la colección/regla "loginErrors" en Firestore — ver nota abajo).</div>';
-    return;
-  }
-  if(!state.loginErrors.length){
-    box.innerHTML = '<div class="hint">✅ No hay ningún error de login registrado por ahora.</div>';
-    return;
-  }
-  box.innerHTML = state.loginErrors.map(le=>{
-    const fecha = le.fecha?.seconds ? relTime(le.fecha.seconds) : '—';
-    return `<details class="err-code-item">
-      <summary><b>${escapeHtml(le.codigo||'?')}</b> — ${escapeHtml(le.usuario||'—')} <span style="float:right;color:var(--muted);font-weight:400;">${fecha}</span></summary>
-      <div>${escapeHtml(le.detalle || 'Sin más detalle.')}</div>
-    </details>`;
-  }).join('');
 }
 async function saveConfig(){
   const wa = $('cfgWhatsapp').value.trim();
@@ -4481,7 +4360,6 @@ async function saveConfig(){
 /* ============ EXPORT ============ */
 Object.assign(window, {
   togglePassEye, doLogin, doLogout, switchTab, adminSwitch,
-  skipConnectionGate, requestConnNotify,
   addLineItem, removeLineItem, updateLineItem, toggleVuelto, recalcVale, submitVale,
   openCatalogPicker, closeCatalogPicker, renderCatalogPicker, pickCatalogProduct, setPickerCat,
   openProductModal, closeProductModal, handlePhotoUpload, saveProduct, removeProduct, updateSubcats, toggleStockField,
@@ -4504,134 +4382,6 @@ Object.assign(window, {
   toggleVoucherPreview, copyVoucherPreview,
   $: (id)=>document.getElementById(id)
 });
-
-/* ============ PANTALLA DE CONEXIÓN (previa al login) ============
-   No deja ver el formulario de usuario/contraseña hasta confirmar que hay
-   internet real (no solo que el dispositivo "cree" tener wifi/datos) Y que,
-   específicamente, se puede contactar al servidor de Firebase Authentication.
-   Son DOS cosas distintas: en redes inestables se puede llegar bien a un nodo
-   estático de Google (CDN) y fallar justo el viaje más largo hasta el servicio
-   de autenticación, o al revés — ninguna de las dos pruebas reemplaza a la otra. */
-function checkGoogleConnectivity(){
-  return new Promise(resolve=>{
-    if(!navigator.onLine){ resolve(false); return; }
-    let done=false;
-    const finish=(ok)=>{ if(done) return; done=true; resolve(ok); };
-    const timer = setTimeout(()=>finish(false), 4000);
-    fetch('https://www.gstatic.com/generate_204', {mode:'no-cors', cache:'no-store'})
-      .then(()=>{ clearTimeout(timer); finish(true); })
-      .catch(()=>{ clearTimeout(timer); finish(false); });
-  });
-}
-function checkFirebaseAuthConnectivity(){
-  return new Promise(resolve=>{
-    let done=false;
-    const finish=(ok)=>{ if(done) return; done=true; resolve(ok); };
-    const timer = setTimeout(()=>finish(false), 4500);
-    // Cualquier respuesta HTTP real del servidor (incluso un error por token inválido)
-    // ya confirma que se pudo contactar — no hace falta ninguna credencial válida.
-    fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${firebaseConfig.apiKey}`, {
-      method:'POST', mode:'cors', cache:'no-store',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({idToken:'conn-check'})
-    })
-      .then(()=>{ clearTimeout(timer); finish(true); })
-      .catch(()=>{ clearTimeout(timer); finish(false); });
-  });
-}
-let _connSkipRequested = false;
-let _connNotifyOnSuccess = false;
-function skipConnectionGate(){
-  _connSkipRequested = true;
-  const btn = $('connSkipBtn');
-  if(btn){ btn.disabled = true; btn.textContent = 'Entrando…'; }
-}
-async function requestConnNotify(){
-  const btn = $('connNotifyBtn');
-  if(!('Notification' in window)){
-    if(btn){ btn.disabled = true; btn.textContent = 'No disponible en este navegador'; }
-    return;
-  }
-  try{
-    const perm = await Notification.requestPermission();
-    if(perm === 'granted'){
-      _connNotifyOnSuccess = true;
-      if(btn){ btn.disabled = true; btn.textContent = '🔔 Te avisaremos cuando haya conexión'; }
-    } else if(btn){
-      btn.disabled = true;
-      btn.textContent = 'Permiso de notificación denegado';
-    }
-  }catch(e){}
-}
-function waitForConnection(){
-  return new Promise(async (resolve)=>{
-    const gate=$('connGate'), bar=$('connGateBar'), pct=$('connGatePct'), status=$('connGateStatus');
-    if(!gate){ resolve(); return; }
-    gate.classList.remove('hidden'); // ya es visible por defecto desde el HTML; esto es un refuerzo
-    _connSkipRequested = false;
-    const notifyBtn=$('connNotifyBtn'), skipBtn=$('connSkipBtn');
-    if(notifyBtn){ notifyBtn.classList.add('hidden'); notifyBtn.disabled=false; notifyBtn.textContent='🔔 Notificarme cuando haya conexión'; }
-    if(skipBtn){ skipBtn.classList.add('hidden'); skipBtn.disabled=false; skipBtn.textContent='Intentar entrar de todas formas'; }
-    let progress = 4;
-    const setProgress = (p)=>{
-      progress = p;
-      if(bar) bar.style.width = p+'%';
-      if(pct) pct.textContent = Math.round(p)+'%';
-    };
-    setProgress(4);
-    const ticker = setInterval(()=>{
-      if(progress < 88) setProgress(progress + (88-progress)*0.06 + 0.4);
-    }, 150);
-    const startedAt = Date.now();
-    let helpersShown = false;
-    let intentosInternet = 0, intentosAuth = 0;
-    let skippedWithoutConfirming = false;
-    while(true){
-      if(_connSkipRequested){ skippedWithoutConfirming = true; break; }
-      // Tras ~15s de reintentos seguidos, ofrecemos dos salidas: avisar por notificación
-      // cuando haya conexión (si el navegador lo permite), o entrar de todas formas.
-      if(!helpersShown && Date.now()-startedAt > 15000){
-        helpersShown = true;
-        if(notifyBtn) notifyBtn.classList.remove('hidden');
-        if(skipBtn) skipBtn.classList.remove('hidden');
-      }
-      status.textContent = intentosInternet===0 ? 'Verificando conexión a internet…' : `Sin conexión — reintentando… (${intentosInternet})`;
-      const internetOk = await checkGoogleConnectivity();
-      if(!internetOk){
-        intentosInternet++;
-        await new Promise(r=>setTimeout(r, 1800));
-        continue;
-      }
-      if(_connSkipRequested){ skippedWithoutConfirming = true; break; }
-      if(progress < 55) setProgress(55);
-      status.textContent = intentosAuth===0 ? 'Verificando servidor de autenticación…' : `Verificando servidor de autenticación… (${intentosAuth})`;
-      const authOk = await checkFirebaseAuthConnectivity();
-      if(!authOk){
-        intentosAuth++;
-        await new Promise(r=>setTimeout(r, 1800));
-        continue;
-      }
-      break; // ambas verificaciones pasaron
-    }
-    clearInterval(ticker);
-    setProgress(100);
-    if(skippedWithoutConfirming){
-      status.textContent = 'Continuando sin confirmar conexión…';
-    } else {
-      status.textContent = '¡Listo! Conectado ✅';
-      if(_connNotifyOnSuccess && 'Notification' in window && Notification.permission==='granted'){
-        try{ new Notification('Digital Store', {body:'Ya hay conexión — ya puedes entrar', icon:'icons/icon-192.png'}); }catch(e){}
-        _connNotifyOnSuccess = false;
-      }
-    }
-    await new Promise(r=>setTimeout(r, 450));
-    gate.classList.add('hidden');
-    if(notifyBtn) notifyBtn.classList.add('hidden');
-    if(skipBtn) skipBtn.classList.add('hidden');
-    if($('loginScreen')) $('loginScreen').classList.remove('hidden');
-    resolve();
-  });
-}
 
 /* ============ INIT: restaurar sesión (offline-first) ============ */
 (async function initApp(){
@@ -4656,12 +4406,9 @@ function waitForConnection(){
       else { await waitForAuthReady(); }
       enterApp();
       bindDraftAutosave();
-      return; // Con sesión ya guardada saltamos la pantalla de conexión (acceso offline-first intacto)
+      return;
     }
   }catch(e){}
-  // A partir de aquí hace falta el formulario de login (manual o autocompletado por
-  // "Recordarme"), y eso sí requiere conexión real: no se muestra hasta confirmarla.
-  await waitForConnection();
   // Recordarme: autocompleta e intenta iniciar sesión (usa caché offline si no hay red)
   try{
     const rem = localStorage.getItem('ds_remember');
