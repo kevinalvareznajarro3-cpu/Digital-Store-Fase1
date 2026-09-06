@@ -48,18 +48,11 @@ label{display:block;font-size:12.5px;font-weight:700;color:var(--muted);margin-b
 
 #loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
   background:linear-gradient(160deg,#0F2E1E,#1A4A2E 55%,#2E6EB5);}
-#connGate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
-  background:linear-gradient(160deg,#0F2E1E,#1A4A2E 55%,#2E6EB5);}
-.conn-gate-bar-track{width:100%;height:10px;border-radius:20px;background:rgba(255,255,255,.12);overflow:hidden;margin:22px 0 8px;}
-body.dark .conn-gate-bar-track{background:rgba(255,255,255,.08);}
-.conn-gate-bar-fill{height:100%;width:4%;border-radius:20px;background:linear-gradient(90deg,var(--green-dim),var(--green));transition:width .25s ease;}
-.conn-gate-pct{text-align:center;font-size:22px;font-weight:800;color:var(--green);margin-bottom:6px;}
-.conn-gate-status{text-align:center;font-size:12.5px;color:var(--muted);min-height:16px;}
 .login-box{background:var(--surface);border-radius:18px;padding:28px 22px;width:100%;max-width:360px;box-shadow:0 12px 40px rgba(0,0,0,.35);}
 .login-logo{width:74px;height:74px;border-radius:18px;overflow:hidden;margin:0 auto 14px;box-shadow:0 4px 14px rgba(0,0,0,.25);}
 .login-logo img{width:100%;height:100%;object-fit:cover;}
-.login-title{text-align:center;font-size:18px;font-weight:800;margin:0 0 2px;color:var(--green);}
-.login-sub{text-align:center;font-size:12px;color:var(--muted);margin:0 0 20px;text-transform:uppercase;letter-spacing:1.2px;}
+.login-title{text-align:center;font-size:18px;font-weight:800;margin:0 0 2px;color:#fff;}
+.login-sub{text-align:center;font-size:12px;color:rgba(255,255,255,.78);margin:0 0 20px;text-transform:uppercase;letter-spacing:1.2px;}
 .login-error{color:var(--danger);font-size:12.5px;text-align:center;margin:8px 0;font-weight:600;}
 .pass-wrap{position:relative;}
 .pass-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:var(--muted);}
@@ -591,19 +584,8 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 
 
 <!-- PANTALLA DE CONEXIÓN: bloquea el acceso al login hasta confirmar internet real -->
-<div id="connGate" class="hidden">
-  <div class="login-box" style="text-align:center;">
-    <div class="login-logo"><img src="logo.jpg" alt="Digital Store" onerror="this.src='icons/icon-192.png'"></div>
-    <h1 class="login-title">Digital Store</h1>
-    <p class="login-sub">Pine Forest Innovaciones</p>
-    <div class="conn-gate-bar-track"><div class="conn-gate-bar-fill" id="connGateBar"></div></div>
-    <div class="conn-gate-pct" id="connGatePct">0%</div>
-    <div class="conn-gate-status" id="connGateStatus">Buscando conexión…</div>
-  </div>
-</div>
-
 <!-- LOGIN -->
-<div id="loginScreen" class="hidden">
+<div id="loginScreen">
   <div class="login-box">
     <div class="login-logo"><img src="logo.jpg" alt="Digital Store" onerror="this.src='icons/icon-192.png'"></div>
     <h1 class="login-title">Digital Store</h1>
@@ -1227,6 +1209,7 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
             <details class="err-code-item"><summary><b>E5</b> — Cuenta sin perfil vinculado</summary><div>Se autenticó correctamente, pero no existe ningún gestor en Firestore conectado a esa cuenta. Es un problema de configuración de esa cuenta, no de la contraseña — revisa el campo authUid de ese gestor.</div></details>
             <details class="err-code-item"><summary><b>E6</b> — No se pudo verificar la cuenta</summary><div>No se pudo leer la colección de gestores (puede ser Reglas de seguridad o conexión inestable). Pídele que reintente; si persiste, revisa las Reglas de Firestore.</div></details>
             <details class="err-code-item"><summary><b>E7</b> — Error inesperado</summary><div>Ocurrió una excepción no controlada durante el login. Pídele que reintente; si se repite seguido, revisa la consola del navegador en ese dispositivo.</div></details>
+            <details class="err-code-item"><summary><b>E8</b> — Falló tras reintentar, pero SÍ había conexión</summary><div>El login reintentó 3 veces y se verificó que Google y Firebase Auth respondían con normalidad, así que el problema no fue de red — puede ser un tropiezo puntual del propio Firebase Auth. Pídele que lo intente de nuevo; si insiste, revisa que su cuenta esté bien configurada en Gestores.</div></details>
           </div>
         </div>
 
@@ -2038,19 +2021,48 @@ async function doLogin(){
     // 1) Gestor ya migrado a Firebase Authentication (método actual y seguro: sin contraseñas en Firestore)
     const email = gestorAuthEmail(u);
     let uidAutenticado = null, authErrorCode = null;
-    try{
-      const cred = await signInWithEmailAndPassword(fbAuth, email, p);
-      uidAutenticado = cred.user.uid;
-    }catch(e){
-      authErrorCode = e?.code || null;
-      diag.push('Firebase Auth: '+(authErrorCode||'error desconocido'));
+    // DIAGNÓSTICO REAL DEL BUG: el Admin nunca podía "fallar" al entrar porque
+    // ensureAdminAuth() tiene un timeout propio y atrapa TODOS sus errores internamente
+    // (siempre termina llamando a enterApp() pase lo que pase). El gestor, en cambio,
+    // dependía de un único intento de signInWithEmailAndPassword sin reintentos: en
+    // cuanto el SDK devolvía network-request-failed (que puede ser un tropiezo puntual
+    // contactando specificamente al servidor de Auth, no necesariamente "sin internet"),
+    // se cortaba de inmediato con el código E4. No era peor conexión del gestor — era
+    // una ruta mucho menos tolerante a fallos pasajeros que la del Admin.
+    const MAX_INTENTOS_AUTH = 3;
+    for(let intento=1; intento<=MAX_INTENTOS_AUTH; intento++){
+      try{
+        const withTimeout = pr => Promise.race([pr, new Promise((_,rej)=>setTimeout(()=>rej({code:'auth/network-request-failed'}), 8000))]);
+        const cred = await withTimeout(signInWithEmailAndPassword(fbAuth, email, p));
+        uidAutenticado = cred.user.uid;
+        authErrorCode = null;
+        break;
+      }catch(e){
+        authErrorCode = e?.code || null;
+        if(authErrorCode==='auth/network-request-failed' && intento<MAX_INTENTOS_AUTH){
+          diag.push(`Firebase Auth: network-request-failed (intento ${intento}/${MAX_INTENTOS_AUTH}, reintentando)`);
+          if(errTech) errTech.textContent = `Reintentando… (${intento}/${MAX_INTENTOS_AUTH})`;
+          await new Promise(r=>setTimeout(r, 900*intento));
+          continue;
+        }
+        diag.push('Firebase Auth: '+(authErrorCode||'error desconocido'));
+      }
     }
 
-    // Cortocircuito de conexión: si Firebase Auth no pudo ni siquiera contactar al servidor,
-    // NO seguimos probando el método viejo (eso era el bug: terminaba mezclando "sin red" con
-    // "contraseña no coincide" en el mismo mensaje, algo contradictorio y confuso).
+    // Cortocircuito de conexión: si tras los reintentos sigue sin poder contactar al
+    // servidor de Auth, antes de culpar a "sin conexión" verificamos de verdad si hay
+    // internet y si el servidor de Auth específicamente responde. Si ambos SÍ funcionan,
+    // el problema no era la red (probablemente credenciales/otro motivo puntual) y se lo
+    // decimos con honestidad al gestor en vez de mandarlo a revisar un wifi que sí sirve.
     if(authErrorCode==='auth/network-request-failed'){
-      fail('E4', 'No se pudo conectar. Revisa tu conexión a internet e intenta de nuevo.');
+      const [googleOk, authOk] = await Promise.all([checkGoogleConnectivity(), checkFirebaseAuthConnectivity()]);
+      if(googleOk && authOk){
+        diag.push('Verificación posterior: sí había conexión real (Google y Firebase Auth respondieron) — no era un problema de red');
+        fail('E8', 'No se pudo iniciar sesión. Intenta de nuevo.');
+      } else {
+        diag.push(`Verificación posterior: Google ${googleOk?'OK':'FALLÓ'}, Firebase Auth ${authOk?'OK':'FALLÓ'}`);
+        fail('E4', 'No se pudo conectar. Revisa tu conexión a internet e intenta de nuevo.');
+      }
       return;
     }
     if(authErrorCode==='auth/too-many-requests'){
@@ -4193,11 +4205,13 @@ async function saveGestor(){
     showToast('Gestor guardado.');
     closeGestorModal();
   }catch(e){
+    console.warn('[saveGestor]', e?.code || '(sin código)', e?.message || e);
     if(e?.code==='auth/email-already-in-use') showToast('Ese nombre de usuario ya está en uso.');
     else if(e?.code==='auth/weak-password') showToast('La contraseña debe tener al menos 6 caracteres.');
     else if(e?.code==='auth/wrong-password' || e?.code==='auth/invalid-credential') showToast('La contraseña actual no es correcta.');
     else if(e?.code==='auth/too-many-requests') showToast('Firebase bloqueó esta cuenta temporalmente por demasiados intentos fallidos. Espera unos minutos y vuelve a intentar.');
-    else showToast('Error al guardar gestor.');
+    else if(e?.code==='permission-denied') showToast('Firestore rechazó el permiso para guardar este gestor. Revisa las Reglas de seguridad de la colección "gestores" (código en consola).');
+    else showToast('Error al guardar gestor. Revisa la consola del navegador para más detalle.');
   }
   finally {
     btns.forEach(b=>{ b.disabled=false; b.textContent='Guardar gestor'; });
@@ -4215,9 +4229,11 @@ async function resetearAccesoGestor(){
     $('gResetUsername').value=''; $('gResetPassword').value='';
     showToast('Acceso restablecido. El gestor ya puede entrar con el usuario y la contraseña nuevos.');
   }catch(e){
+    console.warn('[resetearAccesoGestor]', e?.code || '(sin código)', e?.message || e);
     if(e?.code==='auth/email-already-in-use') showToast('Ese nombre de usuario ya está en uso por otro gestor.');
     else if(e?.code==='auth/weak-password') showToast('La contraseña debe tener al menos 6 caracteres.');
-    else showToast('Error al restablecer el acceso.');
+    else if(e?.code==='permission-denied') showToast('Firestore rechazó el permiso. Revisa las Reglas de seguridad de la colección "gestores" (código en consola).');
+    else showToast('Error al restablecer el acceso. Revisa la consola del navegador para más detalle.');
   }
 }
 async function migrarGestoresAAuth(){
@@ -4233,6 +4249,7 @@ async function migrarGestoresAAuth(){
       await updateDoc(doc(db,'gestores', g.id), { authUid: uid, password: deleteField() });
       ok++;
     }catch(e){
+      console.warn('[migrarGestoresAAuth]', g.username, e?.code || '(sin código)', e?.message || e);
       fallidos.push(`${g.username} (${e?.code||'error'})`);
     }
   }
@@ -4495,10 +4512,15 @@ Object.assign(window, {
   $: (id)=>document.getElementById(id)
 });
 
-/* ============ PANTALLA DE CONEXIÓN (previa al login) ============
-   No deja ver el formulario de usuario/contraseña hasta confirmar que hay
-   internet real (no solo que el dispositivo "cree" tener wifi/datos). */
-function checkRealConnectivity(){
+/* ============ VERIFICACIÓN INTERNA DE CONEXIÓN (sin pantalla visual) ============
+   Ya no hay ninguna pantalla de carga antes del login — el formulario aparece de
+   inmediato. Estas dos funciones se conservan solo como diagnóstico interno dentro
+   de doLogin(): permiten distinguir "de verdad no hay internet" de "hubo un tropiezo
+   puntual llegando al servidor de autenticación" antes de mostrarle un código de
+   error al gestor. Son dos pruebas DISTINTAS a propósito: en redes inestables se
+   puede llegar bien a un nodo estático de Google (CDN) y fallar justo el viaje más
+   largo hasta el servicio de autenticación, o al revés. */
+function checkGoogleConnectivity(){
   return new Promise(resolve=>{
     if(!navigator.onLine){ resolve(false); return; }
     let done=false;
@@ -4509,39 +4531,20 @@ function checkRealConnectivity(){
       .catch(()=>{ clearTimeout(timer); finish(false); });
   });
 }
-function waitForConnection(){
-  return new Promise(async (resolve)=>{
-    const gate=$('connGate'), bar=$('connGateBar'), pct=$('connGatePct'), status=$('connGateStatus');
-    if(!gate){ resolve(); return; }
-    gate.classList.remove('hidden'); // solo se muestra en este momento, nunca por defecto
-    let progress = 4;
-    const setProgress = (p)=>{
-      progress = p;
-      if(bar) bar.style.width = p+'%';
-      if(pct) pct.textContent = Math.round(p)+'%';
-    };
-    setProgress(4);
-    const ticker = setInterval(()=>{
-      if(progress < 88) setProgress(progress + (88-progress)*0.06 + 0.4);
-    }, 150);
-    if(status) status.textContent = 'Buscando conexión…';
-    let ok = false;
-    let intentos = 0;
-    while(!ok){
-      ok = await checkRealConnectivity();
-      if(!ok){
-        intentos++;
-        if(status) status.textContent = intentos===1 ? 'Sin conexión — reintentando…' : `Sin conexión — reintentando… (${intentos})`;
-        await new Promise(r=>setTimeout(r, 1800));
-      }
-    }
-    clearInterval(ticker);
-    setProgress(100);
-    if(status) status.textContent = '¡Listo! Conectado ✅';
-    await new Promise(r=>setTimeout(r, 450));
-    gate.classList.add('hidden');
-    if($('loginScreen')) $('loginScreen').classList.remove('hidden');
-    resolve();
+function checkFirebaseAuthConnectivity(){
+  return new Promise(resolve=>{
+    let done=false;
+    const finish=(ok)=>{ if(done) return; done=true; resolve(ok); };
+    const timer = setTimeout(()=>finish(false), 4500);
+    // Cualquier respuesta HTTP real del servidor (incluso un error por token inválido)
+    // ya confirma que se pudo contactar — no hace falta ninguna credencial válida.
+    fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${firebaseConfig.apiKey}`, {
+      method:'POST', mode:'cors', cache:'no-store',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({idToken:'conn-check'})
+    })
+      .then(()=>{ clearTimeout(timer); finish(true); })
+      .catch(()=>{ clearTimeout(timer); finish(false); });
   });
 }
 
@@ -4568,13 +4571,11 @@ function waitForConnection(){
       else { await waitForAuthReady(); }
       enterApp();
       bindDraftAutosave();
-      return; // Con sesión ya guardada saltamos la pantalla de conexión (acceso offline-first intacto)
+      return; // Con sesión ya guardada, entra directo (acceso offline-first intacto)
     }
   }catch(e){}
-  // A partir de aquí hace falta el formulario de login (manual o autocompletado por
-  // "Recordarme"), y eso sí requiere conexión real: no se muestra hasta confirmarla.
-  await waitForConnection();
-  // Recordarme: autocompleta e intenta iniciar sesión (usa caché offline si no hay red)
+  // Sin sesión guardada: mostramos el formulario de login de inmediato (ya es visible
+  // por defecto desde el HTML). "Recordarme" autocompleta e intenta iniciar sesión.
   try{
     const rem = localStorage.getItem('ds_remember');
     if(rem){
