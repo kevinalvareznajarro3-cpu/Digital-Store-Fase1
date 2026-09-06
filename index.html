@@ -392,6 +392,10 @@ body.dark .voucher-preview-btn{border-color:var(--gold);color:var(--gold);}
 .multi-photos .mp-item{position:relative;width:72px;height:72px;}
 .multi-photos .mp-item img{width:100%;height:100%;object-fit:cover;border-radius:8px;}
 .multi-photos .mp-item .mp-x{position:absolute;top:-4px;right:-4px;width:20px;height:20px;border-radius:50%;background:var(--danger);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;}
+.multi-photos .mp-item.mp-uploading{background:var(--surface-2);border:1.5px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.mp-progress-ring{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--green-dim);}
+.mp-progress-bar{position:absolute;left:0;bottom:0;width:100%;height:5px;background:rgba(0,0,0,.08);}
+.mp-progress-bar-fill{height:100%;background:var(--green);transition:width .15s linear;}
 
 /* Confirm dialog */
 .confirm-back{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -583,7 +587,6 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 </div>
 
 
-<!-- PANTALLA DE CONEXIÓN: bloquea el acceso al login hasta confirmar internet real -->
 <!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-box">
@@ -1146,11 +1149,6 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
       </div>
 
       <div id="adminPanelResumen" class="admin-panel">
-        <div id="migracionBanner" class="hidden" style="background:linear-gradient(135deg,#7a1e1e,var(--red));color:#fff;border-radius:14px;padding:14px 16px;margin-bottom:14px;box-shadow:0 6px 16px rgba(0,0,0,.14);">
-          <div style="font-weight:800;font-size:13.5px;margin-bottom:4px;">⚠️ <span id="migracionBannerTitulo"></span></div>
-          <div id="migracionBannerLista" style="font-size:12.3px;opacity:.92;margin-bottom:10px;"></div>
-          <button type="button" class="btn-secondary" style="background:rgba(255,255,255,.92);color:#7a1e1e;" onclick="adminSwitch('gestores');migrarGestoresAAuth()">🔐 Migrar ahora</button>
-        </div>
         <div class="stat-grid">
           <div class="stat-box"><div class="n" id="statTotalVentas">$0</div><div class="l">Ventas del mes</div></div>
           <div class="stat-box"><div class="n" id="statComisiones">$0</div><div class="l">Comisiones</div></div>
@@ -1175,7 +1173,6 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 
       <div id="adminPanelGestores" class="admin-panel hidden">
         <button class="btn-primary" onclick="openGestorModal()" style="margin-bottom:12px;">+ Nuevo gestor</button>
-        <button class="btn-secondary" id="migrarGestoresBtn" onclick="migrarGestoresAAuth()" style="margin-bottom:12px;">🔐 Migrar gestores antiguos a Firebase Auth</button>
         <div class="hint" style="text-align:left;padding:0 2px 10px;font-size:11px;">ℹ️ "En línea" se calcula por la última señal que envía la app del gestor (cada 1-2 min); si pasan más de ~4 min sin señal se marca como desconectado. No hay forma 100% instantánea de detectar que alguien cerró la pestaña sin un servidor propio.</div>
         <div id="adminGestoresList"><div class="hint">Cargando…</div></div>
       </div>
@@ -1202,14 +1199,10 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
           <h2>🔑 Códigos de error de login</h2>
           <div class="hint" style="margin-bottom:10px;">Cuando un gestor no puede entrar, solo ve un mensaje genérico y un código corto (ej. "Código: E1"). Pídele ese código y búscalo aquí para saber exactamente qué pasó y qué hacer — el gestor nunca ve estos detalles.</div>
           <div class="err-code-list">
-            <details class="err-code-item"><summary><b>E1</b> — Contraseña incorrecta</summary><div>El usuario existe, pero la contraseña no coincide. Pídele que la vuelva a escribir con cuidado (mayúsculas/espacios), o cámbiasela desde Gestores.</div></details>
-            <details class="err-code-item"><summary><b>E2</b> — El usuario no existe</summary><div>No hay ningún gestor con ese nombre de usuario. Revisa que lo haya escrito bien, o que su cuenta exista en la sección Gestores.</div></details>
-            <details class="err-code-item"><summary><b>E3</b> — Demasiados intentos fallidos</summary><div>Firebase bloqueó la cuenta temporalmente por seguridad tras varios intentos fallidos seguidos. Debe esperar unos minutos y volver a intentar.</div></details>
-            <details class="err-code-item"><summary><b>E4</b> — Sin conexión a internet</summary><div>El dispositivo del gestor no pudo contactar al servidor en ese momento. No es un problema de usuario/contraseña — debe revisar su wifi o datos móviles e intentar de nuevo.</div></details>
-            <details class="err-code-item"><summary><b>E5</b> — Cuenta sin perfil vinculado</summary><div>Se autenticó correctamente, pero no existe ningún gestor en Firestore conectado a esa cuenta. Es un problema de configuración de esa cuenta, no de la contraseña — revisa el campo authUid de ese gestor.</div></details>
-            <details class="err-code-item"><summary><b>E6</b> — No se pudo verificar la cuenta</summary><div>No se pudo leer la colección de gestores (puede ser Reglas de seguridad o conexión inestable). Pídele que reintente; si persiste, revisa las Reglas de Firestore.</div></details>
-            <details class="err-code-item"><summary><b>E7</b> — Error inesperado</summary><div>Ocurrió una excepción no controlada durante el login. Pídele que reintente; si se repite seguido, revisa la consola del navegador en ese dispositivo.</div></details>
-            <details class="err-code-item"><summary><b>E8</b> — Falló tras reintentar, pero SÍ había conexión</summary><div>El login reintentó 3 veces y se verificó que Google y Firebase Auth respondían con normalidad, así que el problema no fue de red — puede ser un tropiezo puntual del propio Firebase Auth. Pídele que lo intente de nuevo; si insiste, revisa que su cuenta esté bien configurada en Gestores.</div></details>
+            <details class="err-code-item"><summary><b>E0</b> — Error inesperado</summary><div>Ocurrió una excepción no controlada durante el login (por ejemplo, sin conexión a internet en absoluto). Pídele que reintente; si se repite seguido, revisa la consola del navegador en ese dispositivo.</div></details>
+            <details class="err-code-item"><summary><b>E1</b> — No se pudo verificar la cuenta</summary><div>No se pudo leer la colección de gestores en Firestore (puede ser Reglas de seguridad o conexión inestable). Pídele que reintente; si persiste, revisa las Reglas de Firestore o tu conexión.</div></details>
+            <details class="err-code-item"><summary><b>E2</b> — Contraseña incorrecta</summary><div>El usuario existe, pero la contraseña no coincide. Pídele que la vuelva a escribir con cuidado (mayúsculas/espacios), o cámbiasela desde Gestores.</div></details>
+            <details class="err-code-item"><summary><b>E3</b> — El usuario no existe</summary><div>No hay ningún gestor con ese nombre de usuario. Revisa que lo haya escrito bien, o que su cuenta exista en la sección Gestores.</div></details>
           </div>
         </div>
 
@@ -1271,6 +1264,9 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 <div id="choiceModal" class="modal-back hidden" onclick="if(event.target===this) closeChoiceModal()">
   <div class="modal">
     <div class="modal-head"><h3 id="choiceModalTitle">🌲 Selecciona una opción</h3><button onclick="closeChoiceModal()">✕</button></div>
+    <div id="choiceSearchWrap" class="hidden" style="margin-bottom:10px;">
+      <input type="text" id="choiceSearchInput" placeholder="🔎 Buscar…" oninput="filterChoiceOptions(this.value)" style="width:100%;padding:11px 13px;border-radius:10px;border:1.5px solid var(--line);font-size:13.5px;background:var(--surface);color:var(--text);">
+    </div>
     <div id="choiceModalList"></div>
   </div>
 </div>
@@ -1301,7 +1297,9 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
   <div class="modal">
     <div class="modal-head"><h3 id="productModalTitle">Nuevo producto</h3><button onclick="closeProductModal()">✕</button></div>
     <div class="field"><label>Nombre *</label><input type="text" id="pNombre"></div>
-    <div class="field"><label>Descripción / Especificación</label><textarea id="pDescripcion" rows="2"></textarea></div>
+    <div class="field"><label>Descripción / Especificación</label><textarea id="pDescripcion" rows="10" style="font-size:14px;line-height:1.5;min-height:220px;font-family:inherit;"></textarea>
+      <button type="button" class="btn-secondary" style="margin-top:8px;" onclick="abrirPegarAutocompletar()">📋 Pegar texto y autocompletar</button>
+    </div>
     <div class="field"><label>Categoría principal *</label>
       <button type="button" class="csel-display" onclick="openChoiceSelect('pCategoria','📦 Categoría principal')"><span id="pCategoria_label">Selecciona…</span><span class="csel-arrow">▾</span></button>
       <select id="pCategoria" class="csel-native" onchange="updateSubcats(); syncChoiceLabel('pCategoria');"></select>
@@ -1323,6 +1321,9 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
     </div>
     <div class="field" id="pStockField"><label>Cantidad en stock (opcional)</label><input type="number" id="pStock" value="" placeholder="Dejar vacío si no aplica"></div>
     <div class="field"><label>Garantía</label><input type="text" id="pGarantia" placeholder="Ej: 30 días, 1 año…"></div>
+    <div class="checkbox-row" style="margin-bottom:10px;">
+      <input type="checkbox" id="pDomicilio"><label style="margin:0;">🚗 Domicilio incluido</label>
+    </div>
     <div class="field"><label>Producto de la semana (nuevo)</label>
       <div class="checkbox-row"><input type="checkbox" id="pNuevoSemana"><label style="margin:0;">Mostrar en “Nuevos de la semana”</label></div>
     </div>
@@ -1349,6 +1350,16 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
   </div>
 </div>
 
+<!-- MODAL: Pegar y autocompletar producto (punto #2) -->
+<div id="pasteParseModal" class="modal-back hidden" onclick="if(event.target===this) cerrarPegarAutocompletar()">
+  <div class="modal">
+    <div class="modal-head"><h3>📋 Pegar y autocompletar</h3><button onclick="cerrarPegarAutocompletar()">✕</button></div>
+    <div class="hint" style="padding:0 0 10px;text-align:left;">Pega aquí el texto tal como te lo manda el proveedor. Se va a intentar reconocer Garantía, Comisión, Domicilio incluido y Precio, y el resto queda como descripción del producto.</div>
+    <textarea id="pasteParseInput" rows="14" style="font-size:13.5px;line-height:1.5;min-height:260px;font-family:inherit;"></textarea>
+    <button class="btn-primary" style="margin-top:12px;" onclick="procesarTextoProducto()">Analizar y rellenar</button>
+  </div>
+</div>
+
 <!-- MODAL: Gestor -->
 <div id="gestorModal" class="modal-back hidden">
   <div class="modal">
@@ -1358,15 +1369,9 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
     <div id="gPasswordNewWrap" class="field"><label>Contraseña *</label><input type="text" id="gPassword"><div class="hint" style="padding:4px 0 0;text-align:left;">Mínimo 6 caracteres.</div></div>
     <div id="gPasswordChangeWrap" class="field hidden">
       <label>Cambiar contraseña (opcional)</label>
-      <input type="text" id="gPasswordActual" placeholder="Contraseña actual" style="margin-bottom:8px;">
-      <input type="text" id="gPasswordNueva" placeholder="Contraseña nueva (mín. 6 caracteres)">
-      <div class="hint" style="padding:6px 0 0;text-align:left;">Déjalas en blanco si no vas a cambiar la contraseña.</div>
-      <div class="hint" style="padding:14px 0 0;text-align:left;">¿El gestor olvidó su contraseña y no la sabes? Restablécele el acceso con un usuario y contraseña nuevos, sin necesitar los anteriores:</div>
-      <input type="text" id="gResetUsername" placeholder="Usuario nuevo" style="margin-top:8px;margin-bottom:8px;">
-      <input type="text" id="gResetPassword" placeholder="Contraseña nueva (mín. 6 caracteres)" style="margin-bottom:8px;">
-      <button type="button" class="btn-secondary" onclick="resetearAccesoGestor()">Restablecer acceso</button>
+      <input type="text" id="gPasswordNueva" placeholder="Contraseña nueva (déjala en blanco para no cambiarla)">
       <div class="field" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--line);">
-        <label>🧪 Probar acceso (sin cerrar tu sesión de Admin)</label>
+        <label>🧪 Probar acceso</label>
         <input type="text" id="gTestUsername" placeholder="Usuario a probar" style="margin-bottom:8px;">
         <input type="text" id="gTestPassword" placeholder="Contraseña a probar" style="margin-bottom:8px;">
         <button type="button" id="gTestBtn" class="btn-secondary" onclick="probarAccesoGestorUI()">🧪 Probar acceso</button>
@@ -1450,10 +1455,6 @@ import {
   collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, setDoc, arrayUnion, deleteField,
   onSnapshot, query, where, orderBy, limit, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
-import {
-  getAuth, signInAnonymously, onAuthStateChanged, setPersistence, browserLocalPersistence,
-  signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, signOut
-} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD8BhxfSPDmeCR2g1JyyqtV0Qt2Q4d_DfE",
@@ -1481,111 +1482,13 @@ try{
   db = getFirestore(fbApp);
 }
 
-/* ============ AUTENTICACIÓN (punto #6 — requisito de las Reglas de seguridad) ============
-   La app usa login propio (usuario/contraseña guardados en Firestore), no Firebase Auth.
-   Para poder cerrar las Reglas de Firestore (y dejar de tener "allow read, write: if true"),
-   iniciamos sesión anónima en segundo plano: así request.auth existe para cualquiera que
-   cargue la app real, y las Reglas pueden exigir "request.auth != null" en vez de estar abiertas.
-   No bloquea el arranque ni el login sin conexión: si falla (sin señal), simplemente se
-   reintenta más tarde y mientras tanto se sigue usando la caché local de Firestore. */
-const fbAuth = getAuth(fbApp);
-try{ await setPersistence(fbAuth, browserLocalPersistence); }catch(e){}
-function ensureAnonAuth(){
-  if(fbAuth.currentUser) return;
-  signInAnonymously(fbAuth).catch(()=>{ /* sin conexión: se reintenta en el próximo arranque */ });
-}
-ensureAnonAuth();
-onAuthStateChanged(fbAuth, user=>{ if(!user) ensureAnonAuth(); });
-
-/* Arreglo de la condición de carrera de login intermitente: Firebase Auth restaura la
-   sesión (o crea la anónima) de forma asíncrona en segundo plano. Si arrancamos los
-   onSnapshot de Firestore (Admin/Gestor) antes de que esa restauración termine, las Reglas
-   ven request.auth como null por un instante y niegan el permiso — de ahí el error que
-   solo pasaba "a veces" y se arreglaba solo tras reintentar. Esta función espera a que
-   Firebase Auth confirme su estado (o a un tope de tiempo si no hay conexión) antes de
-   dejar entrar a la app. */
-function waitForAuthReady(timeoutMs=4000){
-  return new Promise(resolve=>{
-    if(fbAuth.currentUser){ resolve(fbAuth.currentUser); return; }
-    let done=false;
-    const unsub = onAuthStateChanged(fbAuth, user=>{
-      if(done) return;
-      done=true;
-      try{ unsub(); }catch(e){}
-      resolve(user);
-    });
-    setTimeout(()=>{
-      if(done) return;
-      done=true;
-      try{ unsub(); }catch(e){}
-      resolve(fbAuth.currentUser||null);
-    }, timeoutMs);
-  });
-}
-
-/* ============ CUENTAS DE GESTOR EN FIREBASE AUTH (migración de seguridad) ============
-   Antes, la contraseña de cada gestor se guardaba en texto plano en el documento de
-   Firestore, legible por cualquiera que pudiera leer la colección "gestores". Ahora cada
-   gestor tiene una cuenta real de Firebase Authentication (con un correo sintético a partir
-   de su usuario) y el documento de Firestore solo guarda su UID de Auth (authUid), nunca
-   la contraseña. Se usa una app secundaria de Firebase solo para crear/cambiar esas cuentas
-   desde el panel de Admin sin cerrar la sesión del Administrador que está usando la app. */
-const secondaryApp = initializeApp(firebaseConfig, "adminOps");
-const secondaryAuth = getAuth(secondaryApp);
-function gestorAuthEmail(username){
-  const clean = String(username||'').trim().toLowerCase().replace(/[^a-z0-9_.-]/g,'');
-  return clean + '@ds-gestor.app';
-}
-async function crearCuentaGestor(username, password){
-  const email = gestorAuthEmail(username);
-  const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
-  const uid = cred.user.uid;
-  await signOut(secondaryAuth);
-  return uid;
-}
-async function cambiarPasswordGestor(username, passwordActual, passwordNueva){
-  const email = gestorAuthEmail(username);
-  const cred = await signInWithEmailAndPassword(secondaryAuth, email, passwordActual);
-  await updatePassword(cred.user, passwordNueva);
-  await signOut(secondaryAuth);
-}
-/* Punto #1: probador de acceso para el Admin — prueba usuario/contraseña de un gestor SIN
-   cerrar la sesión de Admin (usa la app secundaria "adminOps") y SIN esperar a que el
-   gestor confirme si le funciona o no. */
-async function probarAccesoGestor(username, password, gestorConocido){
+/* Punto #1: probador de acceso para el Admin — compara usuario/contraseña directo contra
+   Firestore, sin nada de Firebase Authentication. */
+function probarAccesoGestor(username, password, gestorConocido){
   const g = gestorConocido || state.gestores.find(x=>String(x.username||'').toLowerCase()===String(username||'').toLowerCase());
-  if(g && !g.authUid){
-    // Cuenta aún sin migrar: la contraseña real vive en texto plano en el documento de Firestore.
-    if(String(g.password||'')===password) return { ok:true, motivo:'Correcto (cuenta aún sin migrar a Firebase Auth).' };
-    return { ok:false, motivo:'La contraseña no coincide con la guardada en Firestore (cuenta sin migrar).' };
-  }
-  const email = gestorAuthEmail(username);
-  try{
-    await signInWithEmailAndPassword(secondaryAuth, email, password);
-    await signOut(secondaryAuth);
-    return { ok:true, motivo:'Correcto.' };
-  }catch(e){
-    try{ await signOut(secondaryAuth); }catch(e2){}
-    if(e?.code==='auth/user-not-found') return { ok:false, motivo:'No existe ninguna cuenta de Firebase Auth con ese usuario (revisa que el usuario esté bien escrito).' };
-    if(e?.code==='auth/wrong-password' || e?.code==='auth/invalid-credential') return { ok:false, motivo:'La contraseña es incorrecta para esa cuenta.' };
-    if(e?.code==='auth/too-many-requests') return { ok:false, motivo:'Firebase bloqueó esta cuenta temporalmente por demasiados intentos fallidos. Espera unos minutos.' };
-    if(e?.code==='auth/network-request-failed') return { ok:false, motivo:'No hay conexión a internet en este momento.' };
-    return { ok:false, motivo:'Error inesperado de Firebase Auth ('+(e?.code||'desconocido')+').' };
-  }
-}
-const ADMIN_AUTH_EMAIL = ADMIN_USER.toLowerCase() + '@ds-admin.app';
-async function ensureAdminAuth(){
-  // Crea (la primera vez) o inicia sesión en la cuenta real de Firebase Auth del Admin,
-  // necesaria para que las Reglas de Firestore lo reconozcan (ver colección "admins").
-  // Con tope de tiempo: si no hay red, no debe dejar la app entrando colgada para siempre.
-  const withTimeout = p => Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')), 7000))]);
-  try{
-    await withTimeout(signInWithEmailAndPassword(fbAuth, ADMIN_AUTH_EMAIL, ADMIN_PASS));
-  }catch(e){
-    if(e?.code==='auth/user-not-found' || e?.code==='auth/invalid-credential'){
-      try{ await withTimeout(createUserWithEmailAndPassword(fbAuth, ADMIN_AUTH_EMAIL, ADMIN_PASS)); }catch(e2){}
-    }
-  }
+  if(!g) return { ok:false, motivo:'No existe ningún gestor con ese usuario.' };
+  if(String(g.password||'')===password) return { ok:true, motivo:'Correcto.' };
+  return { ok:false, motivo:'La contraseña no coincide con la guardada.' };
 }
 
 /* ============ CATEGORÍAS ============ */
@@ -1987,20 +1890,15 @@ async function doLogin(){
   const btn=$('loginBtn');
   if(!u || !p){ errBox.textContent='Escribe usuario y contraseña.'; errBox.classList.remove('hidden'); return; }
   if(btn){ btn.disabled=true; btn.innerHTML='<span class="btn-spinner"></span> Entrando…'; }
-  // El gestor NUNCA ve detalles técnicos (ni Firebase, ni Firestore, ni Reglas de seguridad).
-  // Solo ve un mensaje genérico + un código corto (E1, E2, etc). El significado de cada
-  // código queda documentado SOLO para el Admin en Admin → Configuración → "Códigos de
-  // error de login". `diag` es el detalle real y solo se imprime en la consola del navegador.
+  // El gestor NUNCA ve detalles técnicos (ni Firebase ni Firestore). Solo ve un mensaje
+  // genérico + un código corto (E1, E2, etc). El significado de cada código queda
+  // documentado SOLO para el Admin en Admin → Configuración → "Códigos de error de login".
   const diag = [];
   const fail = (code, msg)=>{
     errBox.textContent = msg;
     errBox.classList.remove('hidden');
     if(errTech) errTech.textContent = 'Código: '+code;
     console.warn('[Login '+code+']', diag.join(' · ') || '(sin detalle adicional)');
-    // Registro persistente para que el Admin tenga contexto real (no solo la tabla de
-    // significados) — se guarda aunque el intento haya fallado y el gestor no esté
-    // autenticado. Si la escritura falla (p.ej. sin conexión, o falta la regla de
-    // seguridad correspondiente), se ignora en silencio: nunca debe romper el login.
     try{
       addDoc(collection(db,'loginErrors'), {
         usuario: u, codigo: code, detalle: diag.join(' · ') || null,
@@ -2014,109 +1912,32 @@ async function doLogin(){
       if($('rememberMe')?.checked) localStorage.setItem('ds_remember', JSON.stringify({u,p,role:'admin'}));
       else localStorage.removeItem('ds_remember');
       localStorage.setItem('ds_user', JSON.stringify(state.user));
-      await ensureAdminAuth(); // se espera a que termine para evitar el error intermitente de permisos
       enterApp(); return;
     }
 
-    // 1) Gestor ya migrado a Firebase Authentication (método actual y seguro: sin contraseñas en Firestore)
-    const email = gestorAuthEmail(u);
-    let uidAutenticado = null, authErrorCode = null;
-    // DIAGNÓSTICO REAL DEL BUG: el Admin nunca podía "fallar" al entrar porque
-    // ensureAdminAuth() tiene un timeout propio y atrapa TODOS sus errores internamente
-    // (siempre termina llamando a enterApp() pase lo que pase). El gestor, en cambio,
-    // dependía de un único intento de signInWithEmailAndPassword sin reintentos: en
-    // cuanto el SDK devolvía network-request-failed (que puede ser un tropiezo puntual
-    // contactando specificamente al servidor de Auth, no necesariamente "sin internet"),
-    // se cortaba de inmediato con el código E4. No era peor conexión del gestor — era
-    // una ruta mucho menos tolerante a fallos pasajeros que la del Admin.
-    const MAX_INTENTOS_AUTH = 3;
-    for(let intento=1; intento<=MAX_INTENTOS_AUTH; intento++){
-      try{
-        const withTimeout = pr => Promise.race([pr, new Promise((_,rej)=>setTimeout(()=>rej({code:'auth/network-request-failed'}), 8000))]);
-        const cred = await withTimeout(signInWithEmailAndPassword(fbAuth, email, p));
-        uidAutenticado = cred.user.uid;
-        authErrorCode = null;
-        break;
-      }catch(e){
-        authErrorCode = e?.code || null;
-        if(authErrorCode==='auth/network-request-failed' && intento<MAX_INTENTOS_AUTH){
-          diag.push(`Firebase Auth: network-request-failed (intento ${intento}/${MAX_INTENTOS_AUTH}, reintentando)`);
-          if(errTech) errTech.textContent = `Reintentando… (${intento}/${MAX_INTENTOS_AUTH})`;
-          await new Promise(r=>setTimeout(r, 900*intento));
-          continue;
-        }
-        diag.push('Firebase Auth: '+(authErrorCode||'error desconocido'));
-      }
-    }
-
-    // Cortocircuito de conexión: si tras los reintentos sigue sin poder contactar al
-    // servidor de Auth, antes de culpar a "sin conexión" verificamos de verdad si hay
-    // internet y si el servidor de Auth específicamente responde. Si ambos SÍ funcionan,
-    // el problema no era la red (probablemente credenciales/otro motivo puntual) y se lo
-    // decimos con honestidad al gestor en vez de mandarlo a revisar un wifi que sí sirve.
-    if(authErrorCode==='auth/network-request-failed'){
-      const [googleOk, authOk] = await Promise.all([checkGoogleConnectivity(), checkFirebaseAuthConnectivity()]);
-      if(googleOk && authOk){
-        diag.push('Verificación posterior: sí había conexión real (Google y Firebase Auth respondieron) — no era un problema de red');
-        fail('E8', 'No se pudo iniciar sesión. Intenta de nuevo.');
-      } else {
-        diag.push(`Verificación posterior: Google ${googleOk?'OK':'FALLÓ'}, Firebase Auth ${authOk?'OK':'FALLÓ'}`);
-        fail('E4', 'No se pudo conectar. Revisa tu conexión a internet e intenta de nuevo.');
-      }
+    // Login de gestor: comparación directa de usuario/contraseña contra Firestore, sin
+    // Firebase Authentication de por medio — simple y plano, como pediste.
+    let list = [];
+    try{ list = await fetchGestoresParaLogin(); }
+    catch(e){ diag.push('Firestore (leer "gestores"): '+(e?.code||e?.message||'error desconocido')); }
+    if(!list.length){
+      diag.push('No se pudo leer la colección "gestores" (Reglas de seguridad o conexión)');
+      fail('E1', 'No se pudo verificar tu cuenta en este momento. Revisa tu conexión e intenta de nuevo.');
       return;
     }
-    if(authErrorCode==='auth/too-many-requests'){
-      fail('E3', 'Demasiados intentos fallidos. Espera unos minutos e intenta de nuevo.');
-      return;
-    }
-
-    let found = null;
-    if(uidAutenticado){
-      try{
-        const q = query(collection(db,'gestores'), where('authUid','==', uidAutenticado));
-        const snap = await getDocs(q);
-        if(!snap.empty) found = { id: snap.docs[0].id, ...snap.docs[0].data() };
-        else diag.push('Firestore: autenticó bien pero no existe un documento en "gestores" con ese authUid');
-      }catch(e){ diag.push('Firestore (leer gestores por authUid): '+(e?.code||'error desconocido')+' — revisa las Reglas de seguridad'); }
-      if(!found){
-        try{
-          const cache = JSON.parse(localStorage.getItem('ds_gestores_cache')||'[]');
-          found = cache.find(g=>g.authUid===uidAutenticado) || null;
-          if(found) diag.push('Se usó la copia de respaldo local (sin conexión a Firestore en ese momento)');
-        }catch(e){}
-      }
-      if(!found){
-        // Se autenticó correctamente en Firebase Auth, pero no hay ningún perfil de gestor
-        // vinculado a esa cuenta — esto es un problema de configuración, no de contraseña.
-        fail('E5', 'Tu cuenta no está vinculada correctamente. Avisa al Administrador.');
-        return;
-      }
-    }
-
-    // 2) Compatibilidad temporal: gestor todavía sin migrar (contraseña aún en texto plano en Firestore)
+    const found = list.find(g=>
+      String(g.username||'').toLowerCase()===u.toLowerCase() && String(g.password||'')===p
+    ) || null;
     if(!found){
-      let list = [];
-      try{ list = await fetchGestoresParaLogin(); }
-      catch(e){ diag.push('Firestore (leer "gestores"): '+(e?.code||e?.message||'error desconocido')); }
-      if(!list.length){
-        diag.push('No se pudo leer la colección "gestores" (Reglas de seguridad o conexión)');
-        fail('E6', 'No se pudo verificar tu cuenta en este momento. Intenta de nuevo o avisa al Administrador.');
-        return;
+      const existeUsuario = list.some(g=>String(g.username||'').toLowerCase()===u.toLowerCase());
+      if(existeUsuario){
+        diag.push('El usuario existe pero la contraseña no coincide');
+        fail('E2', 'Usuario o contraseña incorrectos.');
+      } else {
+        diag.push('No existe ningún gestor con ese usuario');
+        fail('E3', 'Usuario o contraseña incorrectos.');
       }
-      found = list.find(g=>
-        String(g.username||'').toLowerCase()===u.toLowerCase() && !g.authUid && String(g.password||'')===p
-      ) || null;
-      if(!found){
-        const existeUsuario = list.some(g=>String(g.username||'').toLowerCase()===u.toLowerCase());
-        if(existeUsuario){
-          diag.push('El usuario existe pero la contraseña no coincide');
-          fail('E1', 'Usuario o contraseña incorrectos.');
-        } else {
-          diag.push('No existe ningún gestor con ese usuario');
-          fail('E2', 'Usuario o contraseña incorrectos.');
-        }
-        return;
-      }
+      return;
     }
     state.user = { role:'gestor', nombre:found.nombre, username:found.username, id:found.id, telefono:found.telefono, fotoUrl:found.fotoUrl||'' };
     if($('rememberMe')?.checked) localStorage.setItem('ds_remember', JSON.stringify({u,p,role:'gestor'}));
@@ -2125,7 +1946,7 @@ async function doLogin(){
     enterApp();
   }catch(e){
     diag.push('Excepción no controlada: '+(e?.code||e?.message||'desconocido'));
-    fail('E7', 'Ocurrió un error inesperado. Intenta de nuevo.');
+    fail('E0', 'Ocurrió un error inesperado. Intenta de nuevo.');
   } finally {
     if(btn){ btn.disabled=false; btn.textContent='Entrar'; }
   }
@@ -3060,18 +2881,45 @@ function openChoiceSelect(selectId, title){
   if($('choiceModalTitle')) $('choiceModalTitle').textContent = title || '🌲 Selecciona una opción';
   const currentVal = sel.value;
   let html = '';
+  let totalOpciones = 0;
   Array.from(sel.children).forEach(node=>{
     if(node.tagName==='OPTGROUP'){
       html += `<div class="csel-group-label">${escapeHtml(node.label)}</div>`;
       Array.from(node.children).forEach(opt=>{
         html += choiceItemHtml(opt, currentVal);
+        totalOpciones++;
       });
     } else if(node.tagName==='OPTION'){
       html += choiceItemHtml(node, currentVal);
+      totalOpciones++;
     }
   });
   if($('choiceModalList')) $('choiceModalList').innerHTML = html;
+  // Punto #3: buscador solo cuando la lista es larga (más de 8 opciones) para no
+  // meterle un buscador innecesario a selects cortos como "Local" o "Calidad".
+  if($('choiceSearchWrap')){
+    $('choiceSearchWrap').classList.toggle('hidden', totalOpciones <= 8);
+    if($('choiceSearchInput')) $('choiceSearchInput').value = '';
+  }
   if($('choiceModal')) $('choiceModal').classList.remove('hidden');
+  if(totalOpciones > 8) setTimeout(()=>{ $('choiceSearchInput')?.focus(); }, 50);
+}
+function filterChoiceOptions(q){
+  const list = $('choiceModalList');
+  if(!list) return;
+  const query = (q||'').trim().toLowerCase();
+  let currentGroupLabel = null, groupHasVisible = false;
+  Array.from(list.children).forEach(node=>{
+    if(node.classList.contains('csel-group-label')){
+      if(currentGroupLabel) currentGroupLabel.style.display = groupHasVisible ? '' : 'none';
+      currentGroupLabel = node; groupHasVisible = false;
+    } else if(node.classList.contains('csel-item')){
+      const match = !query || node.textContent.toLowerCase().includes(query);
+      node.style.display = match ? '' : 'none';
+      if(match) groupHasVisible = true;
+    }
+  });
+  if(currentGroupLabel) currentGroupLabel.style.display = groupHasVisible ? '' : 'none';
 }
 function choiceItemHtml(opt, currentVal){
   const selected = opt.value===currentVal ? ' selected' : '';
@@ -3649,21 +3497,6 @@ function renderResumen(){
   $('top3Box').innerHTML = top3.length ? top3.map(([nombre,total],i)=>`
     <div class="top3-item"><span>${i+1}. ${escapeHtml(nombre)}</span><b>$${money(total)}</b></div>
   `).join('') : '<div class="hint">Sin ventas este mes todavía.</div>';
-
-  // Punto #2: aviso imposible de ignorar si queda algún gestor sin migrar a Firebase Auth
-  const pendientesMigrar = state.gestores.filter(g=>!g.authUid && g.password);
-  const banner = $('migracionBanner');
-  if(banner){
-    if(pendientesMigrar.length){
-      banner.classList.remove('hidden');
-      $('migracionBannerTitulo').textContent = pendientesMigrar.length===1
-        ? '1 gestor sin migrar — su acceso puede fallar en cualquier momento'
-        : `${pendientesMigrar.length} gestores sin migrar — su acceso puede fallar en cualquier momento`;
-      $('migracionBannerLista').textContent = pendientesMigrar.map(g=>g.username).join(', ');
-    } else {
-      banner.classList.add('hidden');
-    }
-  }
 }
 
 /* ============ ADMIN CATÁLOGO ============ */
@@ -3698,6 +3531,7 @@ function openProductModal(id){
   state.editingProductId = id || null;
   state.photoUrl = '';
   state.photoUrls = [];
+  state.uploadingPhotos = [];
   const p = id ? state.productos.find(x=>x.id===id) : null;
   $('productModalTitle').textContent = id ? 'Editar producto' : 'Nuevo producto';
   $('pNombre').value = p?.nombre || '';
@@ -3716,6 +3550,7 @@ function openProductModal(id){
   toggleStockField();
   $('pActivo').checked = p?.activo !== false;
   if($('pGarantia')) $('pGarantia').value = p?.garantia || '';
+  if($('pDomicilio')) $('pDomicilio').checked = !!p?.domicilio;
   if($('pNuevoSemana')) $('pNuevoSemana').checked = !!p?.nuevoSemana;
   if($('pCalidad')) $('pCalidad').value = p?.calidad || '';
   syncChoiceLabel('pCalidad');
@@ -3731,19 +3566,77 @@ function closeProductModal(){ $('productModal').classList.add('hidden'); }
 function toggleStockField(){
   // stock always visible but optional
 }
+
+/* ============ PUNTO #2: Pegar texto y autocompletar producto ============ */
+function abrirPegarAutocompletar(){
+  $('pasteParseInput').value = '';
+  $('pasteParseModal').classList.remove('hidden');
+}
+function cerrarPegarAutocompletar(){
+  $('pasteParseModal').classList.add('hidden');
+}
+function procesarTextoProducto(){
+  const raw = $('pasteParseInput').value;
+  if(!raw || !raw.trim()){ showToast('Pega primero el texto del producto.'); return; }
+  const lineasOriginales = raw.replace(/\r\n/g,'\n').split('\n');
+  let garantia = '', comision = null, precio = null, domicilio = false;
+  const lineasRestantes = [];
+  for(const linea of lineasOriginales){
+    const l = linea.trim();
+    let consumida = false, m;
+    if((m = l.match(/garant[ií]a[:\s]*(.+)/i))){
+      garantia = m[1].replace(/[.\s]+$/,'').trim();
+      consumida = true;
+    } else if((m = l.match(/comisi[oó]n[:\s]*\$?\s*([\d.,]+)/i))){
+      comision = parseFloat(m[1].replace(/,/g,''));
+      consumida = true;
+    } else if(/domicilio\s+inclu/i.test(l)){
+      domicilio = true;
+      consumida = true;
+    } else if((m = l.match(/precio[:\s]*\$?\s*([\d.,]+)/i))){
+      precio = parseFloat(m[1].replace(/,/g,''));
+      consumida = true;
+    }
+    if(!consumida) lineasRestantes.push(linea);
+  }
+  while(lineasRestantes.length && !lineasRestantes[0].trim()) lineasRestantes.shift();
+  while(lineasRestantes.length && !lineasRestantes[lineasRestantes.length-1].trim()) lineasRestantes.pop();
+  const descripcionFinal = lineasRestantes.join('\n');
+  const primeraLinea = (lineasRestantes.find(l=>l.trim()) || '').trim();
+
+  if(primeraLinea) $('pNombre').value = primeraLinea;
+  $('pDescripcion').value = descripcionFinal;
+  if(garantia) $('pGarantia').value = garantia;
+  if(comision!=null && !isNaN(comision)) $('pComisionValor').value = comision;
+  if(precio!=null && !isNaN(precio)) $('pPrecioBase').value = precio;
+  if(domicilio && $('pDomicilio')) $('pDomicilio').checked = true;
+
+  cerrarPegarAutocompletar();
+  showToast('Autocompletado listo — revisa los campos antes de guardar.');
+}
 async function handlePhotoUpload(ev){
   const files = Array.from(ev.target.files||[]);
   if(!files.length) return;
   if(!state.photoUrls) state.photoUrls = [];
+  if(!state.uploadingPhotos) state.uploadingPhotos = [];
   $('photoUploadHint').innerHTML = '<span class="upload-spinner">Subiendo…</span>';
-  for(const file of files){
+  const jobs = files.map(file=>{
+    const job = { id:'up_'+Math.random().toString(36).slice(2), progress:0 };
+    state.uploadingPhotos.push(job);
+    return { file, job };
+  });
+  renderMultiPhotos();
+  for(const {file, job} of jobs){
     try{
-      const url = await uploadToCloudinary(file, null);
+      const url = await uploadToCloudinary(file, (pct)=>{ job.progress = Math.round(pct); renderMultiPhotos(); });
       state.photoUrls.push(url);
       if(!state.photoUrl) state.photoUrl = url;
     }catch(e){ showToast('Error al subir una foto'); }
+    finally{
+      state.uploadingPhotos = state.uploadingPhotos.filter(j=>j!==job);
+      renderMultiPhotos();
+    }
   }
-  renderMultiPhotos();
   $('photoUploadHint').innerHTML = 'Toca para añadir más fotos';
   ev.target.value = '';
 }
@@ -3751,10 +3644,16 @@ function renderMultiPhotos(){
   const box = $('multiPhotosBox');
   if(!box) return;
   const urls = state.photoUrls || [];
+  const uploading = state.uploadingPhotos || [];
   box.innerHTML = urls.map((u,i)=>`
     <div class="mp-item">
       <img src="${u}">
       <button type="button" class="mp-x" onclick="removeProductPhoto(${i})">✕</button>
+    </div>`).join('')
+    + uploading.map(j=>`
+    <div class="mp-item mp-uploading">
+      <div class="mp-progress-ring">${j.progress}%</div>
+      <div class="mp-progress-bar"><div class="mp-progress-bar-fill" style="width:${j.progress}%;"></div></div>
     </div>`).join('');
 }
 function removeProductPhoto(idx){
@@ -3781,6 +3680,7 @@ async function saveProduct(){
     imagenUrl: imagenes[0] || state.photoUrl || '',
     imagenes,
     garantia: $('pGarantia')?.value.trim() || '',
+    domicilio: !!$('pDomicilio')?.checked,
     nuevoSemana: !!$('pNuevoSemana')?.checked,
     calidad: $('pCalidad')?.value || '',
     activo: $('pActivo').checked
@@ -4107,7 +4007,7 @@ function renderAdminGestores(){
       ${g.fotoUrl?`<img src="${g.fotoUrl}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;">`:`<div style="width:44px;height:44px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;">${(g.nombre||'?').charAt(0)}</div>`}
       <div style="flex:1;">
         <div class="hist-top"><b>${escapeHtml(g.nombre)}</b></div>
-        <div class="hist-meta">@${escapeHtml(g.username)} ${g.telefono? ' · '+escapeHtml(g.telefono):''}${(!g.authUid && g.password)?' · <span style="color:var(--danger);font-weight:700;">sin migrar</span>':''}</div>
+        <div class="hist-meta">@${escapeHtml(g.username)} ${g.telefono? ' · '+escapeHtml(g.telefono):''}</div>
         <div class="gestor-presence">
           <span class="presence-dot ${online?'online':'offline'}"></span>
           <span>${online?'En línea':'Desconectado'}</span>
@@ -4136,9 +4036,7 @@ function openGestorModal(id){
   if(id){
     $('gPasswordNewWrap').classList.add('hidden');
     $('gPasswordChangeWrap').classList.remove('hidden');
-    $('gPasswordActual').value = ''; $('gPasswordNueva').value = '';
-    if($('gResetUsername')) $('gResetUsername').value='';
-    if($('gResetPassword')) $('gResetPassword').value='';
+    $('gPasswordNueva').value = '';
     if($('gTestUsername')) $('gTestUsername').value = g?.username || '';
     if($('gTestPassword')) $('gTestPassword').value = '';
     if($('gTestResult')) $('gTestResult').textContent = '';
@@ -4177,85 +4075,29 @@ async function saveGestor(){
   btns.forEach(b=>{ b.disabled=true; b.innerHTML='<span class="btn-spinner"></span> Guardando…'; });
   try{
     if(state.editingGestorId){
-      const g = state.gestores.find(x=>x.id===state.editingGestorId);
-      const passActual = $('gPasswordActual')?.value || '';
       const passNueva = $('gPasswordNueva')?.value || '';
       const data = { nombre, username, telefono };
       if(passNueva){
-        if(!passActual){ showToast('Escribe la contraseña actual del gestor para poder cambiarla.'); return; }
-        if(g?.authUid){
-          // Gestor ya migrado: cambia la contraseña de su cuenta real de Firebase Auth
-          await cambiarPasswordGestor(g.username||username, passActual, passNueva);
-        } else {
-          // Gestor aún no migrado: valida contra la contraseña vieja en texto plano de Firestore
-          // y de paso lo migra creando su cuenta real de Firebase Auth con la contraseña nueva.
-          if(String(g?.password||'') !== passActual){ showToast('La contraseña actual no es correcta.'); return; }
-          const uid = await crearCuentaGestor(username, passNueva);
-          data.authUid = uid;
-          data.password = deleteField();
-        }
+        if(passNueva.length<6){ showToast('La contraseña nueva debe tener al menos 6 caracteres.'); btns.forEach(b=>{ b.disabled=false; b.textContent='Guardar gestor'; }); return; }
+        data.password = passNueva;
       }
       await updateDoc(doc(db,'gestores',state.editingGestorId), data);
+      showToast('✅ Gestor actualizado correctamente.');
     } else {
       const password = $('gPassword').value;
-      if(!password){ showToast('La contraseña es obligatoria para un gestor nuevo.'); return; }
-      const uid = await crearCuentaGestor(username, password);
-      await addDoc(collection(db,'gestores'), { nombre, username, telefono, authUid: uid });
+      if(!password || password.length<6){ showToast('La contraseña es obligatoria y debe tener al menos 6 caracteres.'); btns.forEach(b=>{ b.disabled=false; b.textContent='Guardar gestor'; }); return; }
+      await addDoc(collection(db,'gestores'), { nombre, username, telefono, password });
+      showToast('✅ Gestor creado correctamente.');
     }
-    showToast('Gestor guardado.');
     closeGestorModal();
   }catch(e){
     console.warn('[saveGestor]', e?.code || '(sin código)', e?.message || e);
-    if(e?.code==='auth/email-already-in-use') showToast('Ese nombre de usuario ya está en uso.');
-    else if(e?.code==='auth/weak-password') showToast('La contraseña debe tener al menos 6 caracteres.');
-    else if(e?.code==='auth/wrong-password' || e?.code==='auth/invalid-credential') showToast('La contraseña actual no es correcta.');
-    else if(e?.code==='auth/too-many-requests') showToast('Firebase bloqueó esta cuenta temporalmente por demasiados intentos fallidos. Espera unos minutos y vuelve a intentar.');
-    else if(e?.code==='permission-denied') showToast('Firestore rechazó el permiso para guardar este gestor. Revisa las Reglas de seguridad de la colección "gestores" (código en consola).');
+    if(e?.code==='permission-denied') showToast('Firestore rechazó el permiso para guardar este gestor. Revisa las Reglas de seguridad de la colección "gestores".');
     else showToast('Error al guardar gestor. Revisa la consola del navegador para más detalle.');
   }
   finally {
     btns.forEach(b=>{ b.disabled=false; b.textContent='Guardar gestor'; });
   }
-}
-async function resetearAccesoGestor(){
-  if(!state.editingGestorId) return;
-  const nuevoUsuario = $('gResetUsername').value.trim();
-  const nuevaPassword = $('gResetPassword').value;
-  if(!nuevoUsuario || !nuevaPassword){ showToast('Escribe el usuario nuevo y la contraseña nueva.'); return; }
-  try{
-    const uid = await crearCuentaGestor(nuevoUsuario, nuevaPassword);
-    await updateDoc(doc(db,'gestores', state.editingGestorId), { username: nuevoUsuario, authUid: uid, password: deleteField() });
-    $('gUsername').value = nuevoUsuario;
-    $('gResetUsername').value=''; $('gResetPassword').value='';
-    showToast('Acceso restablecido. El gestor ya puede entrar con el usuario y la contraseña nuevos.');
-  }catch(e){
-    console.warn('[resetearAccesoGestor]', e?.code || '(sin código)', e?.message || e);
-    if(e?.code==='auth/email-already-in-use') showToast('Ese nombre de usuario ya está en uso por otro gestor.');
-    else if(e?.code==='auth/weak-password') showToast('La contraseña debe tener al menos 6 caracteres.');
-    else if(e?.code==='permission-denied') showToast('Firestore rechazó el permiso. Revisa las Reglas de seguridad de la colección "gestores" (código en consola).');
-    else showToast('Error al restablecer el acceso. Revisa la consola del navegador para más detalle.');
-  }
-}
-async function migrarGestoresAAuth(){
-  const pendientes = state.gestores.filter(g=>!g.authUid && g.password);
-  if(!pendientes.length){ showToast('No hay gestores pendientes de migrar.'); return; }
-  if(!confirm(`Se migrarán ${pendientes.length} gestor(es) a Firebase Authentication y se borrará su contraseña en texto plano de Firestore. ¿Continuar?`)) return;
-  const btn = $('migrarGestoresBtn');
-  if(btn){ btn.disabled=true; btn.innerHTML='<span class="btn-spinner"></span> Migrando…'; }
-  let ok=0, fallidos=[];
-  for(const g of pendientes){
-    try{
-      const uid = await crearCuentaGestor(g.username, g.password);
-      await updateDoc(doc(db,'gestores', g.id), { authUid: uid, password: deleteField() });
-      ok++;
-    }catch(e){
-      console.warn('[migrarGestoresAAuth]', g.username, e?.code || '(sin código)', e?.message || e);
-      fallidos.push(`${g.username} (${e?.code||'error'})`);
-    }
-  }
-  if(btn){ btn.disabled=false; btn.textContent='🔐 Migrar gestores antiguos a Firebase Auth'; }
-  if(fallidos.length) showToast(`${ok} migrado(s). Fallaron: ${fallidos.join(', ')}`);
-  else showToast(`${ok} gestor(es) migrado(s) correctamente.`);
 }
 async function removeGestor(id){
   if(!confirm('¿Eliminar este gestor?')) return;
@@ -4492,7 +4334,8 @@ Object.assign(window, {
   addLineItem, removeLineItem, updateLineItem, toggleVuelto, recalcVale, submitVale,
   openCatalogPicker, closeCatalogPicker, renderCatalogPicker, pickCatalogProduct, setPickerCat,
   openProductModal, closeProductModal, handlePhotoUpload, saveProduct, removeProduct, updateSubcats, toggleStockField,
-  updateOrderStatus, openGestorModal, closeGestorModal, saveGestor, removeGestor, saveConfig, migrarGestoresAAuth, resetearAccesoGestor, probarAccesoGestorUI,
+  abrirPegarAutocompletar, cerrarPegarAutocompletar, procesarTextoProducto,
+  updateOrderStatus, openGestorModal, closeGestorModal, saveGestor, removeGestor, saveConfig, probarAccesoGestorUI,
   switchHistClaim, submitComisionTransferencia, goHistComunidadWa, goHistNovedades,
   openGestorComisionModal, closeGestorComisionModal, registrarPagoComision,
   openTarifasModal, closeTarifasModal, switchTarifaLocal, switchTarifaTipo, renderTarifas, selectTarifa,
@@ -4505,48 +4348,12 @@ Object.assign(window, {
   applyAppUpdate, forceAppRefresh, toggleNewCarousel, toggleDarkMode, switchValeMode,
   onTipoPagoUnicoChange, onRMetodoPagoChange, waOtroMetodo,
   addLineItemRecogida, removeLineItemRecogida, updateLineItemRecogida, submitValeRecogida,
-  openChoiceSelect, closeChoiceModal, pickChoiceOption, syncChoiceLabel, cancelCarnetUpload,
+  openChoiceSelect, closeChoiceModal, pickChoiceOption, syncChoiceLabel, cancelCarnetUpload, filterChoiceOptions,
   openOrderDetailModal, closeOrderDetailModal, downloadOrderCarnet, copyOrderDetail,
   openImageLightbox, closeImageLightbox, lightboxRemoveCarnet,
   toggleVoucherPreview, copyVoucherPreview,
   $: (id)=>document.getElementById(id)
 });
-
-/* ============ VERIFICACIÓN INTERNA DE CONEXIÓN (sin pantalla visual) ============
-   Ya no hay ninguna pantalla de carga antes del login — el formulario aparece de
-   inmediato. Estas dos funciones se conservan solo como diagnóstico interno dentro
-   de doLogin(): permiten distinguir "de verdad no hay internet" de "hubo un tropiezo
-   puntual llegando al servidor de autenticación" antes de mostrarle un código de
-   error al gestor. Son dos pruebas DISTINTAS a propósito: en redes inestables se
-   puede llegar bien a un nodo estático de Google (CDN) y fallar justo el viaje más
-   largo hasta el servicio de autenticación, o al revés. */
-function checkGoogleConnectivity(){
-  return new Promise(resolve=>{
-    if(!navigator.onLine){ resolve(false); return; }
-    let done=false;
-    const finish=(ok)=>{ if(done) return; done=true; resolve(ok); };
-    const timer = setTimeout(()=>finish(false), 4000);
-    fetch('https://www.gstatic.com/generate_204', {mode:'no-cors', cache:'no-store'})
-      .then(()=>{ clearTimeout(timer); finish(true); })
-      .catch(()=>{ clearTimeout(timer); finish(false); });
-  });
-}
-function checkFirebaseAuthConnectivity(){
-  return new Promise(resolve=>{
-    let done=false;
-    const finish=(ok)=>{ if(done) return; done=true; resolve(ok); };
-    const timer = setTimeout(()=>finish(false), 4500);
-    // Cualquier respuesta HTTP real del servidor (incluso un error por token inválido)
-    // ya confirma que se pudo contactar — no hace falta ninguna credencial válida.
-    fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${firebaseConfig.apiKey}`, {
-      method:'POST', mode:'cors', cache:'no-store',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({idToken:'conn-check'})
-    })
-      .then(()=>{ clearTimeout(timer); finish(true); })
-      .catch(()=>{ clearTimeout(timer); finish(false); });
-  });
-}
 
 /* ============ INIT: restaurar sesión (offline-first) ============ */
 (async function initApp(){
@@ -4563,12 +4370,6 @@ function checkFirebaseAuthConnectivity(){
     }
     if(sess){
       state.user = JSON.parse(sess);
-      // Arreglo del error intermitente: hay que dejar que Firebase Auth confirme su
-      // sesión (o cree la del Admin) ANTES de arrancar los onSnapshot; si no, las
-      // Reglas de Firestore ven request.auth como null por un instante y niegan el
-      // permiso la primera vez que se abre la app.
-      if(state.user.role==='admin'){ await ensureAdminAuth(); }
-      else { await waitForAuthReady(); }
       enterApp();
       bindDraftAutosave();
       return; // Con sesión ya guardada, entra directo (acceso offline-first intacto)
