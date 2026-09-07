@@ -78,11 +78,20 @@ header.topbar{position:sticky;top:0;z-index:20;background:var(--surface);border-
 #novedadesModal #novedadesList{max-height:calc(92vh - 150px);overflow-y:auto;padding-right:2px;}
 
 /* Novedades: pestañas por tipo (punto #1) */
-.nov-tabs{display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;}
+.nov-tabs-wrap{position:relative;margin-bottom:14px;}
+.nov-tabs-wrap::after{content:'';position:absolute;top:0;right:0;bottom:4px;width:30px;
+  background:linear-gradient(90deg,transparent,var(--surface) 80%);pointer-events:none;border-radius:0 12px 12px 0;}
+.nov-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;padding-right:22px;-webkit-overflow-scrolling:touch;}
 .nov-tabs::-webkit-scrollbar{display:none;}
 .nov-tab{flex:none;padding:8px 13px;border-radius:20px;background:var(--surface-2);font-size:11.5px;font-weight:700;color:var(--muted);white-space:nowrap;border:1.5px solid transparent;}
-.nov-tab.active{background:var(--green);color:#fff;}
+.nov-tab.active{background:var(--green);color:#fff;border-color:transparent;}
 body.dark .nov-tab.active{background:var(--gold);color:#3a2c00;}
+/* Acento de color por categoría, aunque la pestaña no esté activa (punto #1: que se
+   note de un vistazo, sin depender solo del texto/emoji, que hay varias categorías) */
+.nov-tab[data-nt="nuevo"]{border-color:rgba(232,184,37,.55);}
+.nov-tab[data-nt="agotado"]{border-color:rgba(201,60,60,.5);}
+.nov-tab[data-nt="stock"]{border-color:rgba(46,110,181,.5);}
+.nov-tab[data-nt="precio"],.nov-tab[data-nt="comision"],.nov-tab[data-nt="aumento"]{border-color:rgba(47,143,91,.5);}
 
 /* Novedades: tarjeta tipo "hero" con foto del producto y color propio por naturaleza */
 .nov-item{position:relative;overflow:hidden;border-radius:16px;padding:14px 86px 14px 16px;margin-bottom:10px;
@@ -108,6 +117,12 @@ body.dark .nov-tab.active{background:var(--gold);color:#3a2c00;}
 .nov-t-stock{background:linear-gradient(135deg,#12345c 0%,var(--blue) 55%,#5B9BDB 100%);}
 .nov-t-precio{background:linear-gradient(135deg,var(--green-dim) 0%,#3C7A4F 55%,var(--gold) 130%);}
 .nov-t-default{background:linear-gradient(135deg,#5c5c54,#83837a);}
+
+/* Novedades: resaltado de palabras clave y nombre de producto (punto #3) */
+.nov-hl,.nov-hl-name{font-weight:800;padding:1px 6px;border-radius:6px;background:rgba(255,255,255,.22);
+  box-decoration-break:clone;-webkit-box-decoration-break:clone;}
+.nov-hl-name{background:rgba(255,255,255,.16);}
+.nov-t-nuevo .nov-hl,.nov-t-nuevo .nov-hl-name{background:rgba(58,44,0,.14);color:#3a2c00;}
 
 /* Gestores: presencia y actividad (punto #6) */
 .gestor-presence{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);font-weight:600;margin-top:5px;flex-wrap:wrap;}
@@ -172,6 +187,7 @@ nav.tabs button .ic svg{width:19px;height:19px;stroke:currentColor;fill:none;str
 .stock-badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:50px;display:inline-block;margin-top:4px;}
 .stock-badge.si{background:var(--avail-ok-bg);color:var(--avail-ok-text);}
 .stock-badge.no{background:var(--avail-out-bg);color:var(--avail-out-text);}
+.stock-badge.domicilio{background:rgba(46,110,181,.16);color:var(--blue);}
 .local-badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:50px;display:inline-block;margin-top:4px;margin-left:4px;background:#E3F2FD;color:#1565C0;}
 .comision-badge{font-size:10px;font-weight:700;color:var(--green-dim);margin-top:2px;}
 
@@ -646,7 +662,7 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
         <button type="button" class="csel-display" onclick="openChoiceSelect('valeModeSelect','🌲 Tipo de vale')"><span id="valeModeSelect_label">🌲 Vale de Mensajería</span><span class="csel-arrow">▾</span></button>
         <select id="valeModeSelect" class="csel-native" onchange="switchValeMode(this.value)">
           <option value="mensajeria">🌲 Vale de Mensajería</option>
-          <option value="recogida">🏪 Vale de Recogida (en tienda)</option>
+          <option value="recogida">🏪 Vale de Recogida (productos del 2do Local)</option>
         </select>
       </div>
 
@@ -1414,12 +1430,16 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 <div id="novedadesModal" class="modal-back hidden" onclick="if(event.target===this) closeNovedades()">
   <div class="modal">
     <div class="modal-head"><h3>🔔 Novedades</h3><button onclick="closeNovedades()">✕</button></div>
-    <div class="nov-tabs" id="novTabs">
-      <button type="button" class="nov-tab active" data-nt="todas" onclick="switchNovTab('todas')">Todas</button>
-      <button type="button" class="nov-tab" data-nt="nuevo" onclick="switchNovTab('nuevo')">🆕 Nuevos</button>
-      <button type="button" class="nov-tab" data-nt="agotado" onclick="switchNovTab('agotado')">🚫 Agotados</button>
-      <button type="button" class="nov-tab" data-nt="stock" onclick="switchNovTab('stock')">📦 Stock</button>
-      <button type="button" class="nov-tab" data-nt="precio" onclick="switchNovTab('precio')">💲 Precios</button>
+    <div class="nov-tabs-wrap">
+      <div class="nov-tabs" id="novTabs">
+        <button type="button" class="nov-tab active" data-nt="todas" onclick="switchNovTab('todas')">Todas</button>
+        <button type="button" class="nov-tab" data-nt="nuevo" onclick="switchNovTab('nuevo')">🆕 Nuevos</button>
+        <button type="button" class="nov-tab" data-nt="agotado" onclick="switchNovTab('agotado')">🚫 Agotados</button>
+        <button type="button" class="nov-tab" data-nt="stock" onclick="switchNovTab('stock')">📦 Stock</button>
+        <button type="button" class="nov-tab" data-nt="precio" onclick="switchNovTab('precio')">💲 Precios</button>
+        <button type="button" class="nov-tab" data-nt="comision" onclick="switchNovTab('comision')">💰 Comisión</button>
+        <button type="button" class="nov-tab" data-nt="aumento" onclick="switchNovTab('aumento')">📈 Aumento</button>
+      </div>
     </div>
     <div id="novedadesList"><div class="hint">Sin novedades</div></div>
   </div>
@@ -1659,7 +1679,7 @@ const state = {
   deferredPrompt:null, perfilPhotoUrl:'',
   catalogLevel:'cats', catalogCat:'', catalogSub:'', catalogView:'grid', catalogSort:'recientes',
   detailPhotoIdx:0, detailProduct:null, confirmResolve:null,
-  deletedNovIds: JSON.parse(localStorage.getItem('deleted_novs')||'[]'),
+  deletedNovIds: [], // se carga por-usuario en loadDeletedNovIds() al iniciar sesión (punto #2)
   pwaDismissed: localStorage.getItem('pwa_dismissed')==='1',
   valeMode:'mensajeria', lineItemsRecogida:[], pickerTarget:'mensajeria',
   comisionEditada:false, comisionEditadaRecogida:false,
@@ -1671,6 +1691,15 @@ const state = {
 function $(id){ return document.getElementById(id); }
 function escapeHtml(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function money(n){ return Number(n||0).toFixed(2); }
+/* Red de seguridad: si una escritura/borrado a Firestore se queda colgado sin
+   resolver ni fallar nunca (red inestable), esto lo obliga a rechazar igual pasado
+   un tiempo razonable, para que ningún botón quede "pegado" para siempre. */
+function withTimeout(promise, ms=15000){
+  return Promise.race([
+    promise,
+    new Promise((_,reject)=>setTimeout(()=>reject(new Error('timeout: la operación tardó demasiado')), ms))
+  ]);
+}
 /* Punto #6: formato relativo de tiempo ("hace 2 h", "hace 3 días"...) reutilizado
    tanto para "última conexión" como para "última venta" de cada gestor. */
 function relTime(seconds){
@@ -1987,6 +2016,7 @@ function enterApp(){
   $('loginScreen').classList.add('hidden');
   $('app').classList.remove('hidden');
   $('userName').textContent = state.user.nombre;
+  loadDeletedNovIds(); // punto #2: las novedades descartadas son por-usuario, no globales
   const savedTab = localStorage.getItem('ds_tab');
   _skipNavPush = true;
   if(state.user.role==='admin'){
@@ -3060,10 +3090,18 @@ function renderCatalogPicker(){
   let items = state.productos.filter(p=>{
     const matchQ = !q || (p.nombre||'').toLowerCase().includes(q) || (p.categoria||'').toLowerCase().includes(q) || (p.subcategoria||'').toLowerCase().includes(q);
     const matchC = !state.pickerCatFilter || p.categoria===state.pickerCatFilter;
-    return matchQ && matchC && p.activo!==false;
+    // Punto #6: el Vale de Recogida es solo para productos del 2do Local — no debe
+    // poder elegirse ahí ningún producto marcado como del 1er Local.
+    const matchLocal = state.pickerTarget!=='recogida' || p.local==='2';
+    return matchQ && matchC && matchLocal && p.activo!==false;
   });
   const box=$('catalogPickerList');
-  if(!items.length){ box.innerHTML='<div class="hint">No hay productos.</div>'; return; }
+  if(!items.length){
+    box.innerHTML = state.pickerTarget==='recogida'
+      ? '<div class="hint">No hay productos del 2do Local disponibles con ese filtro.</div>'
+      : '<div class="hint">No hay productos.</div>';
+    return;
+  }
   // Group by category
   const byCat = {};
   items.forEach(p=>{ const c=p.categoria||'General'; (byCat[c]=byCat[c]||[]).push(p); });
@@ -3078,6 +3116,7 @@ function renderCatalogPicker(){
           <div class="cat">${escapeHtml(p.subcategoria||p.categoria||'')} · ${p.local==='2'?'2ndo':'1er'} Local</div>
           <div class="prod-price">$${money(p.precioBase)}${p.comisionValor?` + $${money(p.comisionValor)} com.`:''}</div>
           <span class="stock-badge ${p.disponible!==false?'si':'no'}">${p.disponible!==false?(p.stock?('Stock: '+p.stock):'Disponible'):'Agotado'}</span>
+          ${domicilioBadgeHtml(p)}
         </div>
       </div>`).join('');
   }
@@ -3269,6 +3308,7 @@ function renderProdList(items){
         ${p.comisionValor?`<div class="comision-badge">Comisión: $${money(p.comisionValor)}</div>`:''}
         <span class="stock-badge ${p.disponible!==false?'si':'no'}">${p.disponible!==false?(p.stock!=null&&p.stock!==''?('Stock: '+p.stock):'Disponible'):'Agotado'}</span>
         <span class="local-badge ${localCls}">${localTxt}</span>
+        ${domicilioBadgeHtml(p)}
       </div>
     </div>`;
   };
@@ -3329,6 +3369,7 @@ function openProductDetail(id){
     <div style="margin:8px 0;">
       <span class="stock-badge ${p.disponible!==false?'si':'no'}">${p.disponible!==false?'Disponible':'Agotado'}</span>
       <span class="local-badge ${p.local==='2'?'local2':'local1'}">${p.local==='2'?'2ndo Local':'1er Local'}</span>
+      ${domicilioBadgeHtml(p)}
     </div>
     <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${escapeHtml(p.categoria||'')} ${p.subcategoria?'· '+escapeHtml(p.subcategoria):''}</div>
     ${p.garantia?`<div style="font-size:13px;margin-bottom:8px;"><b>Garantía:</b> ${escapeHtml(p.garantia)}</div>`:''}
@@ -3519,6 +3560,7 @@ function renderAdminCatalogo(){
         <div class="prod-price">$${money(p.precioBase)} ${p.comisionValor?`· Com: $${money(p.comisionValor)}`:''}</div>
         <span class="stock-badge ${p.disponible!==false?'si':'no'}">${p.disponible!==false?(p.stock!=null&&p.stock!==''?('Stock: '+p.stock):'Disponible'):'Agotado'}</span>
         <span class="local-badge ${p.local==='2'?'local2':'local1'}">${p.local==='2'?'2ndo Local':'1er Local'}</span>
+        ${domicilioBadgeHtml(p)}
         <div class="prod-actions">
           <button title="Editar" onclick="openProductModal('${p.id}')">${ICONS.pencil}</button>
           <button title="Eliminar" class="del" onclick="removeProduct('${p.id}')">${ICONS.trash}</button>
@@ -3713,6 +3755,17 @@ function qualityBadgeHtml(calidad){
   if(!calidad || !QUALITY_LABELS[calidad]) return '';
   return `<span class="quality-badge ${calidad}">${QUALITY_LABELS[calidad]}</span>`;
 }
+/* Punto #7: regla de negocio ya establecida — domicilio incluido para productos de
+   más de 200 USD en el 1er Local (con comisión fija). Es automático a partir del
+   precio base y el local, no un campo manual: nunca se guarda en Firestore, se
+   calcula al vuelo cada vez que se muestra el producto. */
+function tieneDomicilioIncluido(p){
+  return p.local!=='2' && Number(p.precioBase||0) > 200;
+}
+function domicilioBadgeHtml(p){
+  if(!tieneDomicilioIncluido(p)) return '';
+  return `<span class="stock-badge domicilio">🚚 Domicilio incluido</span>`;
+}
 
 function applyAgotadoAutomation(prevCalidad, data, prev){
   const wasAgotado = prevCalidad === 'agotado';
@@ -3806,8 +3859,20 @@ async function autoNovedadOnProductChange(prev, curr){
 }
 async function removeProduct(id){
   if(!confirm('¿Eliminar este producto?')) return;
-  await deleteDoc(doc(db,'productos',id));
-  showToast('Producto eliminado.');
+  try{
+    await withTimeout(deleteDoc(doc(db,'productos',id)));
+    showToast('Producto eliminado.');
+  }catch(e){
+    console.error('[removeProduct]', e?.code||'', e?.message||e);
+    // Si esto falla (por ejemplo por permiso denegado en las Reglas de seguridad de
+    // Firestore), el producto NUNCA llega a borrarse en el servidor — lo que se veía
+    // antes (desaparece un instante y "vuelve" a los pocos segundos) es el propio SDK
+    // de Firestore revirtiendo el borrado optimista local al confirmar que el servidor
+    // lo rechazó. Antes este error se tragaba en silencio; ahora se avisa con el motivo.
+    if(e?.code==='permission-denied') showToast('No se pudo eliminar: Firestore rechazó el permiso. Revisa las Reglas de seguridad de la colección "productos".');
+    else if(String(e?.message||'').startsWith('timeout')) showToast('Tardó demasiado en responder. Revisa tu conexión e intenta de nuevo.');
+    else showToast('No se pudo eliminar el producto. Revisa la consola del navegador para más detalle.');
+  }
 }
 
 /* ============ ADMIN PEDIDOS ============ */
@@ -4078,14 +4143,14 @@ async function saveGestor(){
       const passNueva = $('gPasswordNueva')?.value || '';
       const data = { nombre, username, telefono };
       if(passNueva){
-        if(passNueva.length<6){ showToast('La contraseña nueva debe tener al menos 6 caracteres.'); btns.forEach(b=>{ b.disabled=false; b.textContent='Guardar gestor'; }); return; }
+        if(passNueva.length<6){ showToast('La contraseña nueva debe tener al menos 6 caracteres.'); return; }
         data.password = passNueva;
       }
       await updateDoc(doc(db,'gestores',state.editingGestorId), data);
       showToast('✅ Gestor actualizado correctamente.');
     } else {
       const password = $('gPassword').value;
-      if(!password || password.length<6){ showToast('La contraseña es obligatoria y debe tener al menos 6 caracteres.'); btns.forEach(b=>{ b.disabled=false; b.textContent='Guardar gestor'; }); return; }
+      if(!password || password.length<6){ showToast('La contraseña es obligatoria y debe tener al menos 6 caracteres.'); return; }
       await addDoc(collection(db,'gestores'), { nombre, username, telefono, password });
       showToast('✅ Gestor creado correctamente.');
     }
@@ -4101,8 +4166,15 @@ async function saveGestor(){
 }
 async function removeGestor(id){
   if(!confirm('¿Eliminar este gestor?')) return;
-  await deleteDoc(doc(db,'gestores',id));
-  showToast('Gestor eliminado.');
+  try{
+    await withTimeout(deleteDoc(doc(db,'gestores',id)));
+    showToast('Gestor eliminado.');
+  }catch(e){
+    console.error('[removeGestor]', e?.code||'', e?.message||e);
+    if(e?.code==='permission-denied') showToast('No se pudo eliminar: Firestore rechazó el permiso. Revisa las Reglas de seguridad de la colección "gestores".');
+    else if(String(e?.message||'').startsWith('timeout')) showToast('Tardó demasiado en responder. Revisa tu conexión e intenta de nuevo.');
+    else showToast('No se pudo eliminar el gestor. Revisa la consola del navegador para más detalle.');
+  }
 }
 
 /* ============ COMISIONES DE GESTOR (Admin) — punto #15 ============ */
@@ -4182,7 +4254,9 @@ function novThumbHtml(n){
 function novMatchesTab(n, tab){
   if(tab==='todas') return true;
   if(tab==='stock') return n.tipo==='stock_up' || n.tipo==='stock_down';
-  if(tab==='precio') return n.tipo==='precio_up' || n.tipo==='precio_down' || n.tipo==='comision';
+  if(tab==='precio') return n.tipo==='precio_up' || n.tipo==='precio_down';
+  if(tab==='comision') return n.tipo==='comision';
+  if(tab==='aumento') return n.tipo==='precio_up';
   return n.tipo===tab;
 }
 function switchNovTab(tab){
@@ -4203,6 +4277,44 @@ function openNovedades(){
   document.querySelectorAll('.nov-tab').forEach(b=>b.classList.toggle('active', b.dataset.nt==='todas'));
   renderNovedadesList();
 }
+/* Punto #3: palabras clave a resaltar según el tipo de novedad. Se buscan de forma
+   flexible (insensible a mayúsculas y a pequeñas variaciones de orden/acento) sobre
+   el texto ya escapado, para no depender de una redacción exacta. */
+const NOV_KEYWORD_PATTERNS = {
+  nuevo:       [/nuevo\s+producto/i],
+  comision:    [/nueva\s+comisi[oó]n/i, /comisi[oó]n\s+(?:subi[oó]|baj[oó])/i, /comisi[oó]n/i],
+  precio_down: [/baj[oó]\s+el\s+precio/i, /precio\s+baj[oó]/i],
+  precio_up:   [/aument[oó]\s+el\s+precio/i, /precio\s+subi[oó]/i],
+  agotado:     [/agotado/i],
+  disponible:  [/disponible\s+de\s+nuevo/i, /disponible/i],
+  stock_up:    [/stock/i, /ahora\s+hay\s+\d+/i],
+  stock_down:  [/stock/i, /quedan\s+\d+/i]
+};
+/* Indica en qué campo (titulo o mensaje) viaja el NOMBRE del producto según el tipo,
+   ya que autoNovedadNewProduct/autoNovedadOnProductChange lo colocan en sitios distintos. */
+const NOV_NAME_FIELD = {
+  nuevo:'mensaje', agotado:'mensaje', disponible:'mensaje',
+  stock_up:'titulo', stock_down:'titulo', comision:'titulo',
+  precio_up:'titulo', precio_down:'titulo'
+};
+function highlightNovKeyword(escapedText, tipo){
+  const patterns = NOV_KEYWORD_PATTERNS[tipo];
+  if(!patterns) return escapedText;
+  for(const re of patterns){
+    if(re.test(escapedText)) return escapedText.replace(re, m=>`<span class="nov-hl">${m}</span>`);
+  }
+  return escapedText;
+}
+function renderNovTitleHtml(n){
+  const esc = escapeHtml(n.titulo);
+  if(NOV_NAME_FIELD[n.tipo]==='titulo') return `<span class="nov-hl-name">${esc}</span>`;
+  return highlightNovKeyword(esc, n.tipo);
+}
+function renderNovMsgHtml(n){
+  const esc = escapeHtml(n.mensaje);
+  if(NOV_NAME_FIELD[n.tipo]==='mensaje') return `<span class="nov-hl-name">${esc}</span>`;
+  return highlightNovKeyword(esc, n.tipo);
+}
 function renderNovedadesList(){
   const box = $('novedadesList');
   const tab = state.novTab || 'todas';
@@ -4214,15 +4326,28 @@ function renderNovedadesList(){
     return `<div class="nov-item nov-t-${cls}" onclick="onNovedadTap('${n.id}')">
       ${novThumbHtml(n)}
       <button type="button" class="photo-remove" onclick="event.stopPropagation();dismissNovedad('${n.id}')">✕</button>
-      <div class="nov-item-title">${escapeHtml(n.titulo)}</div>
-      <div class="nov-item-msg">${escapeHtml(n.mensaje)}</div>
+      <div class="nov-item-title">${renderNovTitleHtml(n)}</div>
+      <div class="nov-item-msg">${renderNovMsgHtml(n)}</div>
       <div class="nov-item-date">${fecha}</div>
     </div>`;
   }).join('');
 }
+/* Punto #2: cada gestor/admin descarta sus propias novedades — antes se guardaba en
+   una sola clave global de localStorage, así que si Kevin descartaba sus novedades,
+   Raúl (u otro gestor probando en el mismo dispositivo) dejaba de verlas también,
+   aunque nunca las hubiera abierto. Ahora la clave incluye el usuario, y se recarga
+   cada vez que alguien inicia sesión. */
+function deletedNovKey(){
+  const who = state.user?.username || state.user?.id || 'anon';
+  return 'deleted_novs_'+who;
+}
+function loadDeletedNovIds(){
+  try{ state.deletedNovIds = JSON.parse(localStorage.getItem(deletedNovKey())||'[]'); }
+  catch(e){ state.deletedNovIds = []; }
+}
 function dismissNovedad(id){
   state.deletedNovIds.push(id);
-  localStorage.setItem('deleted_novs', JSON.stringify(state.deletedNovIds));
+  localStorage.setItem(deletedNovKey(), JSON.stringify(state.deletedNovIds));
   renderNovedadesList();
   updateNovBadge();
 }
