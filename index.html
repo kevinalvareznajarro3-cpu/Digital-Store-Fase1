@@ -582,6 +582,10 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 @keyframes qualityPulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.07);opacity:.88;}}
 .detail-photos{overflow:visible;}
 .detail-photos .quality-badge{top:0;left:0;font-size:10px;padding:4px 9px;}
+/* Punto #2 (petición de Kevin): el "-XX%" ya no se pone en la esquina superior
+   derecha del visor de producto porque ahí mismo está el botón "✕" de cerrar y
+   se tapaban entre sí. Lo bajamos para que no estorbe al cerrar la ventana. */
+.detail-photos .discount-badge{top:40px;right:0;}
 
 </style>
 </head>
@@ -590,8 +594,8 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 <!-- Update Banner: nueva versión de la app disponible -->
 <div id="updateBanner" class="hidden">
   <div class="upd-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 12a9 9 0 0 1-15.5 6.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></div>
-  <div class="upd-text">Nueva versión disponible<small>Toca para actualizar Digital Store</small></div>
-  <button class="upd-btn" id="updateBtn" onclick="applyAppUpdate()">Actualizar</button>
+  <div class="upd-text">Hay una nueva actualización disponible<small>Si no quieres esperar, toca "🔄 Refrescar aplicación" para tener ya la última versión</small></div>
+  <button class="upd-btn" id="updateBtn" onclick="forceAppRefresh()">🔄 Refrescar aplicación</button>
 </div>
 
 <!-- PWA Install Banner -->
@@ -660,7 +664,10 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
     <!-- VALE -->
     <section id="view-vale" class="view hidden">
       <div class="card vale-mode-field">
-        <label>Tipo de vale</label>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+          <label style="margin:0;">Tipo de vale</label>
+          <button type="button" class="btn-secondary" id="forceRefreshBtn" style="width:auto;padding:6px 10px;font-size:11px;white-space:nowrap;" onclick="forceAppRefresh()" title="Trae siempre la última versión publicada en GitHub, sin usar caché vieja">🔄 Refrescar aplicación</button>
+        </div>
         <button type="button" class="csel-display" onclick="openChoiceSelect('valeModeSelect','🌲 Tipo de vale')"><span id="valeModeSelect_label">🌲 Vale de Mensajería</span><span class="csel-arrow">▾</span></button>
         <select id="valeModeSelect" class="csel-native" onchange="switchValeMode(this.value)">
           <option value="mensajeria">🌲 Vale de Mensajería</option>
@@ -1121,11 +1128,6 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
         <h2>Mi WhatsApp de contacto</h2>
         <div id="perfilWa" style="font-size:14px;font-weight:700;"></div>
       </div>
-      <div class="card">
-        <h2><span class="h-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15.5-6.3M21 12a9 9 0 0 1-15.5 6.3"/><path d="M18 3v4h-4M6 21v-4h4"/></svg></span>Actualizar aplicación</h2>
-        <div class="hint" style="padding:0 0 12px;text-align:left;">Si notas que algo no carga bien o quieres asegurarte de tener la última versión de Digital Store, usa este botón para forzar la actualización y limpiar la caché vieja.</div>
-        <button class="btn-secondary" id="forceRefreshBtn" onclick="forceAppRefresh()">🔄 Refrescar aplicación</button>
-      </div>
     </section>
 
     <!-- CATÁLOGO GESTOR -->
@@ -1201,6 +1203,10 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
           <div class="field"><label>Título *</label><input type="text" id="novTitulo" placeholder="Título de la novedad"></div>
           <div class="field"><label>Mensaje *</label><textarea id="novMensaje" rows="3" placeholder="Escribe la novedad…"></textarea></div>
           <button class="btn-primary" onclick="publishNovedad()">Publicar</button>
+        </div>
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+          <h2 style="margin:0;">Novedades publicadas</h2>
+          <button type="button" class="btn-danger" id="deleteAllNovBtn" style="width:auto;padding:8px 12px;font-size:12px;" onclick="deleteAllNovedades()">🗑️ Borrar todas las novedades</button>
         </div>
         <div id="adminNovList"><div class="hint">Sin novedades</div></div>
       </div>
@@ -1324,11 +1330,11 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
     </div>
     <div class="field"><label>Subcategoría</label>
       <button type="button" class="csel-display" onclick="openChoiceSelect('pSubcategoria','📦 Subcategoría')"><span id="pSubcategoria_label">Selecciona…</span><span class="csel-arrow">▾</span></button>
-      <select id="pSubcategoria" class="csel-native" onchange="syncChoiceLabel('pSubcategoria')"></select>
+      <select id="pSubcategoria" class="csel-native" onchange="syncChoiceLabel('pSubcategoria'); aplicarGarantiaAutomatica();"></select>
     </div>
     <div class="field"><label>Local *</label>
       <button type="button" class="csel-display" onclick="openChoiceSelect('pLocal','🏪 Local')"><span id="pLocal_label">1er Local</span><span class="csel-arrow">▾</span></button>
-      <select id="pLocal" class="csel-native" onchange="syncChoiceLabel('pLocal')"><option value="1">1er Local</option><option value="2">2ndo Local</option></select>
+      <select id="pLocal" class="csel-native" onchange="syncChoiceLabel('pLocal'); aplicarGarantiaAutomatica();"><option value="1">1er Local</option><option value="2">2ndo Local</option></select>
     </div>
     <div class="row2">
       <div class="field"><label>Precio base (USD) *</label><input type="number" id="pPrecioBase" step="0.01"></div>
@@ -1348,7 +1354,7 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
     </div>
     <div class="field"><label>Etiqueta de calidad</label>
       <button type="button" class="csel-display" onclick="openChoiceSelect('pCalidad','🏷️ Etiqueta de calidad')"><span id="pCalidad_label">Sin marcar</span><span class="csel-arrow">▾</span></button>
-      <select id="pCalidad" class="csel-native" onchange="syncChoiceLabel('pCalidad')">
+      <select id="pCalidad" class="csel-native" onchange="syncChoiceLabel('pCalidad'); aplicarGarantiaAutomatica();">
         <option value="">Sin marcar</option>
         <option value="nuevo">Nuevo</option>
         <option value="gradoA">Grado A</option>
@@ -1692,6 +1698,13 @@ const state = {
 };
 
 function $(id){ return document.getElementById(id); }
+/* Punto #3 (petición de Kevin): distingue si un error viene de mala conexión (para
+   avisar con un mensaje claro) del resto de errores. Se apoya en el withTimeout()
+   que ya existía en la app (más abajo) para que ninguna operación se quede
+   esperando una respuesta que nunca llega. */
+function esErrorDeConexion(e){
+  return /^timeout/i.test(e?.message||'') || e?.code==='unavailable' || e?.code==='deadline-exceeded' || /network|fetch/i.test(e?.message||'');
+}
 function escapeHtml(s){ return String(s??'').replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function money(n){ return Number(n||0).toFixed(2); }
 /* Red de seguridad: si una escritura/borrado a Firestore se queda colgado sin
@@ -1868,12 +1881,14 @@ function applyAppUpdate(){
     window.location.reload();
   }
 }
-/* Botón manual "Refrescar aplicación" (punto #13, Perfil del gestor): desregistra el
-   Service Worker actual, borra todas las cachés antiguas y recarga para traer siempre
-   la versión más reciente del index.html, sin depender del banner automático. */
+/* Botón manual "Refrescar aplicación" (ahora vive en el Vale de Mensajería, punto #5):
+   desregistra el Service Worker actual, borra todas las cachés antiguas y recarga
+   para traer siempre la versión más reciente del index.html publicado en GitHub, sin
+   depender del banner automático. También la usa el botón del banner de "hay una
+   nueva actualización" para garantizar que nunca se quede con una caché vieja. */
 async function forceAppRefresh(){
-  const btn = $('forceRefreshBtn');
-  if(btn){ btn.disabled = true; btn.innerHTML = '<span class="btn-spinner"></span> Actualizando…'; }
+  const btns = [$('forceRefreshBtn'), $('updateBtn')].filter(Boolean);
+  btns.forEach(btn=>{ btn.disabled = true; btn.innerHTML = '<span class="btn-spinner"></span> Actualizando…'; });
   try{
     if('serviceWorker' in navigator){
       const regs = await navigator.serviceWorker.getRegistrations();
@@ -2569,7 +2584,7 @@ async function submitVale(){
   const calc = recalcVale();
   const btn=$('submitValeBtn'); if(btn){ btn.disabled=true; btn.innerHTML='<span class="btn-spinner"></span> Guardando…'; }
   try{
-    await addDoc(collection(db,'pedidos'), {
+    await withTimeout(addDoc(collection(db,'pedidos'), {
       gestorId: state.user.id || state.user.username,
       gestorNombre: state.user.nombre,
       fecha: serverTimestamp(),
@@ -2601,12 +2616,13 @@ async function submitVale(){
       garantia: $('garantia').value.trim(),
       tarifaZona: $('tarifaSelected').textContent || '',
       estado: 'pendiente'
-    });
+    }));
     showToast('Vale de mensajería enviado 🌲');
     resetValeForm();
   }catch(e){
     console.error(e);
-    showToast('Error al guardar. Intenta de nuevo.');
+    if(esErrorDeConexion(e)) showToast('⚠️ Mala conexión: no se pudo confirmar el envío. Revisa tu señal e inténtalo de nuevo.');
+    else showToast('Error al guardar. Intenta de nuevo.');
   } finally {
     if(btn){ btn.disabled=false; btn.textContent='🌲 Enviar Vale de mensajería'; }
   }
@@ -2880,7 +2896,7 @@ async function submitValeRecogida(){
   const calc = recalcRecogida();
   const btn=$('submitRecogidaBtn'); if(btn){ btn.disabled=true; btn.innerHTML='<span class="btn-spinner"></span> Enviando…'; }
   try{
-    await addDoc(collection(db,'pedidos'), {
+    await withTimeout(addDoc(collection(db,'pedidos'), {
       gestorId: state.user.id || state.user.username,
       gestorNombre: state.user.nombre,
       fecha: serverTimestamp(),
@@ -2894,12 +2910,13 @@ async function submitValeRecogida(){
       pagos: { metodoPago: $('rMetodoPago').value },
       recogida: { dia: $('rDia').value, hora: $('rHora').value },
       estado: 'pendiente'
-    });
+    }));
     showToast('Vale de recogida enviado 🏪');
     resetRecogidaForm();
   }catch(e){
     console.error(e);
-    showToast('Error al guardar. Intenta de nuevo.');
+    if(esErrorDeConexion(e)) showToast('⚠️ Mala conexión: no se pudo confirmar el envío. Revisa tu señal e inténtalo de nuevo.');
+    else showToast('Error al guardar. Intenta de nuevo.');
   } finally {
     if(btn){ btn.disabled=false; btn.textContent='🏪 Enviar Vale de Recogida'; }
   }
@@ -3399,7 +3416,7 @@ function openProductDetail(id){
     if(!imgs.length){ photos.innerHTML = `<div class="prod-thumb empty" style="width:100%;height:160px;margin:0 auto;">${ICONS.box}</div>`; return; }
     photos.innerHTML = `
       ${qualityBadgeHtml(p.calidad)}
-      ${discountPct(p) ? `<span class="discount-badge" style="top:0;right:0;font-size:11px;padding:4px 9px;">-${discountPct(p)}%</span>` : ''}
+      ${discountPct(p) ? `<span class="discount-badge" style="font-size:11px;padding:4px 9px;">-${discountPct(p)}%</span>` : ''}
       <img src="${imgs[state.detailPhotoIdx]}" id="detailMainImg">
       ${imgs.length>1?`<button class="detail-nav prev" onclick="event.stopPropagation();shiftDetailPhoto(-1)">‹</button>
       <button class="detail-nav next" onclick="event.stopPropagation();shiftDetailPhoto(1)">›</button>`:''}
@@ -3683,6 +3700,42 @@ function toggleStockField(){
 }
 
 /* ============ PUNTO #2: Pegar texto y autocompletar producto ============ */
+/* Nueva edición (petición de Kevin): Calidad y Garantía se calculan solas.
+   - Calidad: si el texto pegado menciona "Nuevo", "Grado A" o "Grado A Plus",
+     se marca automáticamente esa etiqueta (sin tocar Categoría/Subcategoría).
+   - Garantía: reglas fijas de Kevin, se recalculan cada vez que cambia Local,
+     Subcategoría o Calidad (a mano o por el pegado de texto):
+       · 1er Local, subcategoría de laptop + Calidad "Nuevo"          -> 15 días
+       · 1er Local, subcategoría de laptop + Calidad "Grado A/A Plus" -> 30 días
+       · 1er Local, cualquier otro producto                          -> 5 días
+       · 2ndo Local, subcategoría "pesada"                           -> 6 meses
+       · 2ndo Local, cualquier otra subcategoría ("pequeña")         -> 3 meses
+     NOTA para Kevin: el 2ndo Local no tiene hoy un campo que diga "pesado" o
+     "pequeño" por producto, así que decidimos qué subcategorías cuentan como
+     "pesadas" según sus nombres (ver SUBCATS_PESADAS_2DO). Si alguna subcategoría
+     está mal clasificada ahí, dímelo y la movemos — es fácil de ajustar. */
+const LAPTOP_SUBCATS = ['Laptop Grado A','Laptops Nuevas'];
+const SUBCATS_PESADAS_2DO = ['Neveras de Exhibición','Frigoríficos','Equipos de Refrigeración Profesionales','Estantes Comerciales','Muebles','Muebles Comprimidos'];
+function detectarCalidadEnTexto(texto){
+  if(/grado\s*a\s*(\+|plus)/i.test(texto)) return 'gradoAPlus';
+  if(/grado\s*a\b/i.test(texto)) return 'gradoA';
+  if(/\bnuevo\b/i.test(texto)) return 'nuevo';
+  return '';
+}
+function calcularGarantiaAutomatica(){
+  const local = $('pLocal')?.value || '1';
+  const subcat = $('pSubcategoria')?.value || '';
+  const calidad = $('pCalidad')?.value || '';
+  if(local==='2') return SUBCATS_PESADAS_2DO.includes(subcat) ? '6 meses' : '3 meses';
+  if(LAPTOP_SUBCATS.includes(subcat)){
+    if(calidad==='nuevo') return '15 días';
+    if(calidad==='gradoA' || calidad==='gradoAPlus') return '30 días';
+  }
+  return '5 días';
+}
+function aplicarGarantiaAutomatica(){
+  if($('pGarantia')) $('pGarantia').value = calcularGarantiaAutomatica();
+}
 function abrirPegarAutocompletar(){
   $('pasteParseInput').value = '';
   $('pasteParseModal').classList.remove('hidden');
@@ -3694,13 +3747,14 @@ function procesarTextoProducto(){
   const raw = $('pasteParseInput').value;
   if(!raw || !raw.trim()){ showToast('Pega primero el texto del producto.'); return; }
   const lineasOriginales = raw.replace(/\r\n/g,'\n').split('\n');
-  let garantia = '', comision = null, precio = null, precioAntes = null, stock = null, domicilio = false;
+  let comision = null, precio = null, precioAntes = null, stock = null, domicilio = false;
   const lineasRestantes = [];
   for(const linea of lineasOriginales){
     const l = linea.trim();
     let consumida = false, m;
     if((m = l.match(/garant[ií]a[:\s]*(.+)/i))){
-      garantia = m[1].replace(/[.\s]+$/,'').trim();
+      // La garantía real la ponen las reglas fijas de Kevin (calcularGarantiaAutomatica),
+      // así que solo descartamos esta línea del texto del proveedor.
       consumida = true;
     } else if((m = l.match(/comisi[oó]n[:\s]*\$?\s*([\d.,]+)/i))){
       comision = parseFloat(m[1].replace(/,/g,''));
@@ -3730,12 +3784,15 @@ function procesarTextoProducto(){
 
   if(primeraLinea) $('pNombre').value = primeraLinea;
   $('pDescripcion').value = descripcionFinal;
-  if(garantia) $('pGarantia').value = garantia;
   if(comision!=null && !isNaN(comision)) $('pComisionValor').value = comision;
   if(precio!=null && !isNaN(precio)) $('pPrecioBase').value = precio;
   if(stock!=null && !isNaN(stock) && $('pStock')) $('pStock').value = stock;
   if(precioAntes!=null && !isNaN(precioAntes) && $('pPrecioAntes')) $('pPrecioAntes').value = precioAntes;
   if(domicilio && $('pDomicilio')) $('pDomicilio').checked = true;
+
+  const calidadDetectada = detectarCalidadEnTexto(raw);
+  if(calidadDetectada){ $('pCalidad').value = calidadDetectada; syncChoiceLabel('pCalidad'); }
+  aplicarGarantiaAutomatica();
 
   cerrarPegarAutocompletar();
   showToast('Autocompletado listo — revisa los campos antes de guardar.');
@@ -3821,15 +3878,19 @@ async function saveProduct(){
     // Snapshot inmutable del producto anterior (evita referencias vivas)
     const prev = state._prevProduct ? JSON.parse(JSON.stringify(state._prevProduct)) : null;
     if(state.editingProductId){
-      await updateDoc(doc(db,'productos',state.editingProductId), data);
-      await autoNovedadOnProductChange(prev, {...data, id:state.editingProductId});
+      await withTimeout(updateDoc(doc(db,'productos',state.editingProductId), data));
+      await withTimeout(autoNovedadOnProductChange(prev, {...data, id:state.editingProductId}));
     } else {
-      const ref = await addDoc(collection(db,'productos'), data);
-      await autoNovedadNewProduct({...data, id:ref.id});
+      const ref = await withTimeout(addDoc(collection(db,'productos'), data));
+      await withTimeout(autoNovedadNewProduct({...data, id:ref.id}));
     }
     showToast('Producto guardado.');
     closeProductModal();
-  }catch(e){ console.error(e); showToast('Error al guardar producto.'); }
+  }catch(e){
+    console.error(e);
+    if(esErrorDeConexion(e)) showToast('⚠️ Mala conexión: no se pudo confirmar el guardado. Revisa tu señal e inténtalo de nuevo.');
+    else showToast('Error al guardar producto.');
+  }
   finally {
     if(btn){ btn.disabled=false; btn.textContent = prevLabel || 'Guardar producto'; }
   }
@@ -4231,18 +4292,19 @@ async function saveGestor(){
         if(passNueva.length<6){ showToast('La contraseña nueva debe tener al menos 6 caracteres.'); return; }
         data.password = passNueva;
       }
-      await updateDoc(doc(db,'gestores',state.editingGestorId), data);
+      await withTimeout(updateDoc(doc(db,'gestores',state.editingGestorId), data));
       showToast('✅ Gestor actualizado correctamente.');
     } else {
       const password = $('gPassword').value;
       if(!password || password.length<6){ showToast('La contraseña es obligatoria y debe tener al menos 6 caracteres.'); return; }
-      await addDoc(collection(db,'gestores'), { nombre, username, telefono, password });
+      await withTimeout(addDoc(collection(db,'gestores'), { nombre, username, telefono, password }));
       showToast('✅ Gestor creado correctamente.');
     }
     closeGestorModal();
   }catch(e){
     console.warn('[saveGestor]', e?.code || '(sin código)', e?.message || e);
-    if(e?.code==='permission-denied') showToast('Firestore rechazó el permiso para guardar este gestor. Revisa las Reglas de seguridad de la colección "gestores".');
+    if(esErrorDeConexion(e)) showToast('⚠️ Mala conexión: no se pudo confirmar el guardado del gestor. Revisa tu señal e inténtalo de nuevo.');
+    else if(e?.code==='permission-denied') showToast('Firestore rechazó el permiso para guardar este gestor. Revisa las Reglas de seguridad de la colección "gestores".');
     else showToast('Error al guardar gestor. Revisa la consola del navegador para más detalle.');
   }
   finally {
@@ -4307,10 +4369,13 @@ async function registrarPagoComision(){
   if(btn){ btn.disabled=true; btn.innerHTML='<span class="btn-spinner"></span> Guardando…'; }
   try{
     const pago = { monto, metodo, nota, fecha: new Date().toISOString() };
-    await updateDoc(doc(db,'gestores', g.id), { pagosComision: arrayUnion(pago) });
+    await withTimeout(updateDoc(doc(db,'gestores', g.id), { pagosComision: arrayUnion(pago) }));
     $('gcMonto').value=''; $('gcNota').value='';
     showToast('Pago registrado.');
-  }catch(e){ showToast('Error al registrar el pago.'); }
+  }catch(e){
+    if(esErrorDeConexion(e)) showToast('⚠️ Mala conexión: no se pudo confirmar el pago. Revisa tu señal e inténtalo de nuevo.');
+    else showToast('Error al registrar el pago.');
+  }
   finally{ if(btn){ btn.disabled=false; btn.textContent='Registrar pago'; } }
 }
 
@@ -4481,18 +4546,45 @@ async function publishNovedad(){
   const btns = document.querySelectorAll('#adminPanelNovedades .btn-primary');
   btns.forEach(b=>{ b.disabled=true; b.innerHTML='<span class="btn-spinner"></span> Publicando…'; });
   try{
-    await addDoc(collection(db,'novedades'), { titulo, mensaje, fecha: serverTimestamp() });
+    await withTimeout(addDoc(collection(db,'novedades'), { titulo, mensaje, fecha: serverTimestamp() }));
     $('novTitulo').value=''; $('novMensaje').value='';
     showToast('Novedad publicada 🔔');
-  }catch(e){ showToast('Error al publicar.'); }
+  }catch(e){
+    if(esErrorDeConexion(e)) showToast('⚠️ Mala conexión: no se pudo confirmar la publicación. Revisa tu señal e inténtalo de nuevo.');
+    else showToast('Error al publicar.');
+  }
   finally {
     btns.forEach(b=>{ b.disabled=false; b.textContent='Publicar'; });
   }
 }
 async function deleteNovedad(id){
   if(!confirm('¿Eliminar esta novedad?')) return;
-  await deleteDoc(doc(db,'novedades',id));
-  showToast('Novedad eliminada.');
+  try{
+    await withTimeout(deleteDoc(doc(db,'novedades',id)));
+    showToast('Novedad eliminada.');
+  }catch(e){
+    if(esErrorDeConexion(e)) showToast('⚠️ Mala conexión: no se pudo confirmar el borrado. Revisa tu señal e inténtalo de nuevo.');
+    else showToast('Error al eliminar la novedad.');
+  }
+}
+/* Punto #4 (petición de Kevin): borrar TODAS las novedades publicadas de un tirón,
+   desde el panel de Admin. Pide confirmación una sola vez (para no arriesgar un
+   borrado accidental) y usa withTimeout() en cada borrado para no quedarse trabado
+   si la conexión falla a mitad de camino. */
+async function deleteAllNovedades(){
+  if(!state.novedades.length){ showToast('No hay novedades para borrar.'); return; }
+  if(!confirm(`¿Eliminar TODAS las novedades publicadas (${state.novedades.length})? Esta acción no se puede deshacer.`)) return;
+  const btn = $('deleteAllNovBtn');
+  if(btn){ btn.disabled=true; btn.innerHTML='<span class="btn-spinner"></span> Borrando…'; }
+  const pendientes = [...state.novedades];
+  let borradas = 0, fallidas = 0;
+  for(const n of pendientes){
+    try{ await withTimeout(deleteDoc(doc(db,'novedades',n.id))); borradas++; }
+    catch(e){ fallidas++; }
+  }
+  if(btn){ btn.disabled=false; btn.textContent='🗑️ Borrar todas las novedades'; }
+  if(fallidas===0) showToast(`✅ Se borraron las ${borradas} novedades.`);
+  else showToast(`⚠️ Se borraron ${borradas}, pero ${fallidas} fallaron (mala conexión). Vuelve a tocar el botón para reintentar las que quedan.`);
 }
 
 /* ============ CONFIG ============ */
@@ -4526,9 +4618,12 @@ async function saveConfig(){
   const btns = document.querySelectorAll('#adminPanelConfig .btn-primary');
   btns.forEach(b=>{ b.disabled=true; b.innerHTML='<span class="btn-spinner"></span> Guardando…'; });
   try{
-    await setDoc(doc(db,'settings','general'), { waNumber: wa, waComunidad: comunidad }, { merge:true });
+    await withTimeout(setDoc(doc(db,'settings','general'), { waNumber: wa, waComunidad: comunidad }, { merge:true }));
     showToast('Configuración guardada.');
-  }catch(e){ showToast('Error al guardar configuración.'); }
+  }catch(e){
+    if(esErrorDeConexion(e)) showToast('⚠️ Mala conexión: no se pudo confirmar el guardado. Revisa tu señal e inténtalo de nuevo.');
+    else showToast('Error al guardar configuración.');
+  }
   finally {
     btns.forEach(b=>{ b.disabled=false; b.textContent='Guardar'; });
   }
@@ -4540,13 +4635,13 @@ Object.assign(window, {
   addLineItem, removeLineItem, updateLineItem, toggleVuelto, recalcVale, submitVale,
   openCatalogPicker, closeCatalogPicker, renderCatalogPicker, pickCatalogProduct, setPickerCat,
   openProductModal, closeProductModal, handlePhotoUpload, saveProduct, removeProduct, updateSubcats, toggleStockField,
-  abrirPegarAutocompletar, cerrarPegarAutocompletar, procesarTextoProducto,
+  abrirPegarAutocompletar, cerrarPegarAutocompletar, procesarTextoProducto, aplicarGarantiaAutomatica,
   updateOrderStatus, openGestorModal, closeGestorModal, saveGestor, removeGestor, saveConfig, probarAccesoGestorUI,
   switchHistClaim, submitComisionTransferencia, goHistComunidadWa, goHistNovedades,
   openGestorComisionModal, closeGestorComisionModal, registrarPagoComision,
   openTarifasModal, closeTarifasModal, switchTarifaLocal, switchTarifaTipo, renderTarifas, selectTarifa,
   handleCarnetUpload, handlePerfilPhoto, pickCarnet, removeCarnet, clearValeDraft, markComisionEditada, markComisionEditadaRecogida,
-  openNovedades, closeNovedades, publishNovedad, deleteNovedad, dismissNovedad, onNovedadTap, closeConfirm,
+  openNovedades, closeNovedades, publishNovedad, deleteNovedad, deleteAllNovedades, dismissNovedad, onNovedadTap, closeConfirm,
   switchNovTab,
   setAdminCat, installPWA, dismissPWA,
   setCatalogView, onGestorSearch, goCatalogCats, goCatalogCat, goCatalogSub, onCatalogSortChange, toggleFaq,
