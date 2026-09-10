@@ -75,7 +75,7 @@ header.topbar{position:sticky;top:0;z-index:20;background:var(--surface);border-
 
 /* Novedades: panel más grande (punto #2) */
 #novedadesModal .modal{max-width:660px;max-height:92vh;padding-top:16px;}
-#novedadesModal #novedadesList{max-height:calc(92vh - 150px);overflow-y:auto;padding-right:2px;}
+#novedadesModal #novedadesList{max-height:calc(92vh - 195px);overflow-y:auto;padding-right:2px;}
 
 /* Novedades: pestañas por tipo (punto #1) */
 .nov-tabs-wrap{position:relative;margin-bottom:14px;}
@@ -93,67 +93,54 @@ body.dark .nov-tab.active{background:var(--gold);color:#3a2c00;}
 .nov-tab[data-nt="stock"]{border-color:rgba(46,110,181,.5);}
 .nov-tab[data-nt="precio"],.nov-tab[data-nt="comision"],.nov-tab[data-nt="aumento"]{border-color:rgba(47,143,91,.5);}
 
-/* Novedades: tarjeta "hero" con degradado, brillo e insignia animada por tipo —
-   mismo lenguaje visual que la tarjeta de comisión total del Historial. */
-.nov-item{position:relative;overflow:hidden;border-radius:18px;padding:16px 82px 14px 16px;margin-bottom:12px;
-  cursor:pointer;animation:slideIn .3s ease;color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.2);}
-.nov-item::before{content:'';position:absolute;top:-42px;right:-26px;width:150px;height:150px;border-radius:50%;
-  background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%);pointer-events:none;}
-.nov-item::after{content:'';position:absolute;left:-30%;top:0;bottom:0;width:55%;
-  background:linear-gradient(100deg,transparent,rgba(255,255,255,.13),transparent);
-  animation:histHeroSheen 6s ease-in-out infinite;pointer-events:none;z-index:1;}
-.nov-item-label{position:relative;z-index:2;font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
-  opacity:.85;display:flex;align-items:center;gap:5px;margin-bottom:5px;}
-.nov-item-label svg{width:13px;height:13px;flex:none;}
-.nov-item-title{position:relative;z-index:2;font-weight:800;font-size:17px;margin-bottom:3px;line-height:1.25;}
-.nov-item-msg{position:relative;z-index:2;font-size:12.5px;line-height:1.4;color:inherit;opacity:.92;}
-.nov-item-date{position:relative;z-index:2;font-size:10.5px;margin-top:10px;font-weight:600;color:inherit;opacity:.7;}
-.nov-item .nov-trash-btn{position:absolute;bottom:10px;right:12px;z-index:3;width:28px;height:28px;border-radius:50%;
-  background:rgba(255,255,255,.92);color:#3a3a34;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 2px 6px rgba(0,0,0,.28);}
-.nov-item .nov-trash-btn svg{width:14px;height:14px;}
+/* Novedades: tarjeta plana con franja lateral de color por tipo + ícono grande muy
+   tenue en la esquina inferior derecha, animado suave (solo transform/opacity, nunca
+   box-shadow animado ni filter:blur, para que no cueste en móviles viejos). */
+.nov-item{position:relative;overflow:hidden;border-radius:14px;padding:13px 44px 12px 16px;margin-bottom:10px;
+  cursor:pointer;animation:slideIn .3s ease;background:var(--surface);color:var(--text);
+  box-shadow:0 2px 8px rgba(0,0,0,.09);border-left:5px solid var(--muted);}
+.nov-bg-icon{position:absolute;right:-8px;bottom:-10px;width:74px;height:74px;z-index:0;pointer-events:none;
+  opacity:.10;animation:novBreathe 4.2s ease-in-out infinite;}
+.nov-bg-icon svg{width:100%;height:100%;}
+@keyframes novBreathe{0%,100%{transform:translateY(0) scale(1);opacity:.08;}50%{transform:translateY(-5px) scale(1.06);opacity:.16;}}
+.nov-thumb-sm{position:relative;z-index:1;float:right;width:34px;height:34px;border-radius:9px;object-fit:cover;
+  margin:0 0 6px 8px;border:1px solid var(--line);}
+.nov-row-top{position:relative;z-index:1;display:flex;align-items:flex-start;gap:6px;}
+.nov-unread-dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-top:5px;
+  box-shadow:0 0 0 3px rgba(47,143,91,.18);}
+.nov-item-title{position:relative;z-index:1;font-weight:800;font-size:14.5px;margin-bottom:3px;line-height:1.3;color:var(--text);}
+.nov-item-msg{position:relative;z-index:1;font-size:12.5px;line-height:1.4;color:var(--muted);}
+.nov-item-date{position:relative;z-index:1;font-size:10.5px;margin-top:7px;font-weight:600;color:var(--muted);opacity:.75;}
+.nov-item .nov-trash-btn{position:absolute;top:10px;right:10px;z-index:2;width:26px;height:26px;border-radius:50%;
+  background:var(--surface-2);color:var(--muted);display:flex;align-items:center;justify-content:center;}
+.nov-item .nov-trash-btn svg{width:13px;height:13px;}
 .nov-item .nov-trash-btn:active{transform:scale(.9);}
 
-/* --- degradado por naturaleza de la novedad --- */
-.nov-t-nuevo{background:linear-gradient(135deg,#8a6a00 0%,var(--gold) 55%,#F4D160 130%);}
-.nov-t-agotado{background:linear-gradient(135deg,#5c1414 0%,var(--red) 55%,#c9634a 130%);}
-.nov-t-disponible{background:linear-gradient(135deg,#0F2E1E 0%,var(--green) 50%,var(--green-dim) 130%);}
-.nov-t-stock{background:linear-gradient(135deg,#0c2748 0%,var(--blue) 55%,#5B9BDB 130%);}
-.nov-t-up{background:linear-gradient(135deg,#0F2E1E 0%,var(--green) 50%,var(--green-dim) 130%);}
-.nov-t-down{background:linear-gradient(135deg,#5c2a10 0%,#C9633C 55%,#e08a5c 130%);}
-.nov-t-default{background:linear-gradient(135deg,#4a4a42,#6b6b60);}
+/* --- franja lateral por naturaleza de la novedad --- */
+.nov-stripe-nuevo{border-left-color:var(--ok);}
+.nov-stripe-agotado{border-left-color:var(--danger);}
+.nov-stripe-disponible{border-left-color:var(--ok);}
+.nov-stripe-stock{border-left-color:var(--blue);}
+.nov-stripe-precio{border-left-color:var(--gold);}
+.nov-stripe-default{border-left-color:var(--muted);}
+.nov-bg-icon.c-nuevo,.nov-bg-icon.c-disponible{color:var(--ok);}
+.nov-bg-icon.c-agotado{color:var(--danger);}
+.nov-bg-icon.c-stock{color:var(--blue);}
+.nov-bg-icon.c-precio{color:var(--gold);}
+.nov-bg-icon.c-default{color:var(--muted);}
 
-/* Insignia flotante (cuando el producto no tiene foto): 3 círculos superpuestos con
-   el ícono del tipo, animados igual que las monedas del Historial. */
-.nov-badge-stack{position:absolute;top:16px;right:16px;width:56px;height:50px;z-index:1;}
-.nov-badge-stack .nb{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  box-shadow:inset 0 -3px 6px rgba(0,0,0,.22), inset 0 2px 3px rgba(255,255,255,.35), 0 3px 8px rgba(0,0,0,.25);}
-.nov-badge-stack .nb svg{width:52%;height:52%;}
-.nov-badge-stack .nb3{width:28px;height:28px;left:0;top:0;opacity:.7;animation:coinFloat 2.8s ease-in-out infinite;}
-.nov-badge-stack .nb2{width:34px;height:34px;left:13px;top:7px;opacity:.88;animation:coinFloat 2.8s ease-in-out infinite .25s;}
-.nov-badge-stack .nb1{width:42px;height:42px;left:5px;top:13px;animation:coinFloat 2.8s ease-in-out infinite .5s;}
-.nov-badge-stack.gold .nb{background:linear-gradient(135deg,#F9E08B,var(--gold) 70%);color:#7a5c00;}
-.nov-badge-stack.red .nb{background:linear-gradient(135deg,#e88,var(--red) 75%);color:#fff;}
-.nov-badge-stack.green .nb{background:linear-gradient(135deg,#7ED2A0,var(--green) 75%);color:#fff;}
-.nov-badge-stack.blue .nb{background:linear-gradient(135deg,#8fbdec,var(--blue) 75%);color:#fff;}
-.nov-badge-stack.orange .nb{background:linear-gradient(135deg,#f0b088,#C9633C 75%);color:#fff;}
-.nov-badge-stack.gray .nb{background:linear-gradient(135deg,#c9c9be,#8f8f83 75%);color:#fff;}
+/* Resaltado de palabras clave y nombre de producto dentro del título/mensaje */
+.nov-hl,.nov-hl-name{font-weight:800;padding:0 3px;border-radius:4px;background:rgba(47,143,91,.12);color:inherit;}
 
-/* Cuando el producto sí tiene foto: la foto real con una insignia pequeña del tipo
-   "prendida" en la esquina, con la misma animación. */
-.nov-photo-badge{position:absolute;top:14px;right:14px;width:54px;height:54px;z-index:1;}
-.nov-photo-badge img{width:100%;height:100%;border-radius:50%;object-fit:cover;
-  border:2px solid rgba(255,255,255,.6);box-shadow:0 4px 10px rgba(0,0,0,.3);}
-.nov-photo-badge .flag{position:absolute;bottom:-4px;right:-4px;width:24px;height:24px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3);
-  animation:coinFloat 2.8s ease-in-out infinite;border:2px solid rgba(255,255,255,.75);}
-.nov-photo-badge .flag svg{width:58%;height:58%;}
-.nov-photo-badge .flag.gold{background:var(--gold);color:#7a5c00;}
-.nov-photo-badge .flag.red{background:var(--red);color:#fff;}
-.nov-photo-badge .flag.green{background:var(--green);color:#fff;}
-.nov-photo-badge .flag.blue{background:var(--blue);color:#fff;}
-.nov-photo-badge .flag.orange{background:#C9633C;color:#fff;}
-.nov-photo-badge .flag.gray{background:#8f8f83;color:#fff;}
+/* Bloques temporales (Hoy / Ayer / Esta semana / Anteriores) */
+.nov-group-header{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);
+  margin:16px 2px 8px;}
+.nov-group-header:first-child{margin-top:2px;}
+
+/* Buscador de novedades */
+.nov-search-wrap{position:relative;margin-bottom:10px;}
+.nov-search-wrap input{padding-left:34px;font-size:13px;}
+.nov-search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted);pointer-events:none;}
 
 /* Gestores: presencia y actividad (punto #6) */
 .gestor-presence{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);font-weight:600;margin-top:5px;flex-wrap:wrap;}
@@ -399,6 +386,21 @@ body.dark .voucher-preview-btn{border-color:var(--gold);color:var(--gold);}
 .back-cats{font-size:14.5px;font-weight:800;color:#fff;background:var(--green);margin-bottom:12px;display:inline-flex;align-items:center;gap:7px;cursor:pointer;padding:12px 18px;border-radius:13px;box-shadow:0 3px 10px rgba(26,74,46,.28);-webkit-tap-highlight-color:transparent;user-select:none;}
 .back-cats:active{transform:scale(.96);background:var(--green-dim);}
 .back-cats svg{width:18px;height:18px;flex:none;stroke:#fff;}
+/* Punto #7: Pedidos del Admin agrupados por gestor */
+.pgestor-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px;
+  display:flex;align-items:center;gap:12px;cursor:pointer;position:relative;}
+.pgestor-card:active{background:var(--surface-2);}
+.pgestor-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:none;background:var(--green);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;}
+.pgestor-count{font-size:12px;color:var(--muted);margin-top:2px;}
+.pgestor-new{position:absolute;top:12px;right:14px;width:13px;height:13px;border-radius:50%;background:var(--gold);
+  box-shadow:0 0 0 rgba(232,184,37,.6);animation:pgestorGlow 1.4s infinite;}
+@keyframes pgestorGlow{
+  0%{box-shadow:0 0 0 0 rgba(232,184,37,.65);}
+  70%{box-shadow:0 0 0 9px rgba(232,184,37,0);}
+  100%{box-shadow:0 0 0 0 rgba(232,184,37,0);}
+}
+.pgestor-arrow{margin-left:auto;color:var(--muted);flex:none;}
 
 /* New products carousel */
 .new-carousel-wrap{overflow:hidden;margin-bottom:12px;border-radius:12px;background:var(--surface);padding:10px 0;border:1px solid var(--line);}
@@ -1230,11 +1232,18 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
       </div>
 
       <div id="adminPanelPedidos" class="admin-panel hidden">
+        <div class="field" style="margin-bottom:10px;">
+          <input type="text" id="adminPedidosSearch" placeholder="🔎 Buscar por cliente, gestor, teléfono o producto…" oninput="onAdminPedidosSearch()">
+        </div>
+        <div id="adminPedidosNav"></div>
         <div id="adminPedidosList"><div class="hint">Cargando…</div></div>
       </div>
 
       <div id="adminPanelGestores" class="admin-panel hidden">
         <button class="btn-primary" onclick="openGestorModal()" style="margin-bottom:12px;">+ Nuevo gestor</button>
+        <div class="field" style="margin-bottom:10px;">
+          <input type="text" id="adminGestoresSearch" placeholder="🔎 Buscar gestor por nombre o usuario…" oninput="onAdminGestoresSearch()">
+        </div>
         <div class="hint" style="text-align:left;padding:0 2px 10px;font-size:11px;">ℹ️ "En línea" se calcula por la última señal que envía la app del gestor (cada 1-2 min); si pasan más de ~4 min sin señal se marca como desconectado. No hay forma 100% instantánea de detectar que alguien cerró la pestaña sin un servidor propio.</div>
         <div id="adminGestoresList"><div class="hint">Cargando…</div></div>
       </div>
@@ -1489,15 +1498,19 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
         <button onclick="closeNovedades()">✕</button>
       </div>
     </div>
+    <div class="nov-search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="search" id="novSearchInput" placeholder="Buscar por producto o texto…" oninput="onNovSearchInput(this.value)">
+    </div>
     <div class="nov-tabs-wrap">
       <div class="nov-tabs" id="novTabs">
-        <button type="button" class="nov-tab active" data-nt="todas" onclick="switchNovTab('todas')">Todas</button>
-        <button type="button" class="nov-tab" data-nt="nuevo" onclick="switchNovTab('nuevo')">🆕 Nuevos</button>
-        <button type="button" class="nov-tab" data-nt="agotado" onclick="switchNovTab('agotado')">🚫 Agotados</button>
-        <button type="button" class="nov-tab" data-nt="stock" onclick="switchNovTab('stock')">📦 Stock</button>
-        <button type="button" class="nov-tab" data-nt="precio" onclick="switchNovTab('precio')">💲 Precios</button>
-        <button type="button" class="nov-tab" data-nt="comision" onclick="switchNovTab('comision')">💰 Comisión</button>
-        <button type="button" class="nov-tab" data-nt="aumento" onclick="switchNovTab('aumento')">📈 Aumento</button>
+        <button type="button" class="nov-tab active" data-nt="todas" onclick="switchNovTab('todas')"><span class="nov-tab-label">Todas</span><span class="nov-tab-count"></span></button>
+        <button type="button" class="nov-tab" data-nt="nuevo" onclick="switchNovTab('nuevo')"><span class="nov-tab-label">🆕 Nuevos</span><span class="nov-tab-count"></span></button>
+        <button type="button" class="nov-tab" data-nt="agotado" onclick="switchNovTab('agotado')"><span class="nov-tab-label">🚫 Agotados</span><span class="nov-tab-count"></span></button>
+        <button type="button" class="nov-tab" data-nt="stock" onclick="switchNovTab('stock')"><span class="nov-tab-label">📦 Stock</span><span class="nov-tab-count"></span></button>
+        <button type="button" class="nov-tab" data-nt="precio" onclick="switchNovTab('precio')"><span class="nov-tab-label">💲 Precios</span><span class="nov-tab-count"></span></button>
+        <button type="button" class="nov-tab" data-nt="comision" onclick="switchNovTab('comision')"><span class="nov-tab-label">💰 Comisión</span><span class="nov-tab-count"></span></button>
+        <button type="button" class="nov-tab" data-nt="aumento" onclick="switchNovTab('aumento')"><span class="nov-tab-label">📈 Aumento</span><span class="nov-tab-count"></span></button>
       </div>
     </div>
     <div id="novedadesList"><div class="hint">Sin novedades</div></div>
@@ -1741,12 +1754,17 @@ const state = {
   catalogLevel:'cats', catalogCat:'', catalogSub:'', catalogView:'grid', catalogSort:'recientes', catalogListIds:[],
   detailPhotoIdx:0, detailProduct:null, confirmResolve:null,
   deletedNovIds: [], // se carga por-usuario en loadDeletedNovIds() al iniciar sesión (punto #2)
+  novReadIds: [], // se carga por-usuario en loadReadNovIds() — novedades ya vistas por este usuario
+  novSearchQuery: '', novVisibleCount: 24, // buscador y paginación del panel de Novedades
   pwaDismissed: localStorage.getItem('pwa_dismissed')==='1',
   valeMode:'mensajeria', lineItemsRecogida:[], pickerTarget:'mensajeria',
   comisionEditada:false, comisionEditadaRecogida:false,
   loginErrors:[], loginErrorsUnavailable:false,
   darkMode: localStorage.getItem('dark_mode')==='1',
-  carouselCollapsed: localStorage.getItem('new_carousel_collapsed')==='1'
+  carouselCollapsed: localStorage.getItem('new_carousel_collapsed')==='1',
+  // Punto #7: Pedidos del Admin agrupados por gestor
+  pedidosView: 'gestores', pedidosGestorId: null,
+  pedidosSeenIds: JSON.parse(localStorage.getItem('admin_pedidos_seen')||'[]')
 };
 
 function $(id){ return document.getElementById(id); }
@@ -1800,7 +1818,9 @@ function navSnapshot(){
     adminTab: state.adminTab,
     catalogLevel: state.catalogLevel,
     catalogCat: state.catalogCat,
-    catalogSub: state.catalogSub
+    catalogSub: state.catalogSub,
+    pedidosView: state.pedidosView,
+    pedidosGestorId: state.pedidosGestorId
   };
 }
 function pushNavState(){
@@ -1837,6 +1857,8 @@ window.addEventListener('popstate', (e)=>{
   _skipNavPush = true;
   try{
     if(st.role==='admin' && state.user.role==='admin'){
+      state.pedidosView = st.pedidosView || 'gestores';
+      state.pedidosGestorId = st.pedidosGestorId || null;
       adminSwitch(st.adminTab || 'resumen');
     } else if(st.role!=='admin' && state.user.role!=='admin'){
       state.catalogLevel = st.catalogLevel || 'cats';
@@ -2087,6 +2109,7 @@ function enterApp(){
   $('app').classList.remove('hidden');
   $('userName').textContent = state.user.nombre;
   loadDeletedNovIds(); // punto #2: las novedades descartadas son por-usuario, no globales
+  loadReadNovIds(); // novedades ya vistas por este usuario (indicador de "no leída")
   const savedTab = localStorage.getItem('ds_tab');
   _skipNavPush = true;
   if(state.user.role==='admin'){
@@ -2260,6 +2283,7 @@ function startNovedadesListener(){
       .sort((a,b)=>(b.fecha?.seconds||0)-(a.fecha?.seconds||0));
     updateNovBadge();
     if(state.adminTab==='novedades') renderAdminNovedades();
+    if($('novedadesModal') && !$('novedadesModal').classList.contains('hidden')) renderNovedadesList();
   }, ()=>{});
 }
 
@@ -3773,6 +3797,10 @@ function setAdminCat(c){ state.catFilter=c; renderCatFilters('adminCatFilters',c
    vivo por nombre (y también por categoría/subcategoría) mientras el admin escribe,
    respetando además el filtro de categoría activo si lo hay. */
 function onAdminProdSearch(){ renderAdminCatalogo(); }
+/* Punto #6: buscadores globales en Pedidos y Gestores del panel del Administrador —
+   filtran en vivo mientras el admin escribe, útiles cuando esas listas crecen mucho. */
+function onAdminPedidosSearch(){ renderAdminPedidos(); }
+function onAdminGestoresSearch(){ renderAdminGestores(); }
 function renderAdminCatalogo(){
   renderCatFilters('adminCatFilters', state.catFilter, 'setAdminCat');
   const box=$('adminProdList');
@@ -4169,29 +4197,111 @@ async function removeProduct(id){
   }
 }
 
-/* ============ ADMIN PEDIDOS ============ */
-function renderAdminPedidos(){
-  const box=$('adminPedidosList');
-  const list = [...state.pedidos].sort((a,b)=>(b.fecha?.seconds||0)-(a.fecha?.seconds||0));
-  if(!list.length){ box.innerHTML='<div class="hint">No hay pedidos todavía.</div>'; return; }
-  box.innerHTML = list.map(o=>{
-    const st=o.estado||'pendiente';
-    const selId = 'orderStatus_'+o.id;
-    return `<div class="hist-item" style="cursor:pointer;" onclick="openOrderDetailModal('${o.id}')">
+/* ============ ADMIN PEDIDOS (punto #7: agrupados por gestor) ============ */
+function pedidoCardHtml(o, opts){
+  opts = opts || {};
+  const st=o.estado||'pendiente';
+  const selId = 'orderStatus_'+o.id;
+  return `<div class="hist-item" style="cursor:pointer;" onclick="openOrderDetailModal('${o.id}')">
       <div class="hist-top"><b>${escapeHtml(o.cliente?.nombre||'—')}</b>
-        <div onclick="event.stopPropagation();">
+        <div onclick="event.stopPropagation();" style="display:flex;align-items:center;gap:6px;">
           <button type="button" class="csel-display" style="width:auto;padding:4px 10px;font-size:11px;" onclick="openChoiceSelect('${selId}','Estado del pedido')"><span id="${selId}_label">${st==='pendiente'?'Pendiente':st==='completado'?'Completado':'Pagado'}</span><span class="csel-arrow">▾</span></button>
           <select id="${selId}" class="csel-native" onchange="updateOrderStatus('${o.id}',this.value); syncChoiceLabel('${selId}');">
             <option value="pendiente" ${st==='pendiente'?'selected':''}>Pendiente</option>
             <option value="completado" ${st==='completado'?'selected':''}>Completado</option>
             <option value="pagado" ${st==='pagado'?'selected':''}>Pagado</option>
           </select>
+          <button type="button" class="del" title="Eliminar pedido" style="width:28px;height:28px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;" onclick="event.stopPropagation();deletePedido('${o.id}')">${ICONS.trash}</button>
         </div>
       </div>
-      <div class="hist-meta">Gestor: ${escapeHtml(o.gestorNombre)} · Tel: ${escapeHtml(o.cliente?.telefono||'—')}</div>
+      ${opts.showGestor!==false?`<div class="hist-meta">Gestor: ${escapeHtml(o.gestorNombre)} · Tel: ${escapeHtml(o.cliente?.telefono||'—')}</div>`:`<div class="hist-meta">Tel: ${escapeHtml(o.cliente?.telefono||'—')}</div>`}
       <div class="hist-total">$${money(o.precios?.totalCobrar)} <span style="font-weight:400;color:var(--muted);font-size:11px;">(comisión $${money(o.precios?.comision)})</span></div>
     </div>`;
+}
+function renderAdminPedidos(){
+  const box=$('adminPedidosList');
+  const nav=$('adminPedidosNav');
+  const q = ($('adminPedidosSearch')?.value||'').toLowerCase().trim();
+
+  // Con búsqueda activa: se ignora el agrupado por gestor y se muestran los pedidos
+  // que coincidan de TODA la app (más rápido que entrar gestor por gestor).
+  if(q){
+    if(nav) nav.innerHTML = '';
+    let list = [...state.pedidos].sort((a,b)=>(b.fecha?.seconds||0)-(a.fecha?.seconds||0));
+    list = list.filter(o=>{
+      const enCliente = (o.cliente?.nombre||'').toLowerCase().includes(q) || (o.cliente?.telefono||'').toLowerCase().includes(q);
+      const enGestor = (o.gestorNombre||'').toLowerCase().includes(q);
+      const enProductos = (o.productos||[]).some(p=>(p.nombre||'').toLowerCase().includes(q));
+      return enCliente || enGestor || enProductos;
+    });
+    box.innerHTML = list.length ? list.map(o=>pedidoCardHtml(o,{showGestor:true})).join('') : `<div class="hint">Ningún pedido coincide con "${escapeHtml(q)}".</div>`;
+    return;
+  }
+
+  if(state.pedidosView==='detalle' && state.pedidosGestorId){
+    const g = state.gestores.find(x=>x.id===state.pedidosGestorId);
+    const suyos = state.pedidos.filter(o=>o.gestorId===state.pedidosGestorId).sort((a,b)=>(b.fecha?.seconds||0)-(a.fecha?.seconds||0));
+    // Al entrar a ver los pedidos de este gestor, se marcan como "vistos" — así el
+    // punto luminoso de "pedido nuevo" desaparece de su tarjeta en la lista de gestores.
+    markPedidosVistos(suyos.map(o=>o.id));
+    if(nav) nav.innerHTML = `<div class="back-cats" onclick="goAdminPedidosGestores()">${ICONS.back}Volver a gestores</div>
+      <div style="font-weight:800;margin-bottom:8px;">${escapeHtml(g?.nombre||'Gestor')} · ${suyos.length} pedido(s)</div>`;
+    box.innerHTML = suyos.length ? suyos.map(o=>pedidoCardHtml(o,{showGestor:false})).join('') : '<div class="hint">Este gestor no tiene pedidos todavía.</div>';
+    return;
+  }
+
+  // Vista principal: un renglón por gestor, con cuántos pedidos tiene y un punto
+  // dorado animado si le llegó un pedido que el admin aún no ha revisado.
+  if(nav) nav.innerHTML = '';
+  const conteos = {};
+  state.pedidos.forEach(o=>{ conteos[o.gestorId] = (conteos[o.gestorId]||0) + 1; });
+  const gestoresConPedidos = state.gestores.filter(g=>conteos[g.id]>0);
+  if(!gestoresConPedidos.length){ box.innerHTML='<div class="hint">No hay pedidos todavía.</div>'; return; }
+  gestoresConPedidos.sort((a,b)=>(conteos[b.id]||0)-(conteos[a.id]||0));
+  box.innerHTML = gestoresConPedidos.map(g=>{
+    const hayNuevo = state.pedidos.some(o=>o.gestorId===g.id && !state.pedidosSeenIds.includes(o.id));
+    return `<div class="pgestor-card" onclick="openAdminPedidosGestor('${g.id}')">
+      ${hayNuevo?'<span class="pgestor-new" title="Pedido(s) nuevo(s)"></span>':''}
+      ${g.fotoUrl?`<img class="pgestor-avatar" src="${g.fotoUrl}">`:`<div class="pgestor-avatar">${(g.nombre||'?').charAt(0)}</div>`}
+      <div>
+        <b>${escapeHtml(g.nombre)}</b>
+        <div class="pgestor-count">${conteos[g.id]} pedido${conteos[g.id]===1?'':'s'}</div>
+      </div>
+      <span class="pgestor-arrow">›</span>
+    </div>`;
   }).join('');
+}
+function openAdminPedidosGestor(gestorId){
+  state.pedidosView = 'detalle';
+  state.pedidosGestorId = gestorId;
+  if($('adminPedidosSearch')) $('adminPedidosSearch').value = '';
+  renderAdminPedidos();
+  pushNavState();
+}
+function goAdminPedidosGestores(){
+  state.pedidosView = 'gestores';
+  state.pedidosGestorId = null;
+  renderAdminPedidos();
+}
+function markPedidosVistos(ids){
+  if(!ids.length) return;
+  const nuevos = ids.filter(id=>!state.pedidosSeenIds.includes(id));
+  if(!nuevos.length) return;
+  state.pedidosSeenIds = [...state.pedidosSeenIds, ...nuevos];
+  localStorage.setItem('admin_pedidos_seen', JSON.stringify(state.pedidosSeenIds));
+}
+async function deletePedido(id){
+  const ok = await showConfirm('¿Eliminar este pedido? Esta acción no se puede deshacer.');
+  if(!ok) return;
+  try{
+    await withTimeout(deleteDoc(doc(db,'pedidos',id)));
+    showToast('Pedido eliminado.');
+  }catch(e){
+    console.error('[deletePedido]', e?.code||'', e?.message||e);
+    if(e?.code==='permission-denied') showToast('No se pudo eliminar: Firestore rechazó el permiso. Revisa las Reglas de seguridad de la colección "pedidos".');
+    else if(String(e?.message||'').startsWith('timeout')) showToast('Tardó demasiado en responder. Revisa tu conexión e intenta de nuevo.');
+    else showToast('No se pudo eliminar el pedido. Revisa la consola del navegador para más detalle.');
+  }
 }
 async function updateOrderStatus(id, estado){
   await updateDoc(doc(db,'pedidos',id), { estado });
@@ -4357,8 +4467,14 @@ function lastSaleSeconds(gestorId){
 }
 function renderAdminGestores(){
   const box=$('adminGestoresList');
-  if(!state.gestores.length){ box.innerHTML='<div class="hint">No hay gestores. Toca "+ Nuevo gestor".</div>'; return; }
-  box.innerHTML = state.gestores.map(g=>{
+  const q = ($('adminGestoresSearch')?.value||'').toLowerCase().trim();
+  let lista = state.gestores;
+  if(q) lista = lista.filter(g=>(g.nombre||'').toLowerCase().includes(q)||(g.username||'').toLowerCase().includes(q)||(g.telefono||'').toLowerCase().includes(q));
+  if(!lista.length){
+    box.innerHTML = q ? `<div class="hint">Ningún gestor coincide con "${escapeHtml(q)}".</div>` : '<div class="hint">No hay gestores. Toca "+ Nuevo gestor".</div>';
+    return;
+  }
+  box.innerHTML = lista.map(g=>{
     const online = isGestorOnline(g);
     const ultVenta = lastSaleSeconds(g.id);
     return `
@@ -4529,23 +4645,23 @@ async function registrarPagoComision(){
 }
 
 /* ============ NOVEDADES ============ */
+const NOV_PAGE_SIZE = 24;
 function novTypeClass(tipo){
   return {nuevo:'nuevo', agotado:'agotado', disponible:'disponible', stock_up:'stock', stock_down:'stock', comision:'precio', precio_up:'precio', precio_down:'precio'}[tipo] || 'default';
 }
-/* Íconos y color de acento por variante visual de la tarjeta "hero" de novedades. */
+/* Ícono grande de fondo (muy tenue, animado) por variante visual de la tarjeta. */
 const NOV_VARIANT_ICONS = {
-  nuevo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>',
-  agotado: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
-  disponible: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>',
-  stock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 8l5-5 5 5M7 16l5 5 5-5"/></svg>',
-  up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>',
-  down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
-  default: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a2.5 2.5 0 0 0 2.4-2H9.6a2.5 2.5 0 0 0 2.4 2Z"/><path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 3h16l-2-3Z"/></svg>'
+  nuevo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>',
+  agotado: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  disponible: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>',
+  stock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 8l5-5 5 5M7 16l5 5 5-5"/></svg>',
+  up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>',
+  down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+  default: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a2.5 2.5 0 0 0 2.4-2H9.6a2.5 2.5 0 0 0 2.4 2Z"/><path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 3h16l-2-3Z"/></svg>'
 };
-const NOV_VARIANT_COLOR = { nuevo:'gold', agotado:'red', disponible:'green', stock:'blue', up:'green', down:'orange', default:'gray' };
-/* Determina la variante visual de la tarjeta (degradado + insignia + etiqueta):
-   el campo tipo por sí solo no distingue si una comisión subió o bajó, así que ahí
-   nos apoyamos en el propio texto del mensaje ("subió"/"bajó"). */
+/* Determina la variante visual de la tarjeta (ícono de fondo + etiqueta): el campo
+   tipo por sí solo no distingue si una comisión subió o bajó, así que ahí nos
+   apoyamos en el propio texto del mensaje ("subió"/"bajó"). */
 function novCardVariant(n){
   const cls = novTypeClass(n.tipo); // nuevo, agotado, disponible, stock, precio, default
   if(cls==='precio'){
@@ -4555,27 +4671,21 @@ function novCardVariant(n){
   }
   return cls;
 }
-function novLabelText(n){
-  const labels = {
-    nuevo:'Producto nuevo', agotado:'Agotado', disponible:'Disponible de nuevo',
-    stock_up:'Stock en aumento', stock_down:'Stock bajo',
-    precio_up:'Precio subió', precio_down:'Precio bajó'
-  };
-  if(n.tipo==='comision') return /subi[oó]/i.test(n.mensaje||'') ? 'Comisión subió' : 'Comisión bajó';
-  return labels[n.tipo] || 'Novedad';
+/* La franja lateral y el color del ícono de fondo van por FAMILIA (verde=nuevo,
+   rojo=agotado, azul=stock, dorado=precio/comisión sea cual sea la dirección,
+   gris=genérica) — pedido explícito de Kevin para no saturar con demasiados colores. */
+function novStripeFamily(n){
+  const cls = novTypeClass(n.tipo);
+  if(cls==='disponible') return 'nuevo'; // producto disponible de nuevo: mismo verde que "nuevo"
+  return cls;
 }
-/* Insignia flotante junto al título: si el producto tiene foto, se muestra la foto
-   real con una banderita del tipo prendida en la esquina; si no, un cúmulo de 3
-   círculos animados con el ícono del tipo (mismo lenguaje visual que el Historial). */
-function novBadgeHtml(n){
+/* Ícono grande, muy tenue, en la esquina inferior derecha de la tarjeta — el color
+   sigue la misma familia que la franja lateral. */
+function novBgIconHtml(n){
   const variant = novCardVariant(n);
-  const color = NOV_VARIANT_COLOR[variant] || 'gray';
+  const family = novStripeFamily(n);
   const icon = NOV_VARIANT_ICONS[variant] || NOV_VARIANT_ICONS.default;
-  const prod = state.productos.find(p=>p.id===n.productoId);
-  if(prod && prod.imagenUrl){
-    return `<div class="nov-photo-badge"><img src="${prod.imagenUrl}" alt=""><div class="flag ${color}">${icon}</div></div>`;
-  }
-  return `<div class="nov-badge-stack ${color}"><div class="nb nb3">${icon}</div><div class="nb nb2">${icon}</div><div class="nb nb1">${icon}</div></div>`;
+  return `<div class="nov-bg-icon c-${family}">${icon}</div>`;
 }
 function novMatchesTab(n, tab){
   if(tab==='todas') return true;
@@ -4585,10 +4695,37 @@ function novMatchesTab(n, tab){
   if(tab==='aumento') return n.tipo==='precio_up';
   return n.tipo===tab;
 }
+/* Punto #7: buscador por texto — compara contra título y mensaje (sin acentos). */
+function novMatchesSearch(n, q){
+  if(!q) return true;
+  const norm = s => String(s||'').toLowerCase();
+  const hay = norm(n.titulo)+' '+norm(n.mensaje);
+  return hay.includes(norm(q));
+}
+function onNovSearchInput(v){
+  clearTimeout(window._novSearchTimer);
+  window._novSearchTimer = setTimeout(()=>{
+    state.novSearchQuery = v;
+    state.novVisibleCount = NOV_PAGE_SIZE;
+    renderNovedadesList();
+  }, 150);
+}
 function switchNovTab(tab){
   state.novTab = tab;
+  state.novVisibleCount = NOV_PAGE_SIZE;
   document.querySelectorAll('.nov-tab').forEach(b=>b.classList.toggle('active', b.dataset.nt===tab));
   renderNovedadesList();
+}
+/* Punto #6: contador entre paréntesis en cada pestaña, sobre el mismo conjunto que
+   ve el buscador (para que siempre reflejen lo que aparecería al tocarlas). */
+function updateNovTabCounts(){
+  const base = state.novedades.filter(n=>!state.deletedNovIds.includes(n.id) && novMatchesSearch(n, state.novSearchQuery));
+  document.querySelectorAll('#novTabs .nov-tab').forEach(btn=>{
+    const tab = btn.dataset.nt;
+    const count = tab==='todas' ? base.length : base.filter(n=>novMatchesTab(n, tab)).length;
+    const countEl = btn.querySelector('.nov-tab-count');
+    if(countEl) countEl.textContent = count>0 ? ` (${count})` : '';
+  });
 }
 function updateNovBadge(){
   const badge = $('novBadge');
@@ -4600,8 +4737,30 @@ function openNovedades(){
   $('novedadesModal').classList.remove('hidden');
   pushNavState();
   state.novTab = 'todas';
+  state.novSearchQuery = '';
+  state.novVisibleCount = NOV_PAGE_SIZE;
+  if($('novSearchInput')) $('novSearchInput').value = '';
   document.querySelectorAll('.nov-tab').forEach(b=>b.classList.toggle('active', b.dataset.nt==='todas'));
   renderNovedadesList();
+  const listEl = $('novedadesList');
+  if(listEl && !listEl._novScrollBound){
+    listEl.addEventListener('scroll', onNovListScroll);
+    listEl._novScrollBound = true;
+  }
+}
+/* Punto #8: en vez de pintar todas las novedades de golpe, se cargan de a
+   NOV_PAGE_SIZE y se van agregando más al acercarse al final de la lista. */
+function onNovListScroll(){
+  const el = $('novedadesList');
+  if(!el) return;
+  if(el.scrollTop + el.clientHeight >= el.scrollHeight - 120){
+    const tab = state.novTab || 'todas';
+    const total = state.novedades.filter(n=>!state.deletedNovIds.includes(n.id) && novMatchesTab(n, tab) && novMatchesSearch(n, state.novSearchQuery)).length;
+    if(state.novVisibleCount < total){
+      state.novVisibleCount += NOV_PAGE_SIZE;
+      renderNovedadesList();
+    }
+  }
 }
 /* Punto #2: ícono de "vaciar buzón" — solo tiene sentido mostrarlo si hay algo que
    vaciar, y solo dentro del modal ya abierto (nunca fuera de él). */
@@ -4632,27 +4791,89 @@ const NOV_NAME_FIELD = {
   stock_up:'titulo', stock_down:'titulo', comision:'titulo',
   precio_up:'titulo', precio_down:'titulo'
 };
+/* Palabras clave a resaltar en el título/mensaje según el tipo de novedad, y el
+   nombre del producto (el campo que no es la palabra clave). Búsqueda flexible
+   (mayúsculas/acentos) porque el texto exacto varía según cómo se generó. */
+const NOV_KEYWORD_PATTERNS = {
+  nuevo:       [/nuevo\s+producto/i],
+  comision:    [/nueva\s+comisi[oó]n/i, /comisi[oó]n\s+(?:subi[oó]|baj[oó])/i, /comisi[oó]n/i],
+  precio_down: [/baj[oó]\s+el\s+precio/i, /precio\s+baj[oó]/i],
+  precio_up:   [/aument[oó]\s+el\s+precio/i, /precio\s+subi[oó]/i],
+  agotado:     [/agotado/i],
+  stock_up:    [/stock/i, /ahora\s+hay\s+\d+/i],
+  stock_down:  [/stock/i, /quedan\s+\d+/i]
+};
+function highlightNovKeyword(escapedText, tipo){
+  const patterns = NOV_KEYWORD_PATTERNS[tipo];
+  if(!patterns) return escapedText;
+  for(const re of patterns){
+    if(re.test(escapedText)) return escapedText.replace(re, m=>`<span class="nov-hl">${m}</span>`);
+  }
+  return escapedText;
+}
+function renderNovHeadlineHtml(n){
+  const esc = escapeHtml(n.titulo);
+  if(NOV_NAME_FIELD[n.tipo]!=='titulo') return `<span class="nov-hl-name">${esc}</span>`;
+  return highlightNovKeyword(esc, n.tipo);
+}
+function renderNovDetailHtml(n){
+  const esc = escapeHtml(n.mensaje);
+  if(NOV_NAME_FIELD[n.tipo]==='titulo') return `<span class="nov-hl-name">${esc}</span>`;
+  return highlightNovKeyword(esc, n.tipo);
+}
+/* Punto #4: agrupa por bloques temporales (Hoy / Ayer / Esta semana / Anteriores),
+   igual que las apps modernas de notificaciones. */
+function novGroupLabel(seconds){
+  if(!seconds) return 'Anteriores';
+  const d = new Date(seconds*1000);
+  const now = new Date();
+  const startOfDay = dt => new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()).getTime();
+  const diffDays = Math.round((startOfDay(now) - startOfDay(d))/86400000);
+  if(diffDays<=0) return 'Hoy';
+  if(diffDays===1) return 'Ayer';
+  if(diffDays<=7) return 'Esta semana';
+  return 'Anteriores';
+}
+const NOV_GROUP_ORDER = ['Hoy','Ayer','Esta semana','Anteriores'];
+function novCardHtml(n){
+  const fecha = n.fecha?.seconds ? new Date(n.fecha.seconds*1000).toLocaleDateString('es-CU',{day:'numeric',month:'short',year:'numeric'}) : '';
+  const family = novStripeFamily(n);
+  const prod = state.productos.find(p=>p.id===n.productoId);
+  const isUnread = !state.novReadIds.includes(n.id);
+  return `<div class="nov-item nov-stripe-${family}" onclick="onNovedadTap('${n.id}')">
+    ${novBgIconHtml(n)}
+    ${prod && prod.imagenUrl ? `<img class="nov-thumb-sm" src="${prod.imagenUrl}" alt="">` : ''}
+    <div class="nov-row-top">
+      ${isUnread ? '<span class="nov-unread-dot" title="No leída"></span>' : ''}
+      <div class="nov-item-title">${renderNovHeadlineHtml(n)}</div>
+    </div>
+    <div class="nov-item-msg">${renderNovDetailHtml(n)}</div>
+    <div class="nov-item-date">${fecha}</div>
+    <button type="button" class="nov-trash-btn" onclick="event.stopPropagation();dismissNovedad('${n.id}')" title="Descartar de mi vista">${ICONS.trash}</button>
+  </div>`;
+}
 function renderNovedadesList(){
   const box = $('novedadesList');
   const tab = state.novTab || 'todas';
-  const visible = state.novedades.filter(n=>!state.deletedNovIds.includes(n.id) && novMatchesTab(n, tab));
   updateNovDismissAllBtn();
-  if(!visible.length){ box.innerHTML='<div class="hint">No hay novedades en esta pestaña.</div>'; return; }
-  box.innerHTML = visible.map(n=>{
-    const fecha = n.fecha?.seconds ? new Date(n.fecha.seconds*1000).toLocaleDateString('es-CU',{day:'numeric',month:'short',year:'numeric'}) : '';
-    const variant = novCardVariant(n);
-    const nameField = NOV_NAME_FIELD[n.tipo] || 'mensaje';
-    const headline = nameField==='titulo' ? n.titulo : n.mensaje;
-    const detail = nameField==='titulo' ? n.mensaje : n.titulo;
-    return `<div class="nov-item nov-t-${variant}" onclick="onNovedadTap('${n.id}')">
-      ${novBadgeHtml(n)}
-      <div class="nov-item-label">${NOV_VARIANT_ICONS[variant]||''}${escapeHtml(novLabelText(n))}</div>
-      <div class="nov-item-title">${escapeHtml(headline)}</div>
-      <div class="nov-item-msg">${escapeHtml(detail)}</div>
-      <div class="nov-item-date">${fecha}</div>
-      <button type="button" class="nov-trash-btn" onclick="event.stopPropagation();dismissNovedad('${n.id}')" title="Descartar de mi vista">${ICONS.trash}</button>
-    </div>`;
-  }).join('');
+  updateNovTabCounts();
+  const visible = state.novedades.filter(n=>!state.deletedNovIds.includes(n.id) && novMatchesTab(n, tab) && novMatchesSearch(n, state.novSearchQuery));
+  if(!visible.length){
+    box.innerHTML = `<div class="hint">${state.novSearchQuery ? 'Nada coincide con tu búsqueda.' : 'No hay novedades en esta pestaña.'}</div>`;
+    return;
+  }
+  const pageItems = visible.slice(0, state.novVisibleCount || NOV_PAGE_SIZE);
+  let lastGroup = null;
+  let html = '';
+  for(const n of pageItems){
+    const group = novGroupLabel(n.fecha?.seconds);
+    if(group !== lastGroup){
+      html += `<div class="nov-group-header">${group}</div>`;
+      lastGroup = group;
+    }
+    html += novCardHtml(n);
+  }
+  box.innerHTML = html;
 }
 /* Punto #2: cada gestor/admin descarta sus propias novedades — antes se guardaba en
    una sola clave global de localStorage, así que si Kevin descartaba sus novedades,
@@ -4666,6 +4887,23 @@ function deletedNovKey(){
 function loadDeletedNovIds(){
   try{ state.deletedNovIds = JSON.parse(localStorage.getItem(deletedNovKey())||'[]'); }
   catch(e){ state.deletedNovIds = []; }
+}
+/* Punto #5: qué novedades ya vio cada usuario (también por-usuario, mismo criterio
+   que las descartadas). Al cerrar el panel, todo lo que estaba visible se marca
+   como leído. */
+function novReadKey(){
+  const who = state.user?.username || state.user?.id || 'anon';
+  return 'read_novs_'+who;
+}
+function loadReadNovIds(){
+  try{ state.novReadIds = JSON.parse(localStorage.getItem(novReadKey())||'[]'); }
+  catch(e){ state.novReadIds = []; }
+}
+function markAllNovedadesRead(){
+  const idsActuales = state.novedades.filter(n=>!state.deletedNovIds.includes(n.id)).map(n=>n.id);
+  if(!idsActuales.length) return;
+  state.novReadIds = [...new Set([...state.novReadIds, ...idsActuales])];
+  localStorage.setItem(novReadKey(), JSON.stringify(state.novReadIds));
 }
 function dismissNovedad(id){
   state.deletedNovIds.push(id);
@@ -4701,7 +4939,12 @@ function closeConfirm(val){
   if(state.confirmResolve) state.confirmResolve(val);
   state.confirmResolve = null;
 }
-function closeNovedades(){ $('novedadesModal').classList.add('hidden'); }
+/* Punto #5: al cerrar el panel, todo lo que estaba visible queda marcado como leído
+   (se guarda por-usuario, ver novReadKey/loadReadNovIds arriba). */
+function closeNovedades(){
+  markAllNovedadesRead();
+  $('novedadesModal').classList.add('hidden');
+}
 function renderAdminNovedades(){
   const box = $('adminNovList');
   if(!state.novedades.length){ box.innerHTML='<div class="hint">Sin novedades publicadas.</div>'; return; }
@@ -4818,8 +5061,10 @@ Object.assign(window, {
   openTarifasModal, closeTarifasModal, switchTarifaLocal, switchTarifaTipo, renderTarifas, selectTarifa,
   handleCarnetUpload, handlePerfilPhoto, pickCarnet, removeCarnet, clearValeDraft, markComisionEditada, markComisionEditadaRecogida,
   openNovedades, closeNovedades, publishNovedad, deleteNovedad, deleteAllNovedades, dismissNovedad, dismissAllNovedades, onNovedadTap, closeConfirm,
+  onNovSearchInput,
   switchNovTab,
-  setAdminCat, installPWA, dismissPWA, onAdminProdSearch,
+  setAdminCat, installPWA, dismissPWA, onAdminProdSearch, onAdminPedidosSearch, onAdminGestoresSearch,
+  openAdminPedidosGestor, goAdminPedidosGestores, deletePedido,
   setCatalogView, onGestorSearch, goCatalogCats, goCatalogCat, goCatalogSub, onCatalogSortChange, toggleFaq,
   openProductDetail, closeProductDetail, pickFromDetail, removeProductPhoto, shiftDetailProduct,
   applyAppUpdate, forceAppRefresh, toggleNewCarousel, toggleDarkMode, switchValeMode,
