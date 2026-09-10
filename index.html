@@ -93,56 +93,67 @@ body.dark .nov-tab.active{background:var(--gold);color:#3a2c00;}
 .nov-tab[data-nt="stock"]{border-color:rgba(46,110,181,.5);}
 .nov-tab[data-nt="precio"],.nov-tab[data-nt="comision"],.nov-tab[data-nt="aumento"]{border-color:rgba(47,143,91,.5);}
 
-/* Novedades: tarjeta clara (blanca/superficie normal) con animación de fondo por
-   tipo, en vez de fondos de color saturados (rediseño solicitado). */
-.nov-item{position:relative;overflow:hidden;border-radius:16px;padding:14px 86px 14px 16px;margin-bottom:10px;
-  cursor:pointer;animation:slideIn .3s ease;box-shadow:0 2px 10px rgba(0,0,0,.08);
-  background:var(--surface);color:var(--text);border:1px solid var(--line);}
-.nov-item::after{content:'';position:absolute;left:-30%;top:0;bottom:0;width:50%;
-  background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);
+/* Novedades: tarjeta "hero" con degradado, brillo e insignia animada por tipo —
+   mismo lenguaje visual que la tarjeta de comisión total del Historial. */
+.nov-item{position:relative;overflow:hidden;border-radius:18px;padding:16px 82px 14px 16px;margin-bottom:12px;
+  cursor:pointer;animation:slideIn .3s ease;color:#fff;box-shadow:0 10px 24px rgba(0,0,0,.2);}
+.nov-item::before{content:'';position:absolute;top:-42px;right:-26px;width:150px;height:150px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.18),transparent 70%);pointer-events:none;}
+.nov-item::after{content:'';position:absolute;left:-30%;top:0;bottom:0;width:55%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.13),transparent);
   animation:histHeroSheen 6s ease-in-out infinite;pointer-events:none;z-index:1;}
-body.dark .nov-item::after{background:linear-gradient(100deg,transparent,rgba(255,255,255,.06),transparent);}
-.nov-item-title{position:relative;z-index:2;font-weight:800;font-size:14px;margin-bottom:4px;line-height:1.3;color:var(--text);}
-.nov-item-msg{position:relative;z-index:2;font-size:12.8px;line-height:1.4;color:var(--muted);}
-.nov-item-date{position:relative;z-index:2;font-size:10.5px;margin-top:8px;font-weight:600;color:var(--muted);opacity:.85;}
-.nov-thumb{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:56px;height:56px;border-radius:14px;
-  object-fit:cover;border:2px solid var(--line);box-shadow:0 4px 10px rgba(0,0,0,.15);z-index:2;}
-.nov-thumb-ic{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:56px;height:56px;border-radius:14px;
-  display:flex;align-items:center;justify-content:center;background:var(--surface-2);
-  border:2px solid var(--line);z-index:2;color:var(--green-dim);}
-.nov-thumb-ic svg{width:26px;height:26px;}
-.nov-item .photo-remove{top:8px;right:8px;background:var(--surface-2);color:var(--text);box-shadow:0 2px 6px rgba(0,0,0,.15);z-index:2;}
+.nov-item-label{position:relative;z-index:2;font-size:10.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;
+  opacity:.85;display:flex;align-items:center;gap:5px;margin-bottom:5px;}
+.nov-item-label svg{width:13px;height:13px;flex:none;}
+.nov-item-title{position:relative;z-index:2;font-weight:800;font-size:17px;margin-bottom:3px;line-height:1.25;}
+.nov-item-msg{position:relative;z-index:2;font-size:12.5px;line-height:1.4;color:inherit;opacity:.92;}
+.nov-item-date{position:relative;z-index:2;font-size:10.5px;margin-top:10px;font-weight:600;color:inherit;opacity:.7;}
+.nov-item .nov-trash-btn{position:absolute;bottom:10px;right:12px;z-index:3;width:28px;height:28px;border-radius:50%;
+  background:rgba(255,255,255,.92);color:#3a3a34;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 6px rgba(0,0,0,.28);}
+.nov-item .nov-trash-btn svg{width:14px;height:14px;}
+.nov-item .nov-trash-btn:active{transform:scale(.9);}
 
-/* Ícono decorativo animado de fondo, grande y semitransparente, detrás del texto —
-   reemplaza los fondos de color por tipo que había antes. */
-.nov-bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;
-  display:flex;align-items:center;justify-content:flex-end;gap:2px;padding-right:4px;}
-.nov-bg svg{width:100px;height:100px;flex:none;opacity:.13;}
-.nov-bg-nuevo svg{color:var(--gold);animation:novBgBob 3.2s ease-in-out infinite;}
-@keyframes novBgBob{0%,100%{transform:translateY(0) rotate(-4deg);}50%{transform:translateY(-8px) rotate(4deg);}}
-.nov-bg-agotado svg{color:var(--danger);width:78px;height:78px;animation:novBgPulse 2.4s ease-in-out infinite;}
-.nov-bg-agotado svg:nth-child(2){animation-delay:.4s;width:56px;height:56px;}
-.nov-bg-agotado svg:nth-child(3){animation-delay:.8s;width:40px;height:40px;}
-@keyframes novBgPulse{0%,100%{transform:scale(1);opacity:.11;}50%{transform:scale(1.14);opacity:.22;}}
-.nov-bg-up svg{color:var(--ok);width:70px;height:70px;animation:novBgRise 2.6s ease-in-out infinite;}
-.nov-bg-up svg:nth-child(2){animation-delay:.5s;width:56px;height:56px;}
-.nov-bg-up svg:nth-child(3){animation-delay:1s;width:42px;height:42px;}
-@keyframes novBgRise{0%{transform:translateY(14px);opacity:.04;}50%{opacity:.2;}100%{transform:translateY(-14px);opacity:.04;}}
-.nov-bg-down svg{color:var(--danger);width:70px;height:70px;animation:novBgFall 2.6s ease-in-out infinite;}
-.nov-bg-down svg:nth-child(2){animation-delay:.5s;width:56px;height:56px;}
-.nov-bg-down svg:nth-child(3){animation-delay:1s;width:42px;height:42px;}
-@keyframes novBgFall{0%{transform:translateY(-14px);opacity:.04;}50%{opacity:.2;}100%{transform:translateY(14px);opacity:.04;}}
-.nov-bg-stock svg{color:var(--blue);animation:novBgSway 3s ease-in-out infinite;}
-@keyframes novBgSway{0%,100%{transform:translateX(0) rotate(0deg);}50%{transform:translateX(-8px) rotate(-10deg);}}
-.nov-bg-disponible svg{color:var(--ok);animation:novBgPulse2 2.2s ease-in-out infinite;}
-@keyframes novBgPulse2{0%,100%{transform:scale(1);opacity:.11;}50%{transform:scale(1.16);opacity:.2;}}
-.nov-bg-default svg{color:var(--muted);animation:novBgBob 3.2s ease-in-out infinite;}
+/* --- degradado por naturaleza de la novedad --- */
+.nov-t-nuevo{background:linear-gradient(135deg,#8a6a00 0%,var(--gold) 55%,#F4D160 130%);}
+.nov-t-agotado{background:linear-gradient(135deg,#5c1414 0%,var(--red) 55%,#c9634a 130%);}
+.nov-t-disponible{background:linear-gradient(135deg,#0F2E1E 0%,var(--green) 50%,var(--green-dim) 130%);}
+.nov-t-stock{background:linear-gradient(135deg,#0c2748 0%,var(--blue) 55%,#5B9BDB 130%);}
+.nov-t-up{background:linear-gradient(135deg,#0F2E1E 0%,var(--green) 50%,var(--green-dim) 130%);}
+.nov-t-down{background:linear-gradient(135deg,#5c2a10 0%,#C9633C 55%,#e08a5c 130%);}
+.nov-t-default{background:linear-gradient(135deg,#4a4a42,#6b6b60);}
 
-/* Novedades: resaltado de palabras clave y nombre de producto (punto #3) */
-.nov-hl,.nov-hl-name{font-weight:800;padding:1px 6px;border-radius:6px;background:var(--avail-ok-bg);color:var(--green-dim);
-  box-decoration-break:clone;-webkit-box-decoration-break:clone;}
-.nov-hl-name{background:var(--surface-2);color:var(--text);}
-body.dark .nov-hl{color:var(--gold);}
+/* Insignia flotante (cuando el producto no tiene foto): 3 círculos superpuestos con
+   el ícono del tipo, animados igual que las monedas del Historial. */
+.nov-badge-stack{position:absolute;top:16px;right:16px;width:56px;height:50px;z-index:1;}
+.nov-badge-stack .nb{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 -3px 6px rgba(0,0,0,.22), inset 0 2px 3px rgba(255,255,255,.35), 0 3px 8px rgba(0,0,0,.25);}
+.nov-badge-stack .nb svg{width:52%;height:52%;}
+.nov-badge-stack .nb3{width:28px;height:28px;left:0;top:0;opacity:.7;animation:coinFloat 2.8s ease-in-out infinite;}
+.nov-badge-stack .nb2{width:34px;height:34px;left:13px;top:7px;opacity:.88;animation:coinFloat 2.8s ease-in-out infinite .25s;}
+.nov-badge-stack .nb1{width:42px;height:42px;left:5px;top:13px;animation:coinFloat 2.8s ease-in-out infinite .5s;}
+.nov-badge-stack.gold .nb{background:linear-gradient(135deg,#F9E08B,var(--gold) 70%);color:#7a5c00;}
+.nov-badge-stack.red .nb{background:linear-gradient(135deg,#e88,var(--red) 75%);color:#fff;}
+.nov-badge-stack.green .nb{background:linear-gradient(135deg,#7ED2A0,var(--green) 75%);color:#fff;}
+.nov-badge-stack.blue .nb{background:linear-gradient(135deg,#8fbdec,var(--blue) 75%);color:#fff;}
+.nov-badge-stack.orange .nb{background:linear-gradient(135deg,#f0b088,#C9633C 75%);color:#fff;}
+.nov-badge-stack.gray .nb{background:linear-gradient(135deg,#c9c9be,#8f8f83 75%);color:#fff;}
+
+/* Cuando el producto sí tiene foto: la foto real con una insignia pequeña del tipo
+   "prendida" en la esquina, con la misma animación. */
+.nov-photo-badge{position:absolute;top:14px;right:14px;width:54px;height:54px;z-index:1;}
+.nov-photo-badge img{width:100%;height:100%;border-radius:50%;object-fit:cover;
+  border:2px solid rgba(255,255,255,.6);box-shadow:0 4px 10px rgba(0,0,0,.3);}
+.nov-photo-badge .flag{position:absolute;bottom:-4px;right:-4px;width:24px;height:24px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.3);
+  animation:coinFloat 2.8s ease-in-out infinite;border:2px solid rgba(255,255,255,.75);}
+.nov-photo-badge .flag svg{width:58%;height:58%;}
+.nov-photo-badge .flag.gold{background:var(--gold);color:#7a5c00;}
+.nov-photo-badge .flag.red{background:var(--red);color:#fff;}
+.nov-photo-badge .flag.green{background:var(--green);color:#fff;}
+.nov-photo-badge .flag.blue{background:var(--blue);color:#fff;}
+.nov-photo-badge .flag.orange{background:#C9633C;color:#fff;}
+.nov-photo-badge .flag.gray{background:#8f8f83;color:#fff;}
 
 /* Gestores: presencia y actividad (punto #6) */
 .gestor-presence{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);font-weight:600;margin-top:5px;flex-wrap:wrap;}
@@ -420,6 +431,14 @@ body.dark .voucher-preview-btn{border-color:var(--gold);color:var(--gold);}
 .detail-nav{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;}
 .detail-nav.prev{left:6px;}
 .detail-nav.next{right:6px;}
+/* Punto #3: flechas EXTERIORES al cuadro de detalle (fuera de la caja blanca, pegadas
+   al borde de la pantalla) para saltar de un producto a otro dentro de la misma
+   subcategoría/lista, sin cerrar y volver a abrir el modal. */
+.detail-outer-nav{position:fixed;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;
+  background:rgba(0,0,0,.4);color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;z-index:61;}
+.detail-outer-nav.prev{left:6px;}
+.detail-outer-nav.next{right:6px;}
+.detail-outer-nav:active{transform:translateY(-50%) scale(.9);}
 .detail-desc{white-space:pre-wrap;line-height:1.5;font-size:13.5px;}
 .copy-btn, .dl-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 10px;border-radius:8px;background:var(--surface-2);font-size:12px;font-weight:700;margin-top:6px;margin-right:6px;}
 
@@ -1203,6 +1222,9 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 
       <div id="adminPanelCatalogo" class="admin-panel hidden">
         <button class="btn-primary" onclick="openProductModal()" style="margin-bottom:12px;">+ Nuevo producto</button>
+        <div class="field" style="margin-bottom:10px;">
+          <input type="text" id="adminProdSearch" placeholder="🔎 Buscar producto por nombre…" oninput="onAdminProdSearch()">
+        </div>
         <div class="cat-filter" id="adminCatFilters"></div>
         <div id="adminProdList"><div class="hint">Cargando…</div></div>
       </div>
@@ -1458,7 +1480,15 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 <!-- MODAL: Novedades -->
 <div id="novedadesModal" class="modal-back hidden" onclick="if(event.target===this) closeNovedades()">
   <div class="modal">
-    <div class="modal-head"><h3>🔔 Novedades</h3><button onclick="closeNovedades()">✕</button></div>
+    <div class="modal-head">
+      <h3>🔔 Novedades</h3>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button type="button" id="novDismissAllBtn" class="hidden" title="Vaciar mi buzón de novedades" onclick="dismissAllNovedades()" style="width:32px;height:32px;border-radius:9px;background:var(--surface-2);color:var(--red);display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/><path d="M10 11v6M14 11v6"/></svg>
+        </button>
+        <button onclick="closeNovedades()">✕</button>
+      </div>
+    </div>
     <div class="nov-tabs-wrap">
       <div class="nov-tabs" id="novTabs">
         <button type="button" class="nov-tab active" data-nt="todas" onclick="switchNovTab('todas')">Todas</button>
@@ -1477,11 +1507,13 @@ body.dark .hist-item.tappable .hist-tap-hint{color:var(--gold);}
 
 <!-- MODAL: Detalle producto -->
 <div id="productDetailModal" class="detail-modal-back hidden" onclick="if(event.target===this) closeProductDetail()">
+  <button type="button" id="detailOuterPrev" class="detail-outer-nav prev hidden" onclick="event.stopPropagation();shiftDetailProduct(-1)" title="Producto anterior">‹</button>
   <div class="detail-modal">
     <button class="detail-close" onclick="closeProductDetail()">✕</button>
     <div class="detail-photos" id="detailPhotos"></div>
     <div id="detailBody"></div>
   </div>
+  <button type="button" id="detailOuterNext" class="detail-outer-nav next hidden" onclick="event.stopPropagation();shiftDetailProduct(1)" title="Producto siguiente">›</button>
 </div>
 
 <!-- Confirm dialog -->
@@ -1706,7 +1738,7 @@ const state = {
   myGestorData:null, viewingGestorId:null,
   tarifaLocal:1, tarifaTipo:'motos', catFilter:'', pickerCatFilter:'',
   deferredPrompt:null, perfilPhotoUrl:'',
-  catalogLevel:'cats', catalogCat:'', catalogSub:'', catalogView:'grid', catalogSort:'recientes',
+  catalogLevel:'cats', catalogCat:'', catalogSub:'', catalogView:'grid', catalogSort:'recientes', catalogListIds:[],
   detailPhotoIdx:0, detailProduct:null, confirmResolve:null,
   deletedNovIds: [], // se carga por-usuario en loadDeletedNovIds() al iniciar sesión (punto #2)
   pwaDismissed: localStorage.getItem('pwa_dismissed')==='1',
@@ -3256,6 +3288,7 @@ function renderGestorCatalogo(){
     if(nav) nav.innerHTML = `<div class="back-cats" onclick="goCatalogCats()">${ICONS.back}Volver a categorías</div>`;
     let items = state.productos.filter(p=>(p.nombre||'').toLowerCase().includes(q)||(p.categoria||'').toLowerCase().includes(q)||(p.subcategoria||'').toLowerCase().includes(q));
     items = sortCatalogItems(items);
+    state.catalogListIds = items.map(p=>p.id);
     box.innerHTML = renderProdList(items);
     return;
   }
@@ -3290,6 +3323,7 @@ function renderGestorCatalogo(){
   let items = state.productos.filter(p=>p.categoria===state.catalogCat);
   if(state.catalogSub) items = items.filter(p=>p.subcategoria===state.catalogSub);
   items = sortCatalogItems(items);
+  state.catalogListIds = items.map(p=>p.id);
   box.innerHTML = renderProdList(items);
 }
 
@@ -3429,6 +3463,14 @@ function openProductDetail(id){
   if(!p) return;
   state.detailProduct = p;
   state.detailPhotoIdx = 0;
+  // Punto #3: flechas exteriores para saltar de un producto a otro dentro de la misma
+  // lista/subcategoría que estaba viendo el gestor, sin cerrar el modal. Si el producto
+  // no viene de esa lista (p.ej. abierto desde una novedad), simplemente no aparecen.
+  const siblings = (state.catalogListIds||[]).filter(pid=>state.productos.some(x=>x.id===pid));
+  const showArrows = siblings.length>1 && siblings.includes(id);
+  const prevBtn = $('detailOuterPrev'), nextBtn = $('detailOuterNext');
+  if(prevBtn) prevBtn.classList.toggle('hidden', !showArrows);
+  if(nextBtn) nextBtn.classList.toggle('hidden', !showArrows);
   const imgs = (p.imagenes&&p.imagenes.length)?p.imagenes:(p.imagenUrl?[p.imagenUrl]:[]);
   const photos = $('detailPhotos');
   const body = $('detailBody');
@@ -3485,14 +3527,90 @@ function openProductDetail(id){
     <div style="font-weight:700;font-size:13px;margin-bottom:4px;">Descripción</div>
     <div class="detail-desc" id="detailDesc">${escapeHtml(desc)}</div>
     <button class="copy-btn" onclick="copyDetailDesc()">📋 Copiar descripción</button>
-    <button class="btn-primary" style="margin-top:14px;" onclick="pickFromDetail('${p.id}')">➕ Añadir al vale</button>`;
+    <button class="btn-primary" style="margin-top:14px;" onclick="pickFromDetail('${p.id}')">➕ Añadir al vale</button>
+    <div id="detailRelatedBox" style="margin-top:16px;"></div>`;
   window.copyDetailDesc = ()=>{
     navigator.clipboard?.writeText(desc).then(()=>showToast('Descripción copiada')).catch(()=>showToast('No se pudo copiar'));
   };
+  renderDetailRelated(p);
   $('productDetailModal').classList.remove('hidden');
   pushNavState();
 }
-function closeProductDetail(){ $('productDetailModal').classList.add('hidden'); state.detailProduct=null; }
+/* Punto #4: "Productos que pueden ser de tu interés" — carrusel animado (mismo
+   lenguaje visual que "Nuevos de la semana") con productos de la MISMA subcategoría
+   del que se está viendo; si no tiene subcategoría o no hay más productos en ella,
+   se usa la categoría como respaldo, y si tampoco hay nada, se oculta sin más. */
+function renderDetailRelated(p){
+  const box = $('detailRelatedBox');
+  if(!box) return;
+  stopRelatedAutoplay();
+  let related = state.productos.filter(x=>x.id!==p.id && x.activo!==false && p.subcategoria && x.subcategoria===p.subcategoria);
+  if(related.length < 3){
+    const extra = state.productos.filter(x=>x.id!==p.id && x.activo!==false && x.categoria===p.categoria && !related.includes(x));
+    related = related.concat(extra);
+  }
+  related = related.slice(0, 12);
+  if(!related.length){ box.innerHTML=''; return; }
+  const loopItems = related.length>2 ? related.concat(related) : related;
+  box.innerHTML = `
+    <div class="new-carousel-wrap" style="margin-bottom:0;">
+      <div class="new-carousel-title">💡 Puede interesarte</div>
+      <div class="new-carousel-scroll" id="detailRelatedScroll">
+        <div class="new-carousel" id="detailRelatedTrack">${loopItems.map(rp=>`
+          <div class="new-item" onclick="event.stopPropagation();openProductDetail('${rp.id}')">
+            ${rp.imagenUrl?`<img src="${rp.imagenUrl}" draggable="false">`:`<div style="width:90px;height:90px;background:var(--surface-2);border-radius:10px;margin:0 auto 4px;"></div>`}
+            <div class="ni-name">${escapeHtml(rp.nombre)}</div>
+            <div class="ni-price">$${money(rp.precioBase)}</div>
+          </div>`).join('')}</div>
+      </div>
+    </div>`;
+  startRelatedAutoplay();
+}
+function stopRelatedAutoplay(){
+  clearInterval(window._relCarInterval);
+  if(window._relCarCleanup) window._relCarCleanup();
+}
+function startRelatedAutoplay(){
+  const scrollEl = $('detailRelatedScroll');
+  if(!scrollEl) return;
+  let paused = false, resumeTimer = null;
+  const onInteract = ()=>{ paused = true; clearTimeout(resumeTimer); resumeTimer = setTimeout(()=>{ paused=false; }, 3000); };
+  scrollEl.addEventListener('pointerdown', onInteract);
+  scrollEl.addEventListener('touchstart', onInteract, {passive:true});
+  scrollEl.addEventListener('wheel', onInteract, {passive:true});
+  window._relCarCleanup = ()=>{
+    scrollEl.removeEventListener('pointerdown', onInteract);
+    scrollEl.removeEventListener('touchstart', onInteract);
+    scrollEl.removeEventListener('wheel', onInteract);
+  };
+  window._relCarInterval = setInterval(()=>{
+    if(paused || !scrollEl.isConnected){ return; }
+    scrollEl.scrollLeft += 1;
+    if(scrollEl.scrollLeft >= scrollEl.scrollWidth/2){ scrollEl.scrollLeft = 0; }
+  }, 30);
+}
+function closeProductDetail(){
+  $('productDetailModal').classList.add('hidden');
+  state.detailProduct=null;
+  stopRelatedAutoplay();
+  const prevBtn = $('detailOuterPrev'), nextBtn = $('detailOuterNext');
+  if(prevBtn) prevBtn.classList.add('hidden');
+  if(nextBtn) nextBtn.classList.add('hidden');
+}
+/* Punto #3: alterna al producto anterior/siguiente de la lista actual (subcategoría,
+   "ver todo", o resultados de búsqueda), reabriendo el detalle en el mismo modal. */
+function shiftDetailProduct(dir){
+  const siblings = (state.catalogListIds||[]).filter(pid=>state.productos.some(x=>x.id===pid));
+  if(!siblings.length || !state.detailProduct) return;
+  const curIdx = siblings.indexOf(state.detailProduct.id);
+  if(curIdx===-1) return;
+  const nextIdx = (curIdx + dir + siblings.length) % siblings.length;
+  const box = $('productDetailModal');
+  if(box) box.scrollTop = 0;
+  const modalInner = document.querySelector('#productDetailModal .detail-modal');
+  if(modalInner) modalInner.scrollTop = 0;
+  openProductDetail(siblings[nextIdx]);
+}
 function pickFromDetail(id){
   const p = state.productos.find(x=>x.id===id);
   closeProductDetail();
@@ -3651,12 +3769,21 @@ function renderResumen(){
 
 /* ============ ADMIN CATÁLOGO ============ */
 function setAdminCat(c){ state.catFilter=c; renderCatFilters('adminCatFilters',c,'setAdminCat'); renderAdminCatalogo(); }
+/* Punto #5: buscador global de productos en el panel del Administrador — filtra en
+   vivo por nombre (y también por categoría/subcategoría) mientras el admin escribe,
+   respetando además el filtro de categoría activo si lo hay. */
+function onAdminProdSearch(){ renderAdminCatalogo(); }
 function renderAdminCatalogo(){
   renderCatFilters('adminCatFilters', state.catFilter, 'setAdminCat');
   const box=$('adminProdList');
+  const q = ($('adminProdSearch')?.value||'').toLowerCase().trim();
   let items = state.productos;
   if(state.catFilter) items = items.filter(p=>p.categoria===state.catFilter);
-  if(!items.length){ box.innerHTML='<div class="hint">No hay productos. Toca "+ Nuevo producto".</div>'; return; }
+  if(q) items = items.filter(p=>(p.nombre||'').toLowerCase().includes(q)||(p.categoria||'').toLowerCase().includes(q)||(p.subcategoria||'').toLowerCase().includes(q));
+  if(!items.length){
+    box.innerHTML = q ? `<div class="hint">Ningún producto coincide con "${escapeHtml(q)}".</div>` : '<div class="hint">No hay productos. Toca "+ Nuevo producto".</div>';
+    return;
+  }
   box.innerHTML = items.map(p=>`
     <div class="prod-card">
       <div class="prod-thumb-box">
@@ -4024,7 +4151,8 @@ async function autoNovedadOnProductChange(prev, curr){
   }
 }
 async function removeProduct(id){
-  if(!confirm('¿Eliminar este producto?')) return;
+  const ok = await showConfirm('¿Eliminar este producto? Esta acción no se puede deshacer.');
+  if(!ok) return;
   try{
     await withTimeout(deleteDoc(doc(db,'productos',id)));
     showToast('Producto eliminado.');
@@ -4332,7 +4460,8 @@ async function saveGestor(){
   }
 }
 async function removeGestor(id){
-  if(!confirm('¿Eliminar este gestor?')) return;
+  const ok = await showConfirm('¿Eliminar este gestor? Esta acción no se puede deshacer.');
+  if(!ok) return;
   try{
     await withTimeout(deleteDoc(doc(db,'gestores',id)));
     showToast('Gestor eliminado.');
@@ -4403,52 +4532,50 @@ async function registrarPagoComision(){
 function novTypeClass(tipo){
   return {nuevo:'nuevo', agotado:'agotado', disponible:'disponible', stock_up:'stock', stock_down:'stock', comision:'precio', precio_up:'precio', precio_down:'precio'}[tipo] || 'default';
 }
-function novIconSvg(tipo){
-  const ICONS_NOV = {
-    nuevo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2Z"/></svg>',
-    agotado: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg>',
-    disponible: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>',
-    stock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>',
-    precio: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 12.6 12 21.2 2.8 12 11.4 3.4H20.6v9.2Z"/><circle cx="16" cy="8" r="1.4" fill="currentColor" stroke="none"/></svg>'
-  };
-  const cls = novTypeClass(tipo);
-  return ICONS_NOV[cls] || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a2.5 2.5 0 0 0 2.4-2H9.6a2.5 2.5 0 0 0 2.4 2Z"/><path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 3h16l-2-3Z"/></svg>';
-}
-function novThumbHtml(n){
-  const prod = state.productos.find(p=>p.id===n.productoId);
-  if(prod && prod.imagenUrl){
-    return `<img class="nov-thumb" src="${prod.imagenUrl}" alt="">`;
-  }
-  return `<div class="nov-thumb-ic">${novIconSvg(n.tipo)}</div>`;
-}
-/* Determina la "dirección" visual del ícono de fondo (arriba/abajo) para precio y
-   comisión: el campo tipo por sí solo no distingue subida/bajada de comisión, así
-   que ahí nos apoyamos en el texto del mensaje ("subió"/"bajó"). */
-function novBgVariant(n){
-  const cls = novTypeClass(n.tipo);
+/* Íconos y color de acento por variante visual de la tarjeta "hero" de novedades. */
+const NOV_VARIANT_ICONS = {
+  nuevo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>',
+  agotado: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  disponible: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>',
+  stock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 8l5-5 5 5M7 16l5 5 5-5"/></svg>',
+  up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>',
+  down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
+  default: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a2.5 2.5 0 0 0 2.4-2H9.6a2.5 2.5 0 0 0 2.4 2Z"/><path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 3h16l-2-3Z"/></svg>'
+};
+const NOV_VARIANT_COLOR = { nuevo:'gold', agotado:'red', disponible:'green', stock:'blue', up:'green', down:'orange', default:'gray' };
+/* Determina la variante visual de la tarjeta (degradado + insignia + etiqueta):
+   el campo tipo por sí solo no distingue si una comisión subió o bajó, así que ahí
+   nos apoyamos en el propio texto del mensaje ("subió"/"bajó"). */
+function novCardVariant(n){
+  const cls = novTypeClass(n.tipo); // nuevo, agotado, disponible, stock, precio, default
   if(cls==='precio'){
     if(n.tipo==='precio_up') return 'up';
     if(n.tipo==='precio_down') return 'down';
     return /subi[oó]/i.test(n.mensaje||'') ? 'up' : 'down';
   }
-  return cls; // nuevo, agotado, stock, disponible, default
+  return cls;
 }
-function novBgIconHtml(n){
-  const variant = novBgVariant(n);
-  const ICONS_BG = {
-    nuevo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>',
-    agotado: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
-    up: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>',
-    down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
-    stock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M7 8l5-5 5 5M7 16l5 5 5-5"/></svg>',
-    disponible: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>',
-    default: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a2.5 2.5 0 0 0 2.4-2H9.6a2.5 2.5 0 0 0 2.4 2Z"/><path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 3h16l-2-3Z"/></svg>'
+function novLabelText(n){
+  const labels = {
+    nuevo:'Producto nuevo', agotado:'Agotado', disponible:'Disponible de nuevo',
+    stock_up:'Stock en aumento', stock_down:'Stock bajo',
+    precio_up:'Precio subió', precio_down:'Precio bajó'
   };
-  const single = ICONS_BG[variant] || ICONS_BG.default;
-  // "agotado", "up" y "down" se ven mejor con el ícono repetido varias veces (más
-  // presencia de fondo); los demás con uno solo, grande.
-  const repeated = (variant==='agotado' || variant==='up' || variant==='down') ? single+single+single : single;
-  return `<div class="nov-bg nov-bg-${variant}">${repeated}</div>`;
+  if(n.tipo==='comision') return /subi[oó]/i.test(n.mensaje||'') ? 'Comisión subió' : 'Comisión bajó';
+  return labels[n.tipo] || 'Novedad';
+}
+/* Insignia flotante junto al título: si el producto tiene foto, se muestra la foto
+   real con una banderita del tipo prendida en la esquina; si no, un cúmulo de 3
+   círculos animados con el ícono del tipo (mismo lenguaje visual que el Historial). */
+function novBadgeHtml(n){
+  const variant = novCardVariant(n);
+  const color = NOV_VARIANT_COLOR[variant] || 'gray';
+  const icon = NOV_VARIANT_ICONS[variant] || NOV_VARIANT_ICONS.default;
+  const prod = state.productos.find(p=>p.id===n.productoId);
+  if(prod && prod.imagenUrl){
+    return `<div class="nov-photo-badge"><img src="${prod.imagenUrl}" alt=""><div class="flag ${color}">${icon}</div></div>`;
+  }
+  return `<div class="nov-badge-stack ${color}"><div class="nb nb3">${icon}</div><div class="nb nb2">${icon}</div><div class="nb nb1">${icon}</div></div>`;
 }
 function novMatchesTab(n, tab){
   if(tab==='todas') return true;
@@ -4476,55 +4603,54 @@ function openNovedades(){
   document.querySelectorAll('.nov-tab').forEach(b=>b.classList.toggle('active', b.dataset.nt==='todas'));
   renderNovedadesList();
 }
-/* Punto #3: palabras clave a resaltar según el tipo de novedad. Se buscan de forma
-   flexible (insensible a mayúsculas y a pequeñas variaciones de orden/acento) sobre
-   el texto ya escapado, para no depender de una redacción exacta. */
-const NOV_KEYWORD_PATTERNS = {
-  nuevo:       [/nuevo\s+producto/i],
-  comision:    [/nueva\s+comisi[oó]n/i, /comisi[oó]n\s+(?:subi[oó]|baj[oó])/i, /comisi[oó]n/i],
-  precio_down: [/baj[oó]\s+el\s+precio/i, /precio\s+baj[oó]/i],
-  precio_up:   [/aument[oó]\s+el\s+precio/i, /precio\s+subi[oó]/i],
-  agotado:     [/agotado/i],
-  disponible:  [/disponible\s+de\s+nuevo/i, /disponible/i],
-  stock_up:    [/stock/i, /ahora\s+hay\s+\d+/i],
-  stock_down:  [/stock/i, /quedan\s+\d+/i]
-};
+/* Punto #2: ícono de "vaciar buzón" — solo tiene sentido mostrarlo si hay algo que
+   vaciar, y solo dentro del modal ya abierto (nunca fuera de él). */
+function updateNovDismissAllBtn(){
+  const btn = $('novDismissAllBtn');
+  if(!btn) return;
+  const hayAlgo = state.novedades.some(n=>!state.deletedNovIds.includes(n.id));
+  btn.classList.toggle('hidden', !hayAlgo);
+}
+async function dismissAllNovedades(){
+  const visibles = state.novedades.filter(n=>!state.deletedNovIds.includes(n.id));
+  if(!visibles.length) return;
+  const ok = await showConfirm('¿Vaciar todo tu buzón de novedades? Dejarán de aparecer en tu lista (no se borran para los demás).');
+  if(!ok) return;
+  const idsNuevos = visibles.map(n=>n.id);
+  state.deletedNovIds = [...new Set([...state.deletedNovIds, ...idsNuevos])];
+  localStorage.setItem(deletedNovKey(), JSON.stringify(state.deletedNovIds));
+  renderNovedadesList();
+  updateNovBadge();
+  updateNovDismissAllBtn();
+  showToast('Tu buzón de novedades quedó vacío.');
+}
 /* Indica en qué campo (titulo o mensaje) viaja el NOMBRE del producto según el tipo,
-   ya que autoNovedadNewProduct/autoNovedadOnProductChange lo colocan en sitios distintos. */
+   ya que autoNovedadNewProduct/autoNovedadOnProductChange lo colocan en sitios
+   distintos: se usa como titular grande de la tarjeta, y el otro campo como detalle. */
 const NOV_NAME_FIELD = {
   nuevo:'mensaje', agotado:'mensaje', disponible:'mensaje',
   stock_up:'titulo', stock_down:'titulo', comision:'titulo',
   precio_up:'titulo', precio_down:'titulo'
 };
-function highlightNovKeyword(escapedText, tipo){
-  const patterns = NOV_KEYWORD_PATTERNS[tipo];
-  if(!patterns) return escapedText;
-  for(const re of patterns){
-    if(re.test(escapedText)) return escapedText.replace(re, m=>`<span class="nov-hl">${m}</span>`);
-  }
-  return escapedText;
-}
-function renderNovTitleHtml(n){
-  return escapeHtml(n.titulo);
-}
-function renderNovMsgHtml(n){
-  return escapeHtml(n.mensaje);
-}
 function renderNovedadesList(){
   const box = $('novedadesList');
   const tab = state.novTab || 'todas';
   const visible = state.novedades.filter(n=>!state.deletedNovIds.includes(n.id) && novMatchesTab(n, tab));
+  updateNovDismissAllBtn();
   if(!visible.length){ box.innerHTML='<div class="hint">No hay novedades en esta pestaña.</div>'; return; }
   box.innerHTML = visible.map(n=>{
     const fecha = n.fecha?.seconds ? new Date(n.fecha.seconds*1000).toLocaleDateString('es-CU',{day:'numeric',month:'short',year:'numeric'}) : '';
-    const cls = novTypeClass(n.tipo);
-    return `<div class="nov-item nov-t-${cls}" onclick="onNovedadTap('${n.id}')">
-      ${novBgIconHtml(n)}
-      ${novThumbHtml(n)}
-      <button type="button" class="photo-remove" onclick="event.stopPropagation();dismissNovedad('${n.id}')">✕</button>
-      <div class="nov-item-title">${renderNovTitleHtml(n)}</div>
-      <div class="nov-item-msg">${renderNovMsgHtml(n)}</div>
+    const variant = novCardVariant(n);
+    const nameField = NOV_NAME_FIELD[n.tipo] || 'mensaje';
+    const headline = nameField==='titulo' ? n.titulo : n.mensaje;
+    const detail = nameField==='titulo' ? n.mensaje : n.titulo;
+    return `<div class="nov-item nov-t-${variant}" onclick="onNovedadTap('${n.id}')">
+      ${novBadgeHtml(n)}
+      <div class="nov-item-label">${NOV_VARIANT_ICONS[variant]||''}${escapeHtml(novLabelText(n))}</div>
+      <div class="nov-item-title">${escapeHtml(headline)}</div>
+      <div class="nov-item-msg">${escapeHtml(detail)}</div>
       <div class="nov-item-date">${fecha}</div>
+      <button type="button" class="nov-trash-btn" onclick="event.stopPropagation();dismissNovedad('${n.id}')" title="Descartar de mi vista">${ICONS.trash}</button>
     </div>`;
   }).join('');
 }
@@ -4691,11 +4817,11 @@ Object.assign(window, {
   openGestorComisionModal, closeGestorComisionModal, registrarPagoComision,
   openTarifasModal, closeTarifasModal, switchTarifaLocal, switchTarifaTipo, renderTarifas, selectTarifa,
   handleCarnetUpload, handlePerfilPhoto, pickCarnet, removeCarnet, clearValeDraft, markComisionEditada, markComisionEditadaRecogida,
-  openNovedades, closeNovedades, publishNovedad, deleteNovedad, deleteAllNovedades, dismissNovedad, onNovedadTap, closeConfirm,
+  openNovedades, closeNovedades, publishNovedad, deleteNovedad, deleteAllNovedades, dismissNovedad, dismissAllNovedades, onNovedadTap, closeConfirm,
   switchNovTab,
-  setAdminCat, installPWA, dismissPWA,
+  setAdminCat, installPWA, dismissPWA, onAdminProdSearch,
   setCatalogView, onGestorSearch, goCatalogCats, goCatalogCat, goCatalogSub, onCatalogSortChange, toggleFaq,
-  openProductDetail, closeProductDetail, pickFromDetail, removeProductPhoto,
+  openProductDetail, closeProductDetail, pickFromDetail, removeProductPhoto, shiftDetailProduct,
   applyAppUpdate, forceAppRefresh, toggleNewCarousel, toggleDarkMode, switchValeMode,
   onTipoPagoUnicoChange, onRMetodoPagoChange, waOtroMetodo,
   addLineItemRecogida, removeLineItemRecogida, updateLineItemRecogida, submitValeRecogida,
