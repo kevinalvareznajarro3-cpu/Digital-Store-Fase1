@@ -1919,7 +1919,13 @@ function playCelebrationSound(){
   if(!audio) return;
   try{ audio.currentTime = 0; audio.volume = 1; audio.play().catch(()=>{}); }catch(e){}
 }
-let _confettiRAF = null, _confettiResizeHandler = null;
+/* Punto #2 (corrección): el confeti ahora es un efecto CONTINUO mientras el cartel
+   esté visible (las partículas que salen de la pantalla se reciclan arriba en vez
+   de desaparecer a un tiempo fijo), y solo se detiene cuando el gestor cierra el
+   cartel manualmente (closeCelebration -> stopConfetti). El cartel en sí NUNCA se
+   cierra por un temporizador: closeCelebration() solo se llama desde el botón "✕"
+   y desde "Ver mi comisión" (ver el HTML del cartel y goToComisionFromCelebration). */
+let _confettiRAF = null, _confettiResizeHandler = null, _confettiActive = false, _confettiParticles = null;
 function launchConfetti(){
   const canvas = $('celebrationConfetti');
   if(!canvas) return;
@@ -1931,25 +1937,34 @@ function launchConfetti(){
   _confettiResizeHandler = resize;
   window.addEventListener('resize', _confettiResizeHandler);
   const colors = ['#1A4A2E','#276B43','#E8B825','#F4D160','#F4F1EA'];
-  const particles = Array.from({length:140}, ()=>({
-    x: Math.random()*canvas.width,
-    y: -20 - Math.random()*canvas.height*0.6,
-    r: 4+Math.random()*5,
-    color: colors[Math.floor(Math.random()*colors.length)],
-    vy: 2+Math.random()*3,
-    vx: (Math.random()-0.5)*2,
-    rot: Math.random()*360,
-    vrot: (Math.random()-0.5)*10,
-    shape: Math.random()<0.5?'rect':'circle'
-  }));
+  function spawn(){
+    return {
+      x: Math.random()*canvas.width,
+      y: -20 - Math.random()*canvas.height*0.6,
+      r: 4+Math.random()*5,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      vy: 2+Math.random()*3,
+      vx: (Math.random()-0.5)*2,
+      rot: Math.random()*360,
+      vrot: (Math.random()-0.5)*10,
+      shape: Math.random()<0.5?'rect':'circle'
+    };
+  }
+  const particles = Array.from({length:140}, spawn);
+  _confettiParticles = particles;
   if(_confettiRAF) cancelAnimationFrame(_confettiRAF);
-  const start = performance.now();
-  const duration = 3600;
-  function frame(t){
-    const elapsed = t - start;
+  _confettiActive = true;
+  function frame(){
+    if(!_confettiActive){ window._confettiRAFHandle = null; return; }
     ctx.clearRect(0,0,canvas.width,canvas.height);
     particles.forEach(p=>{
       p.x += p.vx; p.y += p.vy; p.rot += p.vrot;
+      // Recicla la partícula arriba en vez de dejar que el efecto "se acabe":
+      // así el confeti puede seguir cayendo indefinidamente mientras el cartel
+      // esté abierto, sin depender de un tiempo fijo.
+      if(p.y - p.r > canvas.height){
+        Object.assign(p, spawn(), { y: -20 - Math.random()*40 });
+      }
       ctx.save();
       ctx.translate(p.x,p.y);
       ctx.rotate(p.rot*Math.PI/180);
@@ -1958,15 +1973,21 @@ function launchConfetti(){
       else { ctx.beginPath(); ctx.arc(0,0,p.r/2,0,Math.PI*2); ctx.fill(); }
       ctx.restore();
     });
-    if(elapsed < duration){
-      _confettiRAF = requestAnimationFrame(frame);
-    } else {
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      canvas.classList.add('hidden');
-      if(_confettiResizeHandler){ window.removeEventListener('resize', _confettiResizeHandler); _confettiResizeHandler=null; }
-    }
+    _confettiRAF = requestAnimationFrame(frame);
   }
   _confettiRAF = requestAnimationFrame(frame);
+}
+function stopConfetti(){
+  _confettiActive = false;
+  if(_confettiRAF){ cancelAnimationFrame(_confettiRAF); _confettiRAF = null; }
+  const canvas = $('celebrationConfetti');
+  if(canvas){
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    canvas.classList.add('hidden');
+  }
+  if(_confettiResizeHandler){ window.removeEventListener('resize', _confettiResizeHandler); _confettiResizeHandler=null; }
+  _confettiParticles = null;
 }
 function triggerCelebracion(pedido){
   state.celebrationQueue = state.celebrationQueue || [];
@@ -1984,11 +2005,17 @@ function showNextCelebration(){
   if($('celebrationComision')) $('celebrationComision').textContent = `Ganaste $${money(comision)}`;
   $('celebrationOverlay')?.classList.remove('hidden');
   launchConfetti();
-  playCelebrationSound();
+  playCelebrationSound(); // suena una sola vez por cartel mostrado (no se repite)
   if(navigator.vibrate){ try{ navigator.vibrate([40,60,40]); }catch(e){} }
 }
+/* IMPORTANTE: closeCelebration() es la ÚNICA función que oculta el cartel, y solo
+   la llaman dos acciones del propio gestor: el botón "✕" (celebration-close) y el
+   botón "Ver mi comisión" (goToComisionFromCelebration). No hay ningún setTimeout
+   ni temporizador en ningún otro lugar del código que la invoque, así que el
+   cartel se queda fijo en pantalla hasta que el gestor decide cerrarlo. */
 function closeCelebration(){
   $('celebrationOverlay')?.classList.add('hidden');
+  stopConfetti();
   setTimeout(()=>{
     state.celebrationShowing = false;
     if((state.celebrationQueue||[]).length) showNextCelebration();
@@ -3509,8 +3536,22 @@ function renderNewCarousel(){
   const box = $('newCarouselBox');
   if(!box) return;
   const news = state.productos.filter(p=>p.nuevoSemana && p.activo!==false);
-  if(!news.length){ box.classList.add('hidden'); stopCarouselAutoplay(); return; }
+  if(!news.length){
+    box.classList.add('hidden');
+    stopCarouselAutoplay();
+    window._newCarouselSig = null;
+    return;
+  }
   box.classList.remove('hidden');
+  // Firma del contenido relevante: si nada de esto cambió desde el último render,
+  // NO tocamos el DOM. Esto evita que el carrusel se reconstruya (y por tanto se
+  // reinicie el scroll/la animación) cada vez que llega un snapshot de Firestore
+  // que no cambió nada de "Nuevos de la semana", o cada vez que el gestor navega
+  // el catálogo / escribe en el buscador (lo cual llama renderGestorCatalogo()
+  // -> renderNewCarousel() aunque el carrusel en sí no haya cambiado).
+  const sig = JSON.stringify(news.map(p=>[p.id,p.nombre,p.precioBase,p.imagenUrl])) + '|' + state.carouselCollapsed;
+  if(window._newCarouselSig === sig) return; // sin cambios reales: dejamos el DOM y el autoplay como están
+  window._newCarouselSig = sig;
   const items = news.concat(news); // duplicate for seamless loop
   box.innerHTML = `
     <div class="new-carousel-head">
@@ -3538,28 +3579,48 @@ function startCarouselAutoplay(){
   const scrollEl = $('newCarouselScroll');
   if(!scrollEl) return;
   let paused = false, resumeTimer = null;
-  const onInteract = ()=>{
+  let programmatic = false; // true mientras SOMOS nosotros los que movemos scrollLeft
+  const pause = ()=>{
     paused = true;
     clearTimeout(resumeTimer);
-    resumeTimer = setTimeout(()=>{ paused = false; }, 3000);
+    resumeTimer = setTimeout(()=>{ paused = false; }, 2500);
   };
-  scrollEl.addEventListener('pointerdown', onInteract);
-  scrollEl.addEventListener('touchstart', onInteract, {passive:true});
-  scrollEl.addEventListener('wheel', onInteract, {passive:true});
+  // pointerdown/touchstart: el gestor empieza a tocar/arrastrar.
+  scrollEl.addEventListener('pointerdown', pause, {passive:true});
+  scrollEl.addEventListener('touchstart', pause, {passive:true});
+  scrollEl.addEventListener('wheel', pause, {passive:true});
+  // 'scroll' cubre también el scroll con inercia (momentum) al soltar el dedo,
+  // que pointerdown/touchstart no detectan por sí solos. Ignoramos los eventos
+  // 'scroll' que generamos nosotros mismos vía autoplay (bandera `programmatic`)
+  // para no auto-pausarnos con nuestro propio movimiento.
+  const onScroll = ()=>{ if(!programmatic) pause(); };
+  scrollEl.addEventListener('scroll', onScroll, {passive:true});
   window._carouselCleanup = ()=>{
-    scrollEl.removeEventListener('pointerdown', onInteract);
-    scrollEl.removeEventListener('touchstart', onInteract);
-    scrollEl.removeEventListener('wheel', onInteract);
+    scrollEl.removeEventListener('pointerdown', pause);
+    scrollEl.removeEventListener('touchstart', pause);
+    scrollEl.removeEventListener('wheel', pause);
+    scrollEl.removeEventListener('scroll', onScroll);
   };
-  window._carInterval = setInterval(()=>{
-    if(paused || !scrollEl.isConnected){ return; }
-    scrollEl.scrollLeft += 1;
-    const half = scrollEl.scrollWidth/2;
-    if(half>0 && scrollEl.scrollLeft >= half) scrollEl.scrollLeft -= half;
-  }, 30);
+  const SPEED = 32; // px/segundo — movimiento continuo y suave
+  let lastTs = null;
+  function step(ts){
+    if(!scrollEl.isConnected){ window._carRAF = null; return; }
+    if(lastTs==null) lastTs = ts;
+    const dt = Math.min(ts - lastTs, 100); // clamp por si la pestaña estuvo en segundo plano
+    lastTs = ts;
+    if(!paused){
+      programmatic = true;
+      scrollEl.scrollLeft += SPEED * dt / 1000;
+      const half = scrollEl.scrollWidth / 2;
+      if(half>0 && scrollEl.scrollLeft >= half) scrollEl.scrollLeft -= half;
+      requestAnimationFrame(()=>{ programmatic = false; });
+    }
+    window._carRAF = requestAnimationFrame(step);
+  }
+  window._carRAF = requestAnimationFrame(step);
 }
 function stopCarouselAutoplay(){
-  clearInterval(window._carInterval); window._carInterval = null;
+  if(window._carRAF){ cancelAnimationFrame(window._carRAF); window._carRAF = null; }
   if(window._carouselCleanup){ window._carouselCleanup(); window._carouselCleanup = null; }
 }
 
