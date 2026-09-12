@@ -1757,8 +1757,17 @@ const fbApp = initializeApp(firebaseConfig);
 // Se ven como tráfico web común, así que pasan por redes restrictivas donde el modo
 // streaming no pasaba. No hace falta VPN para el gestor.
 let db;
+/* ============ PROXY DE FIRESTORE (Cloudflare Worker) ============
+   El teléfono/red del gestor bloquea o degrada las conexiones que van directo a
+   firestore.googleapis.com. Para evitarlo, la app ya no habla con Google
+   directamente: habla con tu propio Worker de Cloudflare, que reenvía cada
+   petición tal cual hacia Firestore y devuelve la respuesta sin cambiarla.
+   Así el teléfono nunca "menciona" el dominio bloqueado. */
+const FIRESTORE_PROXY_HOST = 'digitalstore-proxy.kevinalvareznajarro3.workers.dev';
 try{
   db = initializeFirestore(fbApp, {
+    host: FIRESTORE_PROXY_HOST,
+    ssl: true,
     localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
     experimentalForceLongPolling: true
   });
